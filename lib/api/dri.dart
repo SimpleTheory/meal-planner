@@ -5,6 +5,8 @@ import 'package:dataclasses/dataclasses.dart';
 import 'package:dio/dio.dart';
 import 'package:dio_cookie_manager/dio_cookie_manager.dart';
 import 'package:cookie_jar/cookie_jar.dart';
+import 'package:nutrition_app/domain/individual_nutrients.dart';
+import 'package:nutrition_app/domain_2.dart';
 
 enum Sex { M, F }
 
@@ -269,3 +271,18 @@ List<DRI> parseDRI(String dri, AnthroMetrics anthro) {
 int toInches(int feet, int inches){
   return (feet * 12) + inches;
 }
+
+// Nutrients dris2Nutrients(List<DRI> dris){
+//   Map<String, Nutrient> map = {};
+//   for (DRI dri in dris){
+//     String current = dri.name.replaceAll(' ', '');
+//     switch(current){
+//       case 'α-Linolenic Acid': current = 'ALA'; break;
+//       case 'α-Linolenic Acid': current = 'ALA'; break;
+//       case 'α-Linolenic Acid': current = 'ALA'; break;
+//       case 'α-Linolenic Acid': current = 'ALA'; break;
+//       default: current = current;
+//
+//     }
+//   }
+// }
