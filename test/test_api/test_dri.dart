@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:nutrition_app/api/dri.dart';
+import 'package:nutrition_app/domain/nutrtion_app_domain.dart';
 
 void main(){
   test('dri_calc', () async {

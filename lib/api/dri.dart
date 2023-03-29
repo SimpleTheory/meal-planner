@@ -1,16 +1,12 @@
 import 'dart:core';
 import 'package:ari_utils/ari_utils.dart';
 import 'package:beautiful_soup_dart/beautiful_soup.dart';
-import 'package:dataclasses/dataclasses.dart';
 import 'package:dio/dio.dart';
 import 'package:dio_cookie_manager/dio_cookie_manager.dart';
 import 'package:cookie_jar/cookie_jar.dart';
-import 'package:nutrition_app/domain/individual_nutrients.dart';
-import 'package:nutrition_app/domain_2.dart';
+import 'package:nutrition_app/domain.dart';
 
-enum Sex { M, F }
 
-enum Activity { Sedentary, Low_Active, Active, Very_Active }
 
 final valueUnitSearch = RegExp(r'^([0-9.,]+) (\w+)');
 final macroSearch = RegExp(r'^\d+ - \d+ \w+');
