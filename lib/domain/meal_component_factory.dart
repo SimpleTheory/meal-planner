@@ -17,15 +17,16 @@ abstract class MealComponentFactory {
     num grams = quantity * altMeasures2grams[measure]!;
     return MealComponent(grams: grams, reference: reference);
   }
+
   Uri? get photo => null;
 }
-
 
 /// Meal Component Implementation
 /// Infinitive (Includes: Meal)
 
 @Dataclass()
 class Ingredient extends MealComponentFactory {
+  // <editor-fold desc="Parent Attrs">
   @Super('+++')
   String name;
   @Super('+')
@@ -34,62 +35,90 @@ class Ingredient extends MealComponentFactory {
   Map<String, num> altMeasures2grams;
   @override
   Uri? photo;
+  // </editor-fold>
+  IngredientSource source;
+  dynamic sourceMetadata;
 
   // <editor-fold desc="Dataclass Section">
   @Generate()
   // <Dataclass>
 
-  Ingredient({
-    required this.name,
-    required this.baseNutrient,
-    required this.altMeasures2grams,
-  }) : super(
-    baseNutrient,
-    altMeasures2grams,
-    name,
-  );
+  Ingredient(
+      {required this.name,
+      required this.baseNutrient,
+      required this.altMeasures2grams,
+      required this.source,
+      this.photo,
+      this.sourceMetadata})
+      : super(
+          baseNutrient,
+          altMeasures2grams,
+          name,
+        );
 
-  factory Ingredient.staticConstructor({
-    required name,
-    required baseNutrient,
-    required altMeasures2grams,
-  }) =>
+  factory Ingredient.staticConstructor(
+          {required name,
+          required baseNutrient,
+          required altMeasures2grams,
+          required source,
+          photo,
+          sourceMetadata}) =>
       Ingredient(
           name: name,
           baseNutrient: baseNutrient,
-          altMeasures2grams: altMeasures2grams);
+          altMeasures2grams: altMeasures2grams,
+          source: source,
+          photo: photo,
+          sourceMetadata: sourceMetadata);
 
   Map<String, dynamic> get attributes__ => {
-    "name": name,
-    "baseNutrient": baseNutrient,
-    "altMeasures2grams": altMeasures2grams
-  };
+        "name": name,
+        "baseNutrient": baseNutrient,
+        "altMeasures2grams": altMeasures2grams,
+        "photo": photo,
+        "source": source,
+        "sourceMetadata": sourceMetadata
+      };
 
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-          (other is Ingredient &&
-              runtimeType == other.runtimeType &&
-              equals(name, other.name) &&
-              equals(baseNutrient, other.baseNutrient) &&
-              equals(altMeasures2grams, other.altMeasures2grams));
+      (other is Ingredient &&
+          runtimeType == other.runtimeType &&
+          equals(name, other.name) &&
+          equals(baseNutrient, other.baseNutrient) &&
+          equals(altMeasures2grams, other.altMeasures2grams) &&
+          equals(photo, other.photo) &&
+          equals(source, other.source) &&
+          equals(sourceMetadata, other.sourceMetadata));
 
   @override
   int get hashCode =>
-      name.hashCode ^ baseNutrient.hashCode ^ altMeasures2grams.hashCode;
+      name.hashCode ^
+      baseNutrient.hashCode ^
+      altMeasures2grams.hashCode ^
+      photo.hashCode ^
+      source.hashCode ^
+      sourceMetadata.hashCode;
 
   @override
   String toString() =>
-      'Ingredient(name: $name, baseNutrient: $baseNutrient, altMeasures2grams: $altMeasures2grams)';
+      'Ingredient(name: $name, baseNutrient: $baseNutrient, altMeasures2grams: $altMeasures2grams, photo: $photo, source: $source, sourceMetadata: $sourceMetadata)';
 
   Ingredient copyWithIngredient(
-      {String? name,
-        BaseNutrients? baseNutrient,
-        Map<String, num>? altMeasures2grams}) =>
+          {String? name,
+          BaseNutrients? baseNutrient,
+          Map<String, num>? altMeasures2grams,
+          Uri? photo,
+          IngredientSource? source,
+          dynamic? sourceMetadata}) =>
       Ingredient(
           name: name ?? this.name,
           baseNutrient: baseNutrient ?? this.baseNutrient,
-          altMeasures2grams: altMeasures2grams ?? this.altMeasures2grams);
+          altMeasures2grams: altMeasures2grams ?? this.altMeasures2grams,
+          photo: photo ?? this.photo,
+          source: source ?? this.source,
+          sourceMetadata: sourceMetadata ?? this.sourceMetadata);
 
   String toJson() => jsonEncode(toMap());
   Map<String, dynamic> toMap() =>
@@ -102,6 +131,9 @@ class Ingredient extends MealComponentFactory {
     String name = map['name'];
     BaseNutrients baseNutrient = dejsonify(map['baseNutrient']);
     Map altMeasures2gramsTemp = dejsonify(map['altMeasures2grams']);
+    Uri? photo = dejsonify(map['photo']);
+    IngredientSource source = dejsonify(map['source']);
+    dynamic? sourceMetadata = dejsonify(map['sourceMetadata']);
 
     Map<String, num> altMeasures2grams = Map<String, num>.from(
         altMeasures2gramsTemp
@@ -110,9 +142,12 @@ class Ingredient extends MealComponentFactory {
     return Ingredient(
         name: name,
         baseNutrient: baseNutrient,
-        altMeasures2grams: altMeasures2grams);
+        altMeasures2grams: altMeasures2grams,
+        photo: photo,
+        source: source,
+        sourceMetadata: sourceMetadata);
   }
-// </Dataclass>
+  // </Dataclass>
 
 // </editor-fold>
 }
@@ -129,82 +164,89 @@ class Meal extends MealComponentFactory {
 
   Meal(
       {required this.name,
-        required this.ingredients,
-        this.servings = 1,
-        required this.isSubRecipe})
+      required this.ingredients,
+      this.servings = 1,
+      this.photo,
+      required this.isSubRecipe})
       : super(
-      BaseNutrients(
-          grams: (ingredients
-              .map((e) => e.grams)
-              .toList()
-              .reduce((previous, current) => previous + current)) /
-              servings,
-          nutrients: Nutrients.sum(
-              ingredients.map((e) => e.nutrients).toList()) /
-              servings),
-      {
-        'servings': (ingredients
-            .map((e) => e.grams)
-            .toList()
-            .reduce((previous, current) => previous + current)) /
-            servings
-      },
-      name);
+            BaseNutrients(
+                grams: (ingredients
+                        .map((e) => e.grams)
+                        .toList()
+                        .reduce((previous, current) => previous + current)) /
+                    servings,
+                nutrients: Nutrients.sum(
+                        ingredients.map((e) => e.nutrients).toList()) /
+                    servings),
+            {
+              'servings': (ingredients
+                      .map((e) => e.grams)
+                      .toList()
+                      .reduce((previous, current) => previous + current)) /
+                  servings
+            },
+            name);
 
   // <editor-fold desc="Dataclass Section">
   @Generate()
   // <Dataclass>
 
-  factory Meal.staticConstructor({
-    required name,
-    required ingredients,
-    required servings,
-    required isSubRecipe,
-  }) =>
+  factory Meal.staticConstructor(
+          {required name,
+          required ingredients,
+          required servings,
+          required isSubRecipe,
+          photo}) =>
       Meal(
           name: name,
           ingredients: ingredients,
           servings: servings,
-          isSubRecipe: isSubRecipe);
+          isSubRecipe: isSubRecipe,
+          photo: photo);
 
   Map<String, dynamic> get attributes__ => {
-    "name": name,
-    "ingredients": ingredients,
-    "servings": servings,
-    "isSubRecipe": isSubRecipe
-  };
+        "name": name,
+        "ingredients": ingredients,
+        "servings": servings,
+        "isSubRecipe": isSubRecipe,
+        "photo": photo
+      };
 
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-          (other is Meal &&
-              runtimeType == other.runtimeType &&
-              equals(name, other.name) &&
-              equals(ingredients, other.ingredients) &&
-              equals(servings, other.servings) &&
-              equals(isSubRecipe, other.isSubRecipe));
+      (other is Meal &&
+          runtimeType == other.runtimeType &&
+          equals(name, other.name) &&
+          equals(ingredients, other.ingredients) &&
+          equals(servings, other.servings) &&
+          equals(isSubRecipe, other.isSubRecipe) &&
+          equals(photo, other.photo));
 
   @override
   int get hashCode =>
       name.hashCode ^
       ingredients.hashCode ^
       servings.hashCode ^
-      isSubRecipe.hashCode;
+      isSubRecipe.hashCode ^
+      photo.hashCode;
 
   @override
   String toString() =>
-      'Meal(name: $name, ingredients: $ingredients, servings: $servings, isSubRecipe: $isSubRecipe)';
+      'Meal(name: $name, ingredients: $ingredients, servings: $servings, isSubRecipe: $isSubRecipe, photo: $photo)';
 
   Meal copyWithMeal(
-      {String? name,
-        List<MealComponent>? ingredients,
-        int? servings,
-        bool? isSubRecipe}) =>
+          {String? name,
+          List<MealComponent>? ingredients,
+          int? servings,
+          bool? isSubRecipe,
+          Uri? photo}) =>
       Meal(
           name: name ?? this.name,
           ingredients: ingredients ?? this.ingredients,
           servings: servings ?? this.servings,
-          isSubRecipe: isSubRecipe ?? this.isSubRecipe);
+          isSubRecipe: isSubRecipe ?? this.isSubRecipe,
+          photo: photo ?? this.photo);
 
   String toJson() => jsonEncode(toMap());
   Map<String, dynamic> toMap() =>
@@ -217,6 +259,7 @@ class Meal extends MealComponentFactory {
     List ingredientsTemp = dejsonify(map['ingredients']);
     int servings = map['servings'];
     bool isSubRecipe = map['isSubRecipe'];
+    Uri? photo = dejsonify(map['photo']);
 
     List<MealComponent> ingredients = List<MealComponent>.from(ingredientsTemp);
 
@@ -224,9 +267,10 @@ class Meal extends MealComponentFactory {
         name: name,
         ingredients: ingredients,
         servings: servings,
-        isSubRecipe: isSubRecipe);
+        isSubRecipe: isSubRecipe,
+        photo: photo);
   }
-// </Dataclass>
+  // </Dataclass>
 
 // </editor-fold>
 }

@@ -3,6 +3,7 @@ import 'package:dataclasses/dataclasses.dart';
 import 'package:nutrition_app/domain.dart';
 import 'package:nutrition_app/api/dri.dart';
 import 'package:nutrition_app/mydataclasses/metadata.dart';
+
 /// Data carriers (Nutrients and DRIs)
 
 @Dataclass(constructor: false, copyWith: false, toStr: false)
@@ -143,7 +144,7 @@ class Nutrient {
   // <Dataclass>
 
   factory Nutrient.staticConstructor(
-      {required value, required unit, required name, apiId}) =>
+          {required value, required unit, required name, apiId}) =>
       Nutrient(value: value, unit: unit, name: name, apiId: apiId);
 
   Map<String, dynamic> get attributes__ =>
@@ -152,12 +153,12 @@ class Nutrient {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-          (other is Nutrient &&
-              runtimeType == other.runtimeType &&
-              equals(value, other.value) &&
-              equals(apiId, other.apiId) &&
-              equals(unit, other.unit) &&
-              equals(name, other.name));
+      (other is Nutrient &&
+          runtimeType == other.runtimeType &&
+          equals(value, other.value) &&
+          equals(apiId, other.apiId) &&
+          equals(unit, other.unit) &&
+          equals(name, other.name));
 
   @override
   int get hashCode =>
@@ -179,7 +180,7 @@ class Nutrient {
 
     return Nutrient(value: value, apiId: apiId, unit: unit, name: name);
   }
-// </Dataclass>
+  // </Dataclass>
 
 // </editor-fold>
 }
@@ -227,182 +228,182 @@ class Nutrients {
   late final Nutrient unsaturatedFat;
 
   Nutrients operator +(Nutrients other) => Nutrients(
-    calcium: Nutrient.Calcium(calcium.value + other.calcium.value),
-    carbohydrate: Nutrient.Carbohydrate(
-        carbohydrate.value + other.carbohydrate.value),
-    cholesterol:
-    Nutrient.Cholesterol(cholesterol.value + other.cholesterol.value),
-    calories: Nutrient.Calories(calories.value + other.calories.value),
-    saturatedFat: Nutrient.SaturatedFat(
-        saturatedFat.value + other.saturatedFat.value),
-    totalFat: Nutrient.TotalFat(totalFat.value + other.totalFat.value),
-    transFat: Nutrient.TransFat(transFat.value + other.transFat.value),
-    iron: Nutrient.Iron(iron.value + other.iron.value),
-    fiber: Nutrient.Fiber(fiber.value + other.fiber.value),
-    potassium: Nutrient.Potassium(potassium.value + other.potassium.value),
-    sodium: Nutrient.Sodium(sodium.value + other.sodium.value),
-    protein: Nutrient.Protein(protein.value + other.protein.value),
-    sugars: Nutrient.Sugars(sugars.value + other.sugars.value),
-    choline: Nutrient.Choline(choline.value + other.choline.value),
-    copper: Nutrient.Copper(copper.value + other.copper.value),
-    ala: Nutrient.ALA(ala.value + other.ala.value),
-    linoleicAcid: Nutrient.LinoleicAcid(
-        linoleicAcid.value + other.linoleicAcid.value),
-    epa: Nutrient.EPA(epa.value + other.epa.value),
-    dpa: Nutrient.DPA(dpa.value + other.dpa.value),
-    dha: Nutrient.DHA(dha.value + other.dha.value),
-    folate: Nutrient.Folate(folate.value + other.folate.value),
-    magnesium: Nutrient.Magnesium(magnesium.value + other.magnesium.value),
-    manganese: Nutrient.Manganese(manganese.value + other.manganese.value),
-    niacin: Nutrient.Niacin(niacin.value + other.niacin.value),
-    phosphorus:
-    Nutrient.Phosphorus(phosphorus.value + other.phosphorus.value),
-    pantothenicAcid: Nutrient.PantothenicAcid(
-        pantothenicAcid.value + other.pantothenicAcid.value),
-    riboflavin:
-    Nutrient.Riboflavin(riboflavin.value + other.riboflavin.value),
-    selenium: Nutrient.Selenium(selenium.value + other.selenium.value),
-    thiamin: Nutrient.Thiamin(thiamin.value + other.thiamin.value),
-    vitaminE: Nutrient.VitaminE(vitaminE.value + other.vitaminE.value),
-    vitaminA: Nutrient.VitaminA(vitaminA.value + other.vitaminA.value),
-    vitaminB12:
-    Nutrient.VitaminB12(vitaminB12.value + other.vitaminB12.value),
-    vitaminB6: Nutrient.VitaminB6(vitaminB6.value + other.vitaminB6.value),
-    vitaminC: Nutrient.VitaminC(vitaminC.value + other.vitaminC.value),
-    vitaminD: Nutrient.VitaminD(vitaminD.value + other.vitaminD.value),
-    vitaminK: Nutrient.VitaminK(vitaminK.value + other.vitaminK.value),
-    zinc: Nutrient.Zinc(zinc.value + other.zinc.value),
-  );
+        calcium: Nutrient.Calcium(calcium.value + other.calcium.value),
+        carbohydrate: Nutrient.Carbohydrate(
+            carbohydrate.value + other.carbohydrate.value),
+        cholesterol:
+            Nutrient.Cholesterol(cholesterol.value + other.cholesterol.value),
+        calories: Nutrient.Calories(calories.value + other.calories.value),
+        saturatedFat: Nutrient.SaturatedFat(
+            saturatedFat.value + other.saturatedFat.value),
+        totalFat: Nutrient.TotalFat(totalFat.value + other.totalFat.value),
+        transFat: Nutrient.TransFat(transFat.value + other.transFat.value),
+        iron: Nutrient.Iron(iron.value + other.iron.value),
+        fiber: Nutrient.Fiber(fiber.value + other.fiber.value),
+        potassium: Nutrient.Potassium(potassium.value + other.potassium.value),
+        sodium: Nutrient.Sodium(sodium.value + other.sodium.value),
+        protein: Nutrient.Protein(protein.value + other.protein.value),
+        sugars: Nutrient.Sugars(sugars.value + other.sugars.value),
+        choline: Nutrient.Choline(choline.value + other.choline.value),
+        copper: Nutrient.Copper(copper.value + other.copper.value),
+        ala: Nutrient.ALA(ala.value + other.ala.value),
+        linoleicAcid: Nutrient.LinoleicAcid(
+            linoleicAcid.value + other.linoleicAcid.value),
+        epa: Nutrient.EPA(epa.value + other.epa.value),
+        dpa: Nutrient.DPA(dpa.value + other.dpa.value),
+        dha: Nutrient.DHA(dha.value + other.dha.value),
+        folate: Nutrient.Folate(folate.value + other.folate.value),
+        magnesium: Nutrient.Magnesium(magnesium.value + other.magnesium.value),
+        manganese: Nutrient.Manganese(manganese.value + other.manganese.value),
+        niacin: Nutrient.Niacin(niacin.value + other.niacin.value),
+        phosphorus:
+            Nutrient.Phosphorus(phosphorus.value + other.phosphorus.value),
+        pantothenicAcid: Nutrient.PantothenicAcid(
+            pantothenicAcid.value + other.pantothenicAcid.value),
+        riboflavin:
+            Nutrient.Riboflavin(riboflavin.value + other.riboflavin.value),
+        selenium: Nutrient.Selenium(selenium.value + other.selenium.value),
+        thiamin: Nutrient.Thiamin(thiamin.value + other.thiamin.value),
+        vitaminE: Nutrient.VitaminE(vitaminE.value + other.vitaminE.value),
+        vitaminA: Nutrient.VitaminA(vitaminA.value + other.vitaminA.value),
+        vitaminB12:
+            Nutrient.VitaminB12(vitaminB12.value + other.vitaminB12.value),
+        vitaminB6: Nutrient.VitaminB6(vitaminB6.value + other.vitaminB6.value),
+        vitaminC: Nutrient.VitaminC(vitaminC.value + other.vitaminC.value),
+        vitaminD: Nutrient.VitaminD(vitaminD.value + other.vitaminD.value),
+        vitaminK: Nutrient.VitaminK(vitaminK.value + other.vitaminK.value),
+        zinc: Nutrient.Zinc(zinc.value + other.zinc.value),
+      );
 
   Nutrients operator -(Nutrients other) => Nutrients(
-    calcium: Nutrient.Calcium(calcium.value - other.calcium.value),
-    carbohydrate: Nutrient.Carbohydrate(
-        carbohydrate.value - other.carbohydrate.value),
-    cholesterol:
-    Nutrient.Cholesterol(cholesterol.value - other.cholesterol.value),
-    calories: Nutrient.Calories(calories.value - other.calories.value),
-    saturatedFat: Nutrient.SaturatedFat(
-        saturatedFat.value - other.saturatedFat.value),
-    totalFat: Nutrient.TotalFat(totalFat.value - other.totalFat.value),
-    transFat: Nutrient.TransFat(transFat.value - other.transFat.value),
-    iron: Nutrient.Iron(iron.value - other.iron.value),
-    fiber: Nutrient.Fiber(fiber.value - other.fiber.value),
-    potassium: Nutrient.Potassium(potassium.value - other.potassium.value),
-    sodium: Nutrient.Sodium(sodium.value - other.sodium.value),
-    protein: Nutrient.Protein(protein.value - other.protein.value),
-    sugars: Nutrient.Sugars(sugars.value - other.sugars.value),
-    choline: Nutrient.Choline(choline.value - other.choline.value),
-    copper: Nutrient.Copper(copper.value - other.copper.value),
-    ala: Nutrient.ALA(ala.value - other.ala.value),
-    linoleicAcid: Nutrient.LinoleicAcid(
-        linoleicAcid.value - other.linoleicAcid.value),
-    epa: Nutrient.EPA(epa.value - other.epa.value),
-    dpa: Nutrient.DPA(dpa.value - other.dpa.value),
-    dha: Nutrient.DHA(dha.value - other.dha.value),
-    folate: Nutrient.Folate(folate.value - other.folate.value),
-    magnesium: Nutrient.Magnesium(magnesium.value - other.magnesium.value),
-    manganese: Nutrient.Manganese(manganese.value - other.manganese.value),
-    niacin: Nutrient.Niacin(niacin.value - other.niacin.value),
-    phosphorus:
-    Nutrient.Phosphorus(phosphorus.value - other.phosphorus.value),
-    pantothenicAcid: Nutrient.PantothenicAcid(
-        pantothenicAcid.value - other.pantothenicAcid.value),
-    riboflavin:
-    Nutrient.Riboflavin(riboflavin.value - other.riboflavin.value),
-    selenium: Nutrient.Selenium(selenium.value - other.selenium.value),
-    thiamin: Nutrient.Thiamin(thiamin.value - other.thiamin.value),
-    vitaminE: Nutrient.VitaminE(vitaminE.value - other.vitaminE.value),
-    vitaminA: Nutrient.VitaminA(vitaminA.value - other.vitaminA.value),
-    vitaminB12:
-    Nutrient.VitaminB12(vitaminB12.value - other.vitaminB12.value),
-    vitaminB6: Nutrient.VitaminB6(vitaminB6.value - other.vitaminB6.value),
-    vitaminC: Nutrient.VitaminC(vitaminC.value - other.vitaminC.value),
-    vitaminD: Nutrient.VitaminD(vitaminD.value - other.vitaminD.value),
-    vitaminK: Nutrient.VitaminK(vitaminK.value - other.vitaminK.value),
-    zinc: Nutrient.Zinc(zinc.value - other.zinc.value),
-  );
+        calcium: Nutrient.Calcium(calcium.value - other.calcium.value),
+        carbohydrate: Nutrient.Carbohydrate(
+            carbohydrate.value - other.carbohydrate.value),
+        cholesterol:
+            Nutrient.Cholesterol(cholesterol.value - other.cholesterol.value),
+        calories: Nutrient.Calories(calories.value - other.calories.value),
+        saturatedFat: Nutrient.SaturatedFat(
+            saturatedFat.value - other.saturatedFat.value),
+        totalFat: Nutrient.TotalFat(totalFat.value - other.totalFat.value),
+        transFat: Nutrient.TransFat(transFat.value - other.transFat.value),
+        iron: Nutrient.Iron(iron.value - other.iron.value),
+        fiber: Nutrient.Fiber(fiber.value - other.fiber.value),
+        potassium: Nutrient.Potassium(potassium.value - other.potassium.value),
+        sodium: Nutrient.Sodium(sodium.value - other.sodium.value),
+        protein: Nutrient.Protein(protein.value - other.protein.value),
+        sugars: Nutrient.Sugars(sugars.value - other.sugars.value),
+        choline: Nutrient.Choline(choline.value - other.choline.value),
+        copper: Nutrient.Copper(copper.value - other.copper.value),
+        ala: Nutrient.ALA(ala.value - other.ala.value),
+        linoleicAcid: Nutrient.LinoleicAcid(
+            linoleicAcid.value - other.linoleicAcid.value),
+        epa: Nutrient.EPA(epa.value - other.epa.value),
+        dpa: Nutrient.DPA(dpa.value - other.dpa.value),
+        dha: Nutrient.DHA(dha.value - other.dha.value),
+        folate: Nutrient.Folate(folate.value - other.folate.value),
+        magnesium: Nutrient.Magnesium(magnesium.value - other.magnesium.value),
+        manganese: Nutrient.Manganese(manganese.value - other.manganese.value),
+        niacin: Nutrient.Niacin(niacin.value - other.niacin.value),
+        phosphorus:
+            Nutrient.Phosphorus(phosphorus.value - other.phosphorus.value),
+        pantothenicAcid: Nutrient.PantothenicAcid(
+            pantothenicAcid.value - other.pantothenicAcid.value),
+        riboflavin:
+            Nutrient.Riboflavin(riboflavin.value - other.riboflavin.value),
+        selenium: Nutrient.Selenium(selenium.value - other.selenium.value),
+        thiamin: Nutrient.Thiamin(thiamin.value - other.thiamin.value),
+        vitaminE: Nutrient.VitaminE(vitaminE.value - other.vitaminE.value),
+        vitaminA: Nutrient.VitaminA(vitaminA.value - other.vitaminA.value),
+        vitaminB12:
+            Nutrient.VitaminB12(vitaminB12.value - other.vitaminB12.value),
+        vitaminB6: Nutrient.VitaminB6(vitaminB6.value - other.vitaminB6.value),
+        vitaminC: Nutrient.VitaminC(vitaminC.value - other.vitaminC.value),
+        vitaminD: Nutrient.VitaminD(vitaminD.value - other.vitaminD.value),
+        vitaminK: Nutrient.VitaminK(vitaminK.value - other.vitaminK.value),
+        zinc: Nutrient.Zinc(zinc.value - other.zinc.value),
+      );
 
   Nutrients operator *(num other) => Nutrients(
-    calcium: Nutrient.Calcium(calcium.value * other),
-    carbohydrate: Nutrient.Carbohydrate(carbohydrate.value * other),
-    cholesterol: Nutrient.Cholesterol(cholesterol.value * other),
-    calories: Nutrient.Calories(calories.value * other),
-    saturatedFat: Nutrient.SaturatedFat(saturatedFat.value * other),
-    totalFat: Nutrient.TotalFat(totalFat.value * other),
-    transFat: Nutrient.TransFat(transFat.value * other),
-    iron: Nutrient.Iron(iron.value * other),
-    fiber: Nutrient.Fiber(fiber.value * other),
-    potassium: Nutrient.Potassium(potassium.value * other),
-    sodium: Nutrient.Sodium(sodium.value * other),
-    protein: Nutrient.Protein(protein.value * other),
-    sugars: Nutrient.Sugars(sugars.value * other),
-    choline: Nutrient.Choline(choline.value * other),
-    copper: Nutrient.Copper(copper.value * other),
-    ala: Nutrient.ALA(ala.value * other),
-    linoleicAcid: Nutrient.LinoleicAcid(linoleicAcid.value * other),
-    epa: Nutrient.EPA(epa.value * other),
-    dpa: Nutrient.DPA(dpa.value * other),
-    dha: Nutrient.DHA(dha.value * other),
-    folate: Nutrient.Folate(folate.value * other),
-    magnesium: Nutrient.Magnesium(magnesium.value * other),
-    manganese: Nutrient.Manganese(manganese.value * other),
-    niacin: Nutrient.Niacin(niacin.value * other),
-    phosphorus: Nutrient.Phosphorus(phosphorus.value * other),
-    pantothenicAcid:
-    Nutrient.PantothenicAcid(pantothenicAcid.value * other),
-    riboflavin: Nutrient.Riboflavin(riboflavin.value * other),
-    selenium: Nutrient.Selenium(selenium.value * other),
-    thiamin: Nutrient.Thiamin(thiamin.value * other),
-    vitaminE: Nutrient.VitaminE(vitaminE.value * other),
-    vitaminA: Nutrient.VitaminA(vitaminA.value * other),
-    vitaminB12: Nutrient.VitaminB12(vitaminB12.value * other),
-    vitaminB6: Nutrient.VitaminB6(vitaminB6.value * other),
-    vitaminC: Nutrient.VitaminC(vitaminC.value * other),
-    vitaminD: Nutrient.VitaminD(vitaminD.value * other),
-    vitaminK: Nutrient.VitaminK(vitaminK.value * other),
-    zinc: Nutrient.Zinc(zinc.value * other),
-  );
+        calcium: Nutrient.Calcium(calcium.value * other),
+        carbohydrate: Nutrient.Carbohydrate(carbohydrate.value * other),
+        cholesterol: Nutrient.Cholesterol(cholesterol.value * other),
+        calories: Nutrient.Calories(calories.value * other),
+        saturatedFat: Nutrient.SaturatedFat(saturatedFat.value * other),
+        totalFat: Nutrient.TotalFat(totalFat.value * other),
+        transFat: Nutrient.TransFat(transFat.value * other),
+        iron: Nutrient.Iron(iron.value * other),
+        fiber: Nutrient.Fiber(fiber.value * other),
+        potassium: Nutrient.Potassium(potassium.value * other),
+        sodium: Nutrient.Sodium(sodium.value * other),
+        protein: Nutrient.Protein(protein.value * other),
+        sugars: Nutrient.Sugars(sugars.value * other),
+        choline: Nutrient.Choline(choline.value * other),
+        copper: Nutrient.Copper(copper.value * other),
+        ala: Nutrient.ALA(ala.value * other),
+        linoleicAcid: Nutrient.LinoleicAcid(linoleicAcid.value * other),
+        epa: Nutrient.EPA(epa.value * other),
+        dpa: Nutrient.DPA(dpa.value * other),
+        dha: Nutrient.DHA(dha.value * other),
+        folate: Nutrient.Folate(folate.value * other),
+        magnesium: Nutrient.Magnesium(magnesium.value * other),
+        manganese: Nutrient.Manganese(manganese.value * other),
+        niacin: Nutrient.Niacin(niacin.value * other),
+        phosphorus: Nutrient.Phosphorus(phosphorus.value * other),
+        pantothenicAcid:
+            Nutrient.PantothenicAcid(pantothenicAcid.value * other),
+        riboflavin: Nutrient.Riboflavin(riboflavin.value * other),
+        selenium: Nutrient.Selenium(selenium.value * other),
+        thiamin: Nutrient.Thiamin(thiamin.value * other),
+        vitaminE: Nutrient.VitaminE(vitaminE.value * other),
+        vitaminA: Nutrient.VitaminA(vitaminA.value * other),
+        vitaminB12: Nutrient.VitaminB12(vitaminB12.value * other),
+        vitaminB6: Nutrient.VitaminB6(vitaminB6.value * other),
+        vitaminC: Nutrient.VitaminC(vitaminC.value * other),
+        vitaminD: Nutrient.VitaminD(vitaminD.value * other),
+        vitaminK: Nutrient.VitaminK(vitaminK.value * other),
+        zinc: Nutrient.Zinc(zinc.value * other),
+      );
 
   Nutrients operator /(num other) => Nutrients(
-    calcium: Nutrient.Calcium(calcium.value / other),
-    carbohydrate: Nutrient.Carbohydrate(carbohydrate.value / other),
-    cholesterol: Nutrient.Cholesterol(cholesterol.value / other),
-    calories: Nutrient.Calories(calories.value / other),
-    saturatedFat: Nutrient.SaturatedFat(saturatedFat.value / other),
-    totalFat: Nutrient.TotalFat(totalFat.value / other),
-    transFat: Nutrient.TransFat(transFat.value / other),
-    iron: Nutrient.Iron(iron.value / other),
-    fiber: Nutrient.Fiber(fiber.value / other),
-    potassium: Nutrient.Potassium(potassium.value / other),
-    sodium: Nutrient.Sodium(sodium.value / other),
-    protein: Nutrient.Protein(protein.value / other),
-    sugars: Nutrient.Sugars(sugars.value / other),
-    choline: Nutrient.Choline(choline.value / other),
-    copper: Nutrient.Copper(copper.value / other),
-    ala: Nutrient.ALA(ala.value / other),
-    linoleicAcid: Nutrient.LinoleicAcid(linoleicAcid.value / other),
-    epa: Nutrient.EPA(epa.value / other),
-    dpa: Nutrient.DPA(dpa.value / other),
-    dha: Nutrient.DHA(dha.value / other),
-    folate: Nutrient.Folate(folate.value / other),
-    magnesium: Nutrient.Magnesium(magnesium.value / other),
-    manganese: Nutrient.Manganese(manganese.value / other),
-    niacin: Nutrient.Niacin(niacin.value / other),
-    phosphorus: Nutrient.Phosphorus(phosphorus.value / other),
-    pantothenicAcid:
-    Nutrient.PantothenicAcid(pantothenicAcid.value / other),
-    riboflavin: Nutrient.Riboflavin(riboflavin.value / other),
-    selenium: Nutrient.Selenium(selenium.value / other),
-    thiamin: Nutrient.Thiamin(thiamin.value / other),
-    vitaminE: Nutrient.VitaminE(vitaminE.value / other),
-    vitaminA: Nutrient.VitaminA(vitaminA.value / other),
-    vitaminB12: Nutrient.VitaminB12(vitaminB12.value / other),
-    vitaminB6: Nutrient.VitaminB6(vitaminB6.value / other),
-    vitaminC: Nutrient.VitaminC(vitaminC.value / other),
-    vitaminD: Nutrient.VitaminD(vitaminD.value / other),
-    vitaminK: Nutrient.VitaminK(vitaminK.value / other),
-    zinc: Nutrient.Zinc(zinc.value / other),
-  );
+        calcium: Nutrient.Calcium(calcium.value / other),
+        carbohydrate: Nutrient.Carbohydrate(carbohydrate.value / other),
+        cholesterol: Nutrient.Cholesterol(cholesterol.value / other),
+        calories: Nutrient.Calories(calories.value / other),
+        saturatedFat: Nutrient.SaturatedFat(saturatedFat.value / other),
+        totalFat: Nutrient.TotalFat(totalFat.value / other),
+        transFat: Nutrient.TransFat(transFat.value / other),
+        iron: Nutrient.Iron(iron.value / other),
+        fiber: Nutrient.Fiber(fiber.value / other),
+        potassium: Nutrient.Potassium(potassium.value / other),
+        sodium: Nutrient.Sodium(sodium.value / other),
+        protein: Nutrient.Protein(protein.value / other),
+        sugars: Nutrient.Sugars(sugars.value / other),
+        choline: Nutrient.Choline(choline.value / other),
+        copper: Nutrient.Copper(copper.value / other),
+        ala: Nutrient.ALA(ala.value / other),
+        linoleicAcid: Nutrient.LinoleicAcid(linoleicAcid.value / other),
+        epa: Nutrient.EPA(epa.value / other),
+        dpa: Nutrient.DPA(dpa.value / other),
+        dha: Nutrient.DHA(dha.value / other),
+        folate: Nutrient.Folate(folate.value / other),
+        magnesium: Nutrient.Magnesium(magnesium.value / other),
+        manganese: Nutrient.Manganese(manganese.value / other),
+        niacin: Nutrient.Niacin(niacin.value / other),
+        phosphorus: Nutrient.Phosphorus(phosphorus.value / other),
+        pantothenicAcid:
+            Nutrient.PantothenicAcid(pantothenicAcid.value / other),
+        riboflavin: Nutrient.Riboflavin(riboflavin.value / other),
+        selenium: Nutrient.Selenium(selenium.value / other),
+        thiamin: Nutrient.Thiamin(thiamin.value / other),
+        vitaminE: Nutrient.VitaminE(vitaminE.value / other),
+        vitaminA: Nutrient.VitaminA(vitaminA.value / other),
+        vitaminB12: Nutrient.VitaminB12(vitaminB12.value / other),
+        vitaminB6: Nutrient.VitaminB6(vitaminB6.value / other),
+        vitaminC: Nutrient.VitaminC(vitaminC.value / other),
+        vitaminD: Nutrient.VitaminD(vitaminD.value / other),
+        vitaminK: Nutrient.VitaminK(vitaminK.value / other),
+        zinc: Nutrient.Zinc(zinc.value / other),
+      );
 
   static Nutrients sum(List<Nutrients> listOfNutrients) {
     if (listOfNutrients.isEmpty) {
@@ -537,89 +538,89 @@ class Nutrients {
           zinc: zinc);
 
   Map<String, dynamic> get attributes__ => {
-    "calcium": calcium,
-    "carbohydrate": carbohydrate,
-    "cholesterol": cholesterol,
-    "calories": calories,
-    "saturatedFat": saturatedFat,
-    "totalFat": totalFat,
-    "transFat": transFat,
-    "iron": iron,
-    "fiber": fiber,
-    "potassium": potassium,
-    "sodium": sodium,
-    "protein": protein,
-    "sugars": sugars,
-    "choline": choline,
-    "copper": copper,
-    "ala": ala,
-    "linoleicAcid": linoleicAcid,
-    "epa": epa,
-    "dpa": dpa,
-    "dha": dha,
-    "folate": folate,
-    "magnesium": magnesium,
-    "manganese": manganese,
-    "niacin": niacin,
-    "phosphorus": phosphorus,
-    "pantothenicAcid": pantothenicAcid,
-    "riboflavin": riboflavin,
-    "selenium": selenium,
-    "thiamin": thiamin,
-    "vitaminE": vitaminE,
-    "vitaminA": vitaminA,
-    "vitaminB12": vitaminB12,
-    "vitaminB6": vitaminB6,
-    "vitaminC": vitaminC,
-    "vitaminD": vitaminD,
-    "vitaminK": vitaminK,
-    "zinc": zinc,
-    "unsaturatedFat": unsaturatedFat
-  };
+        "calcium": calcium,
+        "carbohydrate": carbohydrate,
+        "cholesterol": cholesterol,
+        "calories": calories,
+        "saturatedFat": saturatedFat,
+        "totalFat": totalFat,
+        "transFat": transFat,
+        "iron": iron,
+        "fiber": fiber,
+        "potassium": potassium,
+        "sodium": sodium,
+        "protein": protein,
+        "sugars": sugars,
+        "choline": choline,
+        "copper": copper,
+        "ala": ala,
+        "linoleicAcid": linoleicAcid,
+        "epa": epa,
+        "dpa": dpa,
+        "dha": dha,
+        "folate": folate,
+        "magnesium": magnesium,
+        "manganese": manganese,
+        "niacin": niacin,
+        "phosphorus": phosphorus,
+        "pantothenicAcid": pantothenicAcid,
+        "riboflavin": riboflavin,
+        "selenium": selenium,
+        "thiamin": thiamin,
+        "vitaminE": vitaminE,
+        "vitaminA": vitaminA,
+        "vitaminB12": vitaminB12,
+        "vitaminB6": vitaminB6,
+        "vitaminC": vitaminC,
+        "vitaminD": vitaminD,
+        "vitaminK": vitaminK,
+        "zinc": zinc,
+        "unsaturatedFat": unsaturatedFat
+      };
 
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-          (other is Nutrients &&
-              runtimeType == other.runtimeType &&
-              equals(calcium, other.calcium) &&
-              equals(carbohydrate, other.carbohydrate) &&
-              equals(cholesterol, other.cholesterol) &&
-              equals(calories, other.calories) &&
-              equals(saturatedFat, other.saturatedFat) &&
-              equals(totalFat, other.totalFat) &&
-              equals(transFat, other.transFat) &&
-              equals(iron, other.iron) &&
-              equals(fiber, other.fiber) &&
-              equals(potassium, other.potassium) &&
-              equals(sodium, other.sodium) &&
-              equals(protein, other.protein) &&
-              equals(sugars, other.sugars) &&
-              equals(choline, other.choline) &&
-              equals(copper, other.copper) &&
-              equals(ala, other.ala) &&
-              equals(linoleicAcid, other.linoleicAcid) &&
-              equals(epa, other.epa) &&
-              equals(dpa, other.dpa) &&
-              equals(dha, other.dha) &&
-              equals(folate, other.folate) &&
-              equals(magnesium, other.magnesium) &&
-              equals(manganese, other.manganese) &&
-              equals(niacin, other.niacin) &&
-              equals(phosphorus, other.phosphorus) &&
-              equals(pantothenicAcid, other.pantothenicAcid) &&
-              equals(riboflavin, other.riboflavin) &&
-              equals(selenium, other.selenium) &&
-              equals(thiamin, other.thiamin) &&
-              equals(vitaminE, other.vitaminE) &&
-              equals(vitaminA, other.vitaminA) &&
-              equals(vitaminB12, other.vitaminB12) &&
-              equals(vitaminB6, other.vitaminB6) &&
-              equals(vitaminC, other.vitaminC) &&
-              equals(vitaminD, other.vitaminD) &&
-              equals(vitaminK, other.vitaminK) &&
-              equals(zinc, other.zinc) &&
-              equals(unsaturatedFat, other.unsaturatedFat));
+      (other is Nutrients &&
+          runtimeType == other.runtimeType &&
+          equals(calcium, other.calcium) &&
+          equals(carbohydrate, other.carbohydrate) &&
+          equals(cholesterol, other.cholesterol) &&
+          equals(calories, other.calories) &&
+          equals(saturatedFat, other.saturatedFat) &&
+          equals(totalFat, other.totalFat) &&
+          equals(transFat, other.transFat) &&
+          equals(iron, other.iron) &&
+          equals(fiber, other.fiber) &&
+          equals(potassium, other.potassium) &&
+          equals(sodium, other.sodium) &&
+          equals(protein, other.protein) &&
+          equals(sugars, other.sugars) &&
+          equals(choline, other.choline) &&
+          equals(copper, other.copper) &&
+          equals(ala, other.ala) &&
+          equals(linoleicAcid, other.linoleicAcid) &&
+          equals(epa, other.epa) &&
+          equals(dpa, other.dpa) &&
+          equals(dha, other.dha) &&
+          equals(folate, other.folate) &&
+          equals(magnesium, other.magnesium) &&
+          equals(manganese, other.manganese) &&
+          equals(niacin, other.niacin) &&
+          equals(phosphorus, other.phosphorus) &&
+          equals(pantothenicAcid, other.pantothenicAcid) &&
+          equals(riboflavin, other.riboflavin) &&
+          equals(selenium, other.selenium) &&
+          equals(thiamin, other.thiamin) &&
+          equals(vitaminE, other.vitaminE) &&
+          equals(vitaminA, other.vitaminA) &&
+          equals(vitaminB12, other.vitaminB12) &&
+          equals(vitaminB6, other.vitaminB6) &&
+          equals(vitaminC, other.vitaminC) &&
+          equals(vitaminD, other.vitaminD) &&
+          equals(vitaminK, other.vitaminK) &&
+          equals(zinc, other.zinc) &&
+          equals(unsaturatedFat, other.unsaturatedFat));
 
   @override
   int get hashCode =>
@@ -667,43 +668,43 @@ class Nutrients {
       'Nutrients(calcium: $calcium, carbohydrate: $carbohydrate, cholesterol: $cholesterol, calories: $calories, saturatedFat: $saturatedFat, totalFat: $totalFat, transFat: $transFat, iron: $iron, fiber: $fiber, potassium: $potassium, sodium: $sodium, protein: $protein, sugars: $sugars, choline: $choline, copper: $copper, ala: $ala, linoleicAcid: $linoleicAcid, epa: $epa, dpa: $dpa, dha: $dha, folate: $folate, magnesium: $magnesium, manganese: $manganese, niacin: $niacin, phosphorus: $phosphorus, pantothenicAcid: $pantothenicAcid, riboflavin: $riboflavin, selenium: $selenium, thiamin: $thiamin, vitaminE: $vitaminE, vitaminA: $vitaminA, vitaminB12: $vitaminB12, vitaminB6: $vitaminB6, vitaminC: $vitaminC, vitaminD: $vitaminD, vitaminK: $vitaminK, zinc: $zinc, unsaturatedFat: $unsaturatedFat)';
 
   Nutrients copyWith(
-      {Nutrient? calcium,
-        Nutrient? carbohydrate,
-        Nutrient? cholesterol,
-        Nutrient? calories,
-        Nutrient? saturatedFat,
-        Nutrient? totalFat,
-        Nutrient? transFat,
-        Nutrient? iron,
-        Nutrient? fiber,
-        Nutrient? potassium,
-        Nutrient? sodium,
-        Nutrient? protein,
-        Nutrient? sugars,
-        Nutrient? choline,
-        Nutrient? copper,
-        Nutrient? ala,
-        Nutrient? linoleicAcid,
-        Nutrient? epa,
-        Nutrient? dpa,
-        Nutrient? dha,
-        Nutrient? folate,
-        Nutrient? magnesium,
-        Nutrient? manganese,
-        Nutrient? niacin,
-        Nutrient? phosphorus,
-        Nutrient? pantothenicAcid,
-        Nutrient? riboflavin,
-        Nutrient? selenium,
-        Nutrient? thiamin,
-        Nutrient? vitaminE,
-        Nutrient? vitaminA,
-        Nutrient? vitaminB12,
-        Nutrient? vitaminB6,
-        Nutrient? vitaminC,
-        Nutrient? vitaminD,
-        Nutrient? vitaminK,
-        Nutrient? zinc}) =>
+          {Nutrient? calcium,
+          Nutrient? carbohydrate,
+          Nutrient? cholesterol,
+          Nutrient? calories,
+          Nutrient? saturatedFat,
+          Nutrient? totalFat,
+          Nutrient? transFat,
+          Nutrient? iron,
+          Nutrient? fiber,
+          Nutrient? potassium,
+          Nutrient? sodium,
+          Nutrient? protein,
+          Nutrient? sugars,
+          Nutrient? choline,
+          Nutrient? copper,
+          Nutrient? ala,
+          Nutrient? linoleicAcid,
+          Nutrient? epa,
+          Nutrient? dpa,
+          Nutrient? dha,
+          Nutrient? folate,
+          Nutrient? magnesium,
+          Nutrient? manganese,
+          Nutrient? niacin,
+          Nutrient? phosphorus,
+          Nutrient? pantothenicAcid,
+          Nutrient? riboflavin,
+          Nutrient? selenium,
+          Nutrient? thiamin,
+          Nutrient? vitaminE,
+          Nutrient? vitaminA,
+          Nutrient? vitaminB12,
+          Nutrient? vitaminB6,
+          Nutrient? vitaminC,
+          Nutrient? vitaminD,
+          Nutrient? vitaminK,
+          Nutrient? zinc}) =>
       Nutrients(
           calcium: calcium ?? this.calcium,
           carbohydrate: carbohydrate ?? this.carbohydrate,
@@ -971,12 +972,12 @@ class DRI {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-          other is DRI &&
-              runtimeType == other.runtimeType &&
-              name == other.name &&
-              dri == other.dri &&
-              upperLimit == other.upperLimit &&
-              unit == other.unit;
+      other is DRI &&
+          runtimeType == other.runtimeType &&
+          name == other.name &&
+          dri == other.dri &&
+          upperLimit == other.upperLimit &&
+          unit == other.unit;
 
   @override
   int get hashCode =>
@@ -1253,87 +1254,87 @@ class DRIS {
           zinc: zinc);
 
   Map<String, dynamic> get attributes__ => {
-    "calcium": calcium,
-    "carbohydrate": carbohydrate,
-    "cholesterol": cholesterol,
-    "calories": calories,
-    "saturatedFat": saturatedFat,
-    "totalFat": totalFat,
-    "iron": iron,
-    "fiber": fiber,
-    "potassium": potassium,
-    "sodium": sodium,
-    "protein": protein,
-    "sugars": sugars,
-    "choline": choline,
-    "copper": copper,
-    "ala": ala,
-    "linoleicAcid": linoleicAcid,
-    "epa": epa,
-    "dpa": dpa,
-    "dha": dha,
-    "folate": folate,
-    "magnesium": magnesium,
-    "manganese": manganese,
-    "niacin": niacin,
-    "phosphorus": phosphorus,
-    "pantothenicAcid": pantothenicAcid,
-    "riboflavin": riboflavin,
-    "selenium": selenium,
-    "thiamin": thiamin,
-    "vitaminE": vitaminE,
-    "vitaminA": vitaminA,
-    "vitaminB12": vitaminB12,
-    "vitaminB6": vitaminB6,
-    "vitaminC": vitaminC,
-    "vitaminD": vitaminD,
-    "vitaminK": vitaminK,
-    "zinc": zinc,
-    "unsaturatedFat": unsaturatedFat
-  };
+        "calcium": calcium,
+        "carbohydrate": carbohydrate,
+        "cholesterol": cholesterol,
+        "calories": calories,
+        "saturatedFat": saturatedFat,
+        "totalFat": totalFat,
+        "iron": iron,
+        "fiber": fiber,
+        "potassium": potassium,
+        "sodium": sodium,
+        "protein": protein,
+        "sugars": sugars,
+        "choline": choline,
+        "copper": copper,
+        "ala": ala,
+        "linoleicAcid": linoleicAcid,
+        "epa": epa,
+        "dpa": dpa,
+        "dha": dha,
+        "folate": folate,
+        "magnesium": magnesium,
+        "manganese": manganese,
+        "niacin": niacin,
+        "phosphorus": phosphorus,
+        "pantothenicAcid": pantothenicAcid,
+        "riboflavin": riboflavin,
+        "selenium": selenium,
+        "thiamin": thiamin,
+        "vitaminE": vitaminE,
+        "vitaminA": vitaminA,
+        "vitaminB12": vitaminB12,
+        "vitaminB6": vitaminB6,
+        "vitaminC": vitaminC,
+        "vitaminD": vitaminD,
+        "vitaminK": vitaminK,
+        "zinc": zinc,
+        "unsaturatedFat": unsaturatedFat
+      };
 
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-          (other is DRIS &&
-              runtimeType == other.runtimeType &&
-              equals(calcium, other.calcium) &&
-              equals(carbohydrate, other.carbohydrate) &&
-              equals(cholesterol, other.cholesterol) &&
-              equals(calories, other.calories) &&
-              equals(saturatedFat, other.saturatedFat) &&
-              equals(totalFat, other.totalFat) &&
-              equals(iron, other.iron) &&
-              equals(fiber, other.fiber) &&
-              equals(potassium, other.potassium) &&
-              equals(sodium, other.sodium) &&
-              equals(protein, other.protein) &&
-              equals(sugars, other.sugars) &&
-              equals(choline, other.choline) &&
-              equals(copper, other.copper) &&
-              equals(ala, other.ala) &&
-              equals(linoleicAcid, other.linoleicAcid) &&
-              equals(epa, other.epa) &&
-              equals(dpa, other.dpa) &&
-              equals(dha, other.dha) &&
-              equals(folate, other.folate) &&
-              equals(magnesium, other.magnesium) &&
-              equals(manganese, other.manganese) &&
-              equals(niacin, other.niacin) &&
-              equals(phosphorus, other.phosphorus) &&
-              equals(pantothenicAcid, other.pantothenicAcid) &&
-              equals(riboflavin, other.riboflavin) &&
-              equals(selenium, other.selenium) &&
-              equals(thiamin, other.thiamin) &&
-              equals(vitaminE, other.vitaminE) &&
-              equals(vitaminA, other.vitaminA) &&
-              equals(vitaminB12, other.vitaminB12) &&
-              equals(vitaminB6, other.vitaminB6) &&
-              equals(vitaminC, other.vitaminC) &&
-              equals(vitaminD, other.vitaminD) &&
-              equals(vitaminK, other.vitaminK) &&
-              equals(zinc, other.zinc) &&
-              equals(unsaturatedFat, other.unsaturatedFat));
+      (other is DRIS &&
+          runtimeType == other.runtimeType &&
+          equals(calcium, other.calcium) &&
+          equals(carbohydrate, other.carbohydrate) &&
+          equals(cholesterol, other.cholesterol) &&
+          equals(calories, other.calories) &&
+          equals(saturatedFat, other.saturatedFat) &&
+          equals(totalFat, other.totalFat) &&
+          equals(iron, other.iron) &&
+          equals(fiber, other.fiber) &&
+          equals(potassium, other.potassium) &&
+          equals(sodium, other.sodium) &&
+          equals(protein, other.protein) &&
+          equals(sugars, other.sugars) &&
+          equals(choline, other.choline) &&
+          equals(copper, other.copper) &&
+          equals(ala, other.ala) &&
+          equals(linoleicAcid, other.linoleicAcid) &&
+          equals(epa, other.epa) &&
+          equals(dpa, other.dpa) &&
+          equals(dha, other.dha) &&
+          equals(folate, other.folate) &&
+          equals(magnesium, other.magnesium) &&
+          equals(manganese, other.manganese) &&
+          equals(niacin, other.niacin) &&
+          equals(phosphorus, other.phosphorus) &&
+          equals(pantothenicAcid, other.pantothenicAcid) &&
+          equals(riboflavin, other.riboflavin) &&
+          equals(selenium, other.selenium) &&
+          equals(thiamin, other.thiamin) &&
+          equals(vitaminE, other.vitaminE) &&
+          equals(vitaminA, other.vitaminA) &&
+          equals(vitaminB12, other.vitaminB12) &&
+          equals(vitaminB6, other.vitaminB6) &&
+          equals(vitaminC, other.vitaminC) &&
+          equals(vitaminD, other.vitaminD) &&
+          equals(vitaminK, other.vitaminK) &&
+          equals(zinc, other.zinc) &&
+          equals(unsaturatedFat, other.unsaturatedFat));
 
   @override
   int get hashCode =>
@@ -1380,41 +1381,41 @@ class DRIS {
       'DRIS(calcium: $calcium, carbohydrate: $carbohydrate, cholesterol: $cholesterol, calories: $calories, saturatedFat: $saturatedFat, totalFat: $totalFat, iron: $iron, fiber: $fiber, potassium: $potassium, sodium: $sodium, protein: $protein, sugars: $sugars, choline: $choline, copper: $copper, ala: $ala, linoleicAcid: $linoleicAcid, epa: $epa, dpa: $dpa, dha: $dha, folate: $folate, magnesium: $magnesium, manganese: $manganese, niacin: $niacin, phosphorus: $phosphorus, pantothenicAcid: $pantothenicAcid, riboflavin: $riboflavin, selenium: $selenium, thiamin: $thiamin, vitaminE: $vitaminE, vitaminA: $vitaminA, vitaminB12: $vitaminB12, vitaminB6: $vitaminB6, vitaminC: $vitaminC, vitaminD: $vitaminD, vitaminK: $vitaminK, zinc: $zinc, unsaturatedFat: $unsaturatedFat)';
 
   DRIS copyWithDRIS(
-      {DRI? calcium,
-        DRI? carbohydrate,
-        DRI? cholesterol,
-        DRI? calories,
-        DRI? totalFat,
-        DRI? iron,
-        DRI? fiber,
-        DRI? potassium,
-        DRI? sodium,
-        DRI? protein,
-        DRI? sugars,
-        DRI? choline,
-        DRI? copper,
-        DRI? ala,
-        DRI? linoleicAcid,
-        DRI? epa,
-        DRI? dpa,
-        DRI? dha,
-        DRI? folate,
-        DRI? magnesium,
-        DRI? manganese,
-        DRI? niacin,
-        DRI? phosphorus,
-        DRI? pantothenicAcid,
-        DRI? riboflavin,
-        DRI? selenium,
-        DRI? thiamin,
-        DRI? vitaminE,
-        DRI? vitaminA,
-        DRI? vitaminB12,
-        DRI? vitaminB6,
-        DRI? vitaminC,
-        DRI? vitaminD,
-        DRI? vitaminK,
-        DRI? zinc}) =>
+          {DRI? calcium,
+          DRI? carbohydrate,
+          DRI? cholesterol,
+          DRI? calories,
+          DRI? totalFat,
+          DRI? iron,
+          DRI? fiber,
+          DRI? potassium,
+          DRI? sodium,
+          DRI? protein,
+          DRI? sugars,
+          DRI? choline,
+          DRI? copper,
+          DRI? ala,
+          DRI? linoleicAcid,
+          DRI? epa,
+          DRI? dpa,
+          DRI? dha,
+          DRI? folate,
+          DRI? magnesium,
+          DRI? manganese,
+          DRI? niacin,
+          DRI? phosphorus,
+          DRI? pantothenicAcid,
+          DRI? riboflavin,
+          DRI? selenium,
+          DRI? thiamin,
+          DRI? vitaminE,
+          DRI? vitaminA,
+          DRI? vitaminB12,
+          DRI? vitaminB6,
+          DRI? vitaminC,
+          DRI? vitaminD,
+          DRI? vitaminK,
+          DRI? zinc}) =>
       DRIS(
           calcium: calcium ?? this.calcium,
           carbohydrate: carbohydrate ?? this.carbohydrate,
@@ -1534,7 +1535,7 @@ class DRIS {
         vitaminK: vitaminK,
         zinc: zinc);
   }
-// </Dataclass>
+  // </Dataclass>
 
 // </editor-fold>
 }
@@ -1562,11 +1563,11 @@ class AnthroMetrics {
 
   AnthroMetrics(
       {required this.sex,
-        required this.age,
-        required this.weight,
-        required this.feet,
-        required this.inches,
-        required this.activity});
+      required this.age,
+      required this.weight,
+      required this.feet,
+      required this.inches,
+      required this.activity});
 
   // <editor-fold desc="Dataclass Section">
   @Generate()
@@ -1589,25 +1590,25 @@ class AnthroMetrics {
           activity: activity);
 
   Map<String, dynamic> get attributes__ => {
-    "sex": sex,
-    "age": age,
-    "weight": weight,
-    "feet": feet,
-    "inches": inches,
-    "activity": activity
-  };
+        "sex": sex,
+        "age": age,
+        "weight": weight,
+        "feet": feet,
+        "inches": inches,
+        "activity": activity
+      };
 
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-          (other is AnthroMetrics &&
-              runtimeType == other.runtimeType &&
-              equals(sex, other.sex) &&
-              equals(age, other.age) &&
-              equals(weight, other.weight) &&
-              equals(feet, other.feet) &&
-              equals(inches, other.inches) &&
-              equals(activity, other.activity));
+      (other is AnthroMetrics &&
+          runtimeType == other.runtimeType &&
+          equals(sex, other.sex) &&
+          equals(age, other.age) &&
+          equals(weight, other.weight) &&
+          equals(feet, other.feet) &&
+          equals(inches, other.inches) &&
+          equals(activity, other.activity));
 
   @override
   int get hashCode =>
@@ -1623,12 +1624,12 @@ class AnthroMetrics {
       'AnthroMetrics(sex: $sex, age: $age, weight: $weight, feet: $feet, inches: $inches, activity: $activity)';
 
   AnthroMetrics copyWithAnthroMetrics(
-      {Sex? sex,
-        int? age,
-        int? weight,
-        int? feet,
-        int? inches,
-        Activity? activity}) =>
+          {Sex? sex,
+          int? age,
+          int? weight,
+          int? feet,
+          int? inches,
+          Activity? activity}) =>
       AnthroMetrics(
           sex: sex ?? this.sex,
           age: age ?? this.age,
@@ -1728,11 +1729,11 @@ class Settings {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-          (other is Settings &&
-              runtimeType == other.runtimeType &&
-              equals(apikey, other.apikey) &&
-              equals(darkMode, other.darkMode) &&
-              equals(anthroMetrics, other.anthroMetrics));
+      (other is Settings &&
+          runtimeType == other.runtimeType &&
+          equals(apikey, other.apikey) &&
+          equals(darkMode, other.darkMode) &&
+          equals(anthroMetrics, other.anthroMetrics));
 
   @override
   int get hashCode =>
@@ -1743,7 +1744,7 @@ class Settings {
       'Settings(apikey: $apikey, darkMode: $darkMode, anthroMetrics: $anthroMetrics)';
 
   Settings copyWithSettings(
-      {String? apikey, bool? darkMode, AnthroMetrics? anthroMetrics}) =>
+          {String? apikey, bool? darkMode, AnthroMetrics? anthroMetrics}) =>
       Settings(
           apikey: apikey ?? this.apikey,
           darkMode: darkMode ?? this.darkMode,
@@ -1765,7 +1766,7 @@ class Settings {
     return Settings(
         apikey: apikey, darkMode: darkMode, anthroMetrics: anthroMetrics);
   }
-// </Dataclass>
+  // </Dataclass>
 
 // </editor-fold>
 }

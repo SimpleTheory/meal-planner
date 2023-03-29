@@ -4,66 +4,138 @@ import 'package:dataclasses/dataclasses.dart';
 import 'package:nutrition_app/domain.dart';
 
 /// AGG ROOT
-@Dataclass()
+@Dataclass(
+    constructor: false,
+    staticConstructor: false,
+    eq: false,
+    copyWith: false,
+    fromJson: false)
 class App {
   Settings settings;
   List<Diet> diets;
+  List<Meal> meals;
+  List<Ingredient> baseIngredients;
+  List<MealComponentFactory> get ingredients =>
+      [...baseIngredients, ...meals.where((element) => element.isSubRecipe)];
 
   // What can an app do?
+  // Add meal
+  // Add ingredient
+  // Add diet
+  // Update Settings
+  // Update Meal
+  // Update Diet
+  // Delete: meal, ingredient, diet
 
   // <editor-fold desc="Dataclass Section">
-  @Generate()
-  // <Dataclass>
 
-  App({
+  // <editor-fold desc="Singleton Pattern">
+  static late final App _singleton;
+
+  factory App() {
+    return _singleton;
+  }
+
+  App._internal({
     required this.settings,
     required this.diets,
+    required this.meals,
+    required this.baseIngredients,
   });
 
-  factory App.staticConstructor({
-    required settings,
-    required diets,
-  }) =>
-      App(settings: settings, diets: diets);
+  factory App.restart({required Settings settings}) {
+    _singleton = App._internal(
+        settings: settings,
+        diets: <Diet>[],
+        meals: <Meal>[],
+        baseIngredients: <Ingredient>[]);
+    return _singleton;
+  }
 
-  Map<String, dynamic> get attributes__ =>
-      {"settings": settings, "diets": diets};
+  // </editor-fold>
 
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      (other is App &&
-          runtimeType == other.runtimeType &&
-          equals(settings, other.settings) &&
-          equals(diets, other.diets));
-
-  @override
-  int get hashCode => settings.hashCode ^ diets.hashCode;
-
-  @override
-  String toString() => 'App(settings: $settings, diets: $diets)';
-
-  App copyWithApp({Settings? settings, List<Diet>? diets}) =>
-      App(settings: settings ?? this.settings, diets: diets ?? this.diets);
-
-  String toJson() => jsonEncode(toMap());
-  Map<String, dynamic> toMap() =>
-      {'__type': 'App', ...nestedJsonMap(attributes__)};
-
-  factory App.fromJson(String json) => App.fromMap(jsonDecode(json));
+  // <editor-fold desc="Custom Data Functions">
+  App update(
+      {Settings? settings,
+      List<Diet>? diets,
+      List<Meal>? meals,
+      List<Ingredient>? baseIngredients}) {
+    _singleton = App._internal(
+        settings: settings ?? this.settings,
+        diets: diets ?? this.diets,
+        meals: meals ?? this.meals,
+        baseIngredients: baseIngredients ?? this.baseIngredients);
+    return _singleton;
+  }
 
   factory App.fromMap(Map map) {
     Settings settings = dejsonify(map['settings']);
     List dietsTemp = dejsonify(map['diets']);
+    List mealsTemp = dejsonify(map['meals']);
+    List baseIngredientsTemp = dejsonify(map['baseIngredients']);
 
     List<Diet> diets = List<Diet>.from(dietsTemp);
 
-    return App(settings: settings, diets: diets);
+    List<Meal> meals = List<Meal>.from(mealsTemp);
+
+    List<Ingredient> baseIngredients =
+        List<Ingredient>.from(baseIngredientsTemp);
+
+    _singleton = App._internal(
+        settings: settings,
+        diets: diets,
+        meals: meals,
+        baseIngredients: baseIngredients);
+    return _singleton;
   }
+  factory App.fromJson(String json) => App.fromMap(jsonDecode(json));
+  // </editor-fold>
+
+  // <editor-fold desc="Regular Dataclass Section">
+  @Generate()
+  // <Dataclass>
+
+  Map<String, dynamic> get attributes__ => {
+        "settings": settings,
+        "diets": diets,
+        "meals": meals,
+        "baseIngredients": baseIngredients
+      };
+
+  @override
+  String toString() =>
+      'App(settings: $settings, diets: $diets, meals: $meals, baseIngredients: $baseIngredients)';
+
+  String toJson() => jsonEncode(toMap());
+  Map<String, dynamic> toMap() =>
+      {'__type': 'App', ...nestedJsonMap(attributes__)};
   // </Dataclass>
+  // </editor-fold>
 
   // </editor-fold>
 }
+// class App {
+//   Settings settings;
+//   List<Diet> diets;
+//   List<Meal> meals;
+//   List<Ingredient> baseIngredients;
+//
+//   static late final App _singleton;
+//
+//   factory App() {
+//     return _singleton;
+//   }
+//
+//   App._internal({
+//     required this.settings,
+//     required this.diets,
+//     required this.meals,
+//     required this.baseIngredients,
+//   });
+//
+//   List<MealComponentFactory> get ingredients =>
+//       [...baseIngredients, ...meals.where((element) => element.isSubRecipe)];
+// }
 
 /// Diet Branch
 
@@ -71,13 +143,9 @@ class App {
 class Diet {
   String name;
   List<Day> days;
-  List<Meal> meals;
-  List<Ingredient> baseIngredients;
   AnthroMetrics anthroMetrics;
   DRIS dris;
 
-  List<MealComponentFactory> get ingredients =>
-      [...baseIngredients, ...meals.where((element) => element.isSubRecipe)];
   DRIS get dayDri => dris / days.length;
   Nutrients get averageNutrition {
     List<Nutrients> dayNut = days.map((e) => e.nutrients).toList();
@@ -96,8 +164,6 @@ class Diet {
   Diet({
     required this.name,
     required this.days,
-    required this.meals,
-    required this.baseIngredients,
     required this.anthroMetrics,
     required this.dris,
   });
@@ -105,24 +171,14 @@ class Diet {
   factory Diet.staticConstructor({
     required name,
     required days,
-    required meals,
-    required baseIngredients,
     required anthroMetrics,
     required dris,
   }) =>
-      Diet(
-          name: name,
-          days: days,
-          meals: meals,
-          baseIngredients: baseIngredients,
-          anthroMetrics: anthroMetrics,
-          dris: dris);
+      Diet(name: name, days: days, anthroMetrics: anthroMetrics, dris: dris);
 
   Map<String, dynamic> get attributes__ => {
         "name": name,
         "days": days,
-        "meals": meals,
-        "baseIngredients": baseIngredients,
         "anthroMetrics": anthroMetrics,
         "dris": dris
       };
@@ -134,36 +190,25 @@ class Diet {
           runtimeType == other.runtimeType &&
           equals(name, other.name) &&
           equals(days, other.days) &&
-          equals(meals, other.meals) &&
-          equals(baseIngredients, other.baseIngredients) &&
           equals(anthroMetrics, other.anthroMetrics) &&
           equals(dris, other.dris));
 
   @override
   int get hashCode =>
-      name.hashCode ^
-      days.hashCode ^
-      meals.hashCode ^
-      baseIngredients.hashCode ^
-      anthroMetrics.hashCode ^
-      dris.hashCode;
+      name.hashCode ^ days.hashCode ^ anthroMetrics.hashCode ^ dris.hashCode;
 
   @override
   String toString() =>
-      'Diet(name: $name, days: $days, meals: $meals, baseIngredients: $baseIngredients, anthroMetrics: $anthroMetrics, dris: $dris)';
+      'Diet(name: $name, days: $days, anthroMetrics: $anthroMetrics, dris: $dris)';
 
   Diet copyWithDiet(
           {String? name,
           List<Day>? days,
-          List<Meal>? meals,
-          List<Ingredient>? baseIngredients,
           AnthroMetrics? anthroMetrics,
           DRIS? dris}) =>
       Diet(
           name: name ?? this.name,
           days: days ?? this.days,
-          meals: meals ?? this.meals,
-          baseIngredients: baseIngredients ?? this.baseIngredients,
           anthroMetrics: anthroMetrics ?? this.anthroMetrics,
           dris: dris ?? this.dris);
 
@@ -176,25 +221,13 @@ class Diet {
   factory Diet.fromMap(Map map) {
     String name = map['name'];
     List daysTemp = dejsonify(map['days']);
-    List mealsTemp = dejsonify(map['meals']);
-    List baseIngredientsTemp = dejsonify(map['baseIngredients']);
     AnthroMetrics anthroMetrics = dejsonify(map['anthroMetrics']);
     DRIS dris = dejsonify(map['dris']);
 
     List<Day> days = List<Day>.from(daysTemp);
 
-    List<Meal> meals = List<Meal>.from(mealsTemp);
-
-    List<Ingredient> baseIngredients =
-        List<Ingredient>.from(baseIngredientsTemp);
-
     return Diet(
-        name: name,
-        days: days,
-        meals: meals,
-        baseIngredients: baseIngredients,
-        anthroMetrics: anthroMetrics,
-        dris: dris);
+        name: name, days: days, anthroMetrics: anthroMetrics, dris: dris);
   }
   // </Dataclass>
 
@@ -262,6 +295,8 @@ class Day {
 
 @Dataclass()
 class MealComponent {
+  // String measure;
+  // num quantity;
   MealComponentFactory reference;
   num grams;
   Nutrients get nutrients {
@@ -325,6 +360,3 @@ class MealComponent {
 
 // </editor-fold>
 }
-
-
-
