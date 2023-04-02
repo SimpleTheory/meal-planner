@@ -39,6 +39,10 @@ class Ingredient extends MealComponentFactory {
   IngredientSource source;
   dynamic sourceMetadata;
 
+  // factory Ingredient.fromApi(source){
+  //   TODO
+  // }
+
   // <editor-fold desc="Dataclass Section">
   @Generate()
   // <Dataclass>
@@ -133,7 +137,7 @@ class Ingredient extends MealComponentFactory {
     Map altMeasures2gramsTemp = dejsonify(map['altMeasures2grams']);
     Uri? photo = dejsonify(map['photo']);
     IngredientSource source = dejsonify(map['source']);
-    dynamic? sourceMetadata = dejsonify(map['sourceMetadata']);
+    dynamic sourceMetadata = dejsonify(map['sourceMetadata']);
 
     Map<String, num> altMeasures2grams = Map<String, num>.from(
         altMeasures2gramsTemp
@@ -152,7 +156,7 @@ class Ingredient extends MealComponentFactory {
 // </editor-fold>
 }
 
-@Dataclass(constructor: false)
+@Dataclass(constructor: false, attributes: false)
 class Meal extends MealComponentFactory {
   @Super('+++')
   String name;
@@ -162,6 +166,7 @@ class Meal extends MealComponentFactory {
   @override
   Uri? photo;
 
+  // <editor-fold desc="Dataclass Section">
   Meal(
       {required this.name,
       required this.ingredients,
@@ -186,8 +191,15 @@ class Meal extends MealComponentFactory {
                   servings
             },
             name);
-
-  // <editor-fold desc="Dataclass Section">
+  Map<String, dynamic> get attributes__ => {
+        "name": name,
+        "ingredients": ingredients,
+        "servings": servings,
+        "isSubRecipe": isSubRecipe,
+        "photo": photo,
+        "baseNutrient": baseNutrient,
+        "altMeasures2grams": altMeasures2grams
+      };
   @Generate()
   // <Dataclass>
 
@@ -203,14 +215,6 @@ class Meal extends MealComponentFactory {
           servings: servings,
           isSubRecipe: isSubRecipe,
           photo: photo);
-
-  Map<String, dynamic> get attributes__ => {
-        "name": name,
-        "ingredients": ingredients,
-        "servings": servings,
-        "isSubRecipe": isSubRecipe,
-        "photo": photo
-      };
 
   @override
   bool operator ==(Object other) =>

@@ -411,8 +411,90 @@ class Nutrients {
     }
     return listOfNutrients.reduce((previous, current) => previous + current);
   }
+  
+
 
   // <editor-fold desc="Dataclass Section">
+
+  // <editor-fold desc="From Values Constructor">
+  factory Nutrients.fromValues(
+      num calcium,
+      num carbohydrate,
+      num cholesterol,
+      num calories,
+      num saturatedFat,
+      num totalFat,
+      num transFat,
+      num iron,
+      num fiber,
+      num potassium,
+      num sodium,
+      num protein,
+      num sugars,
+      num choline,
+      num copper,
+      num ala,
+      num linoleicAcid,
+      num epa,
+      num dpa,
+      num dha,
+      num folate,
+      num magnesium,
+      num manganese,
+      num niacin,
+      num phosphorus,
+      num pantothenicAcid,
+      num riboflavin,
+      num selenium,
+      num thiamin,
+      num vitaminE,
+      num vitaminA,
+      num vitaminB12,
+      num vitaminB6,
+      num vitaminC,
+      num vitaminD,
+      num vitaminK,
+      num zinc
+      )=> Nutrients(
+      calcium:
+      Nutrient.Calcium(calcium),
+      carbohydrate: Nutrient.Carbohydrate(carbohydrate),
+      cholesterol: Nutrient.Cholesterol(cholesterol),
+      calories: Nutrient.Calories(calories),
+      saturatedFat: Nutrient.SaturatedFat(saturatedFat),
+      totalFat: Nutrient.TotalFat(totalFat),
+      transFat: Nutrient.TransFat(transFat),
+      iron: Nutrient.Iron(iron),
+      fiber: Nutrient.Fiber(fiber),
+      potassium: Nutrient.Potassium(potassium),
+      sodium: Nutrient.Sodium(sodium),
+      protein: Nutrient.Protein(protein),
+      sugars: Nutrient.Sugars(sugars),
+      choline: Nutrient.Choline(choline),
+      copper: Nutrient.Copper(copper),
+      ala: Nutrient.ALA(ala),
+      linoleicAcid: Nutrient.LinoleicAcid(linoleicAcid),
+      epa: Nutrient.EPA(epa),
+      dpa: Nutrient.DPA(dpa),
+      dha: Nutrient.DHA(dha),
+      folate: Nutrient.Folate(folate),
+      magnesium: Nutrient.Magnesium(magnesium),
+      manganese: Nutrient.Manganese(manganese),
+      niacin: Nutrient.Niacin(niacin),
+      phosphorus: Nutrient.Phosphorus(phosphorus),
+      pantothenicAcid: Nutrient.PantothenicAcid(pantothenicAcid),
+      riboflavin: Nutrient.Riboflavin(riboflavin),
+      selenium: Nutrient.Selenium(selenium),
+      thiamin: Nutrient.Thiamin(thiamin),
+      vitaminE: Nutrient.VitaminE(vitaminE),
+      vitaminA: Nutrient.VitaminA(vitaminA),
+      vitaminB12: Nutrient.VitaminB12(vitaminB12),
+      vitaminB6: Nutrient.VitaminB6(vitaminB6),
+      vitaminC: Nutrient.VitaminC(vitaminC),
+      vitaminD: Nutrient.VitaminD(vitaminD),
+      vitaminK: Nutrient.VitaminK(vitaminK),
+      zinc: Nutrient.Zinc(zinc));
+  // </editor-fold>
 
   // <Dataclass>
 
@@ -881,7 +963,7 @@ class DRI {
   String name;
   num? dri;
   num? upperLimit;
-  String? unit;
+  String unit;
 
   bool compare(val) {
     throw UnimplementedError();
@@ -897,7 +979,7 @@ class DRI {
       upperLimit: upperLimit == null ? null : upperLimit! / num);
 
   // <editor-fold desc="Dataclass Objects">
-  DRI(this.name, {this.dri, this.upperLimit, this.unit}) {
+  DRI(this.name, {this.dri, this.upperLimit, required this.unit}) {
     if (dri == 0) {
       dri = null;
     }
@@ -956,7 +1038,7 @@ class DRI {
     if (name == 'Protein' && anthro != null) {
       ul = (anthro.weight * 0.8).round();
     }
-    return DRI(name, dri: dri, upperLimit: ul, unit: unit);
+    return DRI(name, dri: dri, upperLimit: ul, unit: unit!);
   }
 
   factory DRI.driMicro(List<String> instantiationString) {
@@ -966,7 +1048,7 @@ class DRI {
     String? unit = driLine?.group(2);
     String? ul = ulLine?.group(1);
     return DRI(instantiationString[0],
-        dri: toNum(dri), upperLimit: toNum(ul), unit: unit);
+        dri: toNum(dri), upperLimit: toNum(ul), unit: unit!);
   }
 
   @override
@@ -995,8 +1077,8 @@ class DRI {
   factory DRI.fromMap(Map<String, dynamic> map) {
     return DRI(
       map['name'] as String,
-      dri: map['dri'] as num,
-      upperLimit: map['upperLimit'] as num,
+      dri: map['dri'] as num?,
+      upperLimit: map['upperLimit'] as num?,
       unit: map['unit'] as String,
     );
   }
@@ -1008,15 +1090,13 @@ class DRI {
 //</editor-fold>
 }
 
-@Dataclass()
+@Dataclass(constructor: false)
 class DRIS {
   DRI calcium;
   DRI carbohydrate;
   DRI cholesterol;
   DRI calories;
-  late DRI saturatedFat;
   DRI totalFat;
-  // DRI transFat = DRI('TransFat', unit: 'g', upperLimit: );
   DRI iron;
   DRI fiber;
   DRI potassium;
@@ -1047,10 +1127,16 @@ class DRIS {
   DRI vitaminD;
   DRI vitaminK;
   DRI zinc;
+  late DRI transFat;
   late DRI unsaturatedFat;
-
-  // TODO CREATE MACRO SETTERS
+  late DRI saturatedFat;
+  // Create desired percentages as a setter
+  // CREATE MACRO SETTERS
   // TODO Comparer to nutrients
+  factory DRIS.fromPreparedList(List<DRI> list) {
+    Map<String, DRI> map = {for (DRI dri in list) dri.name: dri};
+    return DRIS.fromMap(map);
+  }
 
   DRIS operator *(num num) {
     return DRIS(
@@ -1135,9 +1221,6 @@ class DRIS {
   }
 
   // <editor-fold desc="Dataclass Section">
-  @Generate()
-  // <Dataclass>
-
   DRIS({
     required this.calcium,
     required this.carbohydrate,
@@ -1175,9 +1258,17 @@ class DRIS {
     required this.vitaminK,
     required this.zinc,
   }) {
-    // TODO: initiate late attribute `saturatedFat`
-    // TODO: initiate late attribute `unsaturatedFat`
+    transFat = DRI('Trans Fat', unit: 'g', upperLimit: 1);
+    saturatedFat =
+        DRI('Saturated Fat', unit: 'g', upperLimit: calories.dri! / 90);
+    unsaturatedFat = DRI('Unsaturated Fat',
+        unit: 'g',
+        dri: totalFat.dri! - unsaturatedFat.upperLimit!,
+        upperLimit: totalFat.upperLimit);
   }
+
+  @Generate()
+  // <Dataclass>
 
   factory DRIS.staticConstructor({
     required calcium,
@@ -1258,7 +1349,6 @@ class DRIS {
         "carbohydrate": carbohydrate,
         "cholesterol": cholesterol,
         "calories": calories,
-        "saturatedFat": saturatedFat,
         "totalFat": totalFat,
         "iron": iron,
         "fiber": fiber,
@@ -1290,7 +1380,9 @@ class DRIS {
         "vitaminD": vitaminD,
         "vitaminK": vitaminK,
         "zinc": zinc,
-        "unsaturatedFat": unsaturatedFat
+        "transFat": transFat,
+        "unsaturatedFat": unsaturatedFat,
+        "saturatedFat": saturatedFat
       };
 
   @override
@@ -1302,7 +1394,6 @@ class DRIS {
           equals(carbohydrate, other.carbohydrate) &&
           equals(cholesterol, other.cholesterol) &&
           equals(calories, other.calories) &&
-          equals(saturatedFat, other.saturatedFat) &&
           equals(totalFat, other.totalFat) &&
           equals(iron, other.iron) &&
           equals(fiber, other.fiber) &&
@@ -1334,7 +1425,9 @@ class DRIS {
           equals(vitaminD, other.vitaminD) &&
           equals(vitaminK, other.vitaminK) &&
           equals(zinc, other.zinc) &&
-          equals(unsaturatedFat, other.unsaturatedFat));
+          equals(transFat, other.transFat) &&
+          equals(unsaturatedFat, other.unsaturatedFat) &&
+          equals(saturatedFat, other.saturatedFat));
 
   @override
   int get hashCode =>
@@ -1342,7 +1435,6 @@ class DRIS {
       carbohydrate.hashCode ^
       cholesterol.hashCode ^
       calories.hashCode ^
-      saturatedFat.hashCode ^
       totalFat.hashCode ^
       iron.hashCode ^
       fiber.hashCode ^
@@ -1374,11 +1466,13 @@ class DRIS {
       vitaminD.hashCode ^
       vitaminK.hashCode ^
       zinc.hashCode ^
-      unsaturatedFat.hashCode;
+      transFat.hashCode ^
+      unsaturatedFat.hashCode ^
+      saturatedFat.hashCode;
 
   @override
   String toString() =>
-      'DRIS(calcium: $calcium, carbohydrate: $carbohydrate, cholesterol: $cholesterol, calories: $calories, saturatedFat: $saturatedFat, totalFat: $totalFat, iron: $iron, fiber: $fiber, potassium: $potassium, sodium: $sodium, protein: $protein, sugars: $sugars, choline: $choline, copper: $copper, ala: $ala, linoleicAcid: $linoleicAcid, epa: $epa, dpa: $dpa, dha: $dha, folate: $folate, magnesium: $magnesium, manganese: $manganese, niacin: $niacin, phosphorus: $phosphorus, pantothenicAcid: $pantothenicAcid, riboflavin: $riboflavin, selenium: $selenium, thiamin: $thiamin, vitaminE: $vitaminE, vitaminA: $vitaminA, vitaminB12: $vitaminB12, vitaminB6: $vitaminB6, vitaminC: $vitaminC, vitaminD: $vitaminD, vitaminK: $vitaminK, zinc: $zinc, unsaturatedFat: $unsaturatedFat)';
+      'DRIS(calcium: $calcium, carbohydrate: $carbohydrate, cholesterol: $cholesterol, calories: $calories, totalFat: $totalFat, iron: $iron, fiber: $fiber, potassium: $potassium, sodium: $sodium, protein: $protein, sugars: $sugars, choline: $choline, copper: $copper, ala: $ala, linoleicAcid: $linoleicAcid, epa: $epa, dpa: $dpa, dha: $dha, folate: $folate, magnesium: $magnesium, manganese: $manganese, niacin: $niacin, phosphorus: $phosphorus, pantothenicAcid: $pantothenicAcid, riboflavin: $riboflavin, selenium: $selenium, thiamin: $thiamin, vitaminE: $vitaminE, vitaminA: $vitaminA, vitaminB12: $vitaminB12, vitaminB6: $vitaminB6, vitaminC: $vitaminC, vitaminD: $vitaminD, vitaminK: $vitaminK, zinc: $zinc, transFat: $transFat, unsaturatedFat: $unsaturatedFat, saturatedFat: $saturatedFat)';
 
   DRIS copyWithDRIS(
           {DRI? calcium,
@@ -1702,6 +1796,7 @@ class AnthroMetrics {
 @Dataclass()
 class Settings {
   String apikey = '';
+  String appId = '';
   bool darkMode = true;
   AnthroMetrics anthroMetrics;
 
@@ -1712,19 +1807,28 @@ class Settings {
   Settings({
     required this.anthroMetrics,
     this.apikey = '',
+    this.appId = '',
     this.darkMode = true,
   });
 
   factory Settings.staticConstructor({
     required anthroMetrics,
     apikey = '',
+    appId = '',
     darkMode = true,
   }) =>
       Settings(
-          anthroMetrics: anthroMetrics, apikey: apikey, darkMode: darkMode);
+          anthroMetrics: anthroMetrics,
+          apikey: apikey,
+          appId: appId,
+          darkMode: darkMode);
 
-  Map<String, dynamic> get attributes__ =>
-      {"apikey": apikey, "darkMode": darkMode, "anthroMetrics": anthroMetrics};
+  Map<String, dynamic> get attributes__ => {
+        "apikey": apikey,
+        "appId": appId,
+        "darkMode": darkMode,
+        "anthroMetrics": anthroMetrics
+      };
 
   @override
   bool operator ==(Object other) =>
@@ -1732,21 +1836,29 @@ class Settings {
       (other is Settings &&
           runtimeType == other.runtimeType &&
           equals(apikey, other.apikey) &&
+          equals(appId, other.appId) &&
           equals(darkMode, other.darkMode) &&
           equals(anthroMetrics, other.anthroMetrics));
 
   @override
   int get hashCode =>
-      apikey.hashCode ^ darkMode.hashCode ^ anthroMetrics.hashCode;
+      apikey.hashCode ^
+      appId.hashCode ^
+      darkMode.hashCode ^
+      anthroMetrics.hashCode;
 
   @override
   String toString() =>
-      'Settings(apikey: $apikey, darkMode: $darkMode, anthroMetrics: $anthroMetrics)';
+      'Settings(apikey: $apikey, appId: $appId, darkMode: $darkMode, anthroMetrics: $anthroMetrics)';
 
   Settings copyWithSettings(
-          {String? apikey, bool? darkMode, AnthroMetrics? anthroMetrics}) =>
+          {String? apikey,
+          String? appId,
+          bool? darkMode,
+          AnthroMetrics? anthroMetrics}) =>
       Settings(
           apikey: apikey ?? this.apikey,
+          appId: appId ?? this.appId,
           darkMode: darkMode ?? this.darkMode,
           anthroMetrics: anthroMetrics ?? this.anthroMetrics);
 
@@ -1758,13 +1870,17 @@ class Settings {
 
   factory Settings.fromMap(Map map) {
     String apikey = map['apikey'];
+    String appId = map['appId'];
     bool darkMode = map['darkMode'];
     AnthroMetrics anthroMetrics = dejsonify(map['anthroMetrics']);
 
     // No casting
 
     return Settings(
-        apikey: apikey, darkMode: darkMode, anthroMetrics: anthroMetrics);
+        apikey: apikey,
+        appId: appId,
+        darkMode: darkMode,
+        anthroMetrics: anthroMetrics);
   }
   // </Dataclass>
 

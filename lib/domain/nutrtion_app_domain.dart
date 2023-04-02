@@ -4,96 +4,130 @@ import 'package:dataclasses/dataclasses.dart';
 import 'package:nutrition_app/domain.dart';
 
 /// AGG ROOT
-@Dataclass(
-    constructor: false,
-    staticConstructor: false,
-    eq: false,
-    copyWith: false,
-    fromJson: false)
+@Dataclass()
 class App {
   Settings settings;
-  List<Diet> diets;
-  List<Meal> meals;
-  List<Ingredient> baseIngredients;
-  List<MealComponentFactory> get ingredients =>
-      [...baseIngredients, ...meals.where((element) => element.isSubRecipe)];
+  Map<String, Diet> diets;
+  Map<String, Meal> meals;
+  Map<String, Ingredient> baseIngredients;
+  List<MealComponentFactory> get ingredients => [
+        ...baseIngredients.values,
+        ...meals.values.where((element) => element.isSubRecipe)
+      ];
 
   // What can an app do?
-  // Add meal
-  // Add ingredient
-  // Add diet
-  // Update Settings
-  // Update Meal
-  // Update Diet
+  void addMeal(Meal meal) {
+    meals[meal.name] = meal;
+  }
+
+  void addBaseIngredient(Ingredient ingredient) {
+    baseIngredients[ingredient.name] = ingredient;
+  }
+
+  void addDiet(Diet diet) {
+    diets[diet.name] = diet;
+  }
+
+  // Update Meal, Diet: just access key with copyWith
   // Delete: meal, ingredient, diet
+  void deleteMeal(Meal meal) {}
+  void deleteBaseIngredient(Ingredient ingredient) {
+    baseIngredients[ingredient.name] = ingredient;
+  }
+
+  void deleteDiet(Diet diet) {
+    diets[diet.name] = diet;
+  }
+
+  factory App.newApp(Settings settings) =>
+      App(settings: settings, diets: {}, meals: {}, baseIngredients: {});
 
   // <editor-fold desc="Dataclass Section">
 
   // <editor-fold desc="Singleton Pattern">
-  static late final App _singleton;
+  // static late final App _singleton;
+  //
+  // factory App() {
+  //   return _singleton;
+  // }
+  //
+  // App._internal({
+  //   required this.settings,
+  //   required this.diets,
+  //   required this.meals,
+  //   required this.baseIngredients,
+  // });
+  //
+  // factory App.restart({required Settings settings}) {
+  //   _singleton = App._internal(
+  //       settings: settings,
+  //       diets: <Diet>[],
+  //       meals: <Meal>[],
+  //       baseIngredients: <Ingredient>[]);
+  //   return _singleton;
+  // }
 
-  factory App() {
-    return _singleton;
-  }
+  // </editor-fold>
 
-  App._internal({
+  // <editor-fold desc="Custom Data Functions">
+  // App update(
+  //     {Settings? settings,
+  //     List<Diet>? diets,
+  //     List<Meal>? meals,
+  //     List<Ingredient>? baseIngredients}) {
+  //   _singleton = App._internal(
+  //       settings: settings ?? this.settings,
+  //       diets: diets ?? this.diets,
+  //       meals: meals ?? this.meals,
+  //       baseIngredients: baseIngredients ?? this.baseIngredients);
+  //   return _singleton;
+  // }
+  //
+  // factory App.fromMap(Map map) {
+  //   Settings settings = dejsonify(map['settings']);
+  //   List dietsTemp = dejsonify(map['diets']);
+  //   List mealsTemp = dejsonify(map['meals']);
+  //   List baseIngredientsTemp = dejsonify(map['baseIngredients']);
+  //
+  //   List<Diet> diets = List<Diet>.from(dietsTemp);
+  //
+  //   List<Meal> meals = List<Meal>.from(mealsTemp);
+  //
+  //   List<Ingredient> baseIngredients =
+  //       List<Ingredient>.from(baseIngredientsTemp);
+  //
+  //   _singleton = App._internal(
+  //       settings: settings,
+  //       diets: diets,
+  //       meals: meals,
+  //       baseIngredients: baseIngredients);
+  //   return _singleton;
+  // }
+  // factory App.fromJson(String json) => App.fromMap(jsonDecode(json));
+  // </editor-fold>
+
+  // <editor-fold desc="Regular Dataclass Section">
+  @Generate()
+  // <Dataclass>
+
+  App({
     required this.settings,
     required this.diets,
     required this.meals,
     required this.baseIngredients,
   });
 
-  factory App.restart({required Settings settings}) {
-    _singleton = App._internal(
-        settings: settings,
-        diets: <Diet>[],
-        meals: <Meal>[],
-        baseIngredients: <Ingredient>[]);
-    return _singleton;
-  }
-
-  // </editor-fold>
-
-  // <editor-fold desc="Custom Data Functions">
-  App update(
-      {Settings? settings,
-      List<Diet>? diets,
-      List<Meal>? meals,
-      List<Ingredient>? baseIngredients}) {
-    _singleton = App._internal(
-        settings: settings ?? this.settings,
-        diets: diets ?? this.diets,
-        meals: meals ?? this.meals,
-        baseIngredients: baseIngredients ?? this.baseIngredients);
-    return _singleton;
-  }
-
-  factory App.fromMap(Map map) {
-    Settings settings = dejsonify(map['settings']);
-    List dietsTemp = dejsonify(map['diets']);
-    List mealsTemp = dejsonify(map['meals']);
-    List baseIngredientsTemp = dejsonify(map['baseIngredients']);
-
-    List<Diet> diets = List<Diet>.from(dietsTemp);
-
-    List<Meal> meals = List<Meal>.from(mealsTemp);
-
-    List<Ingredient> baseIngredients =
-        List<Ingredient>.from(baseIngredientsTemp);
-
-    _singleton = App._internal(
-        settings: settings,
-        diets: diets,
-        meals: meals,
-        baseIngredients: baseIngredients);
-    return _singleton;
-  }
-  factory App.fromJson(String json) => App.fromMap(jsonDecode(json));
-  // </editor-fold>
-
-  // <editor-fold desc="Regular Dataclass Section">
-  @Generate()
-  // <Dataclass>
+  factory App.staticConstructor({
+    required settings,
+    required diets,
+    required meals,
+    required baseIngredients,
+  }) =>
+      App(
+          settings: settings,
+          diets: diets,
+          meals: meals,
+          baseIngredients: baseIngredients);
 
   Map<String, dynamic> get attributes__ => {
         "settings": settings,
@@ -103,39 +137,70 @@ class App {
       };
 
   @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is App &&
+          runtimeType == other.runtimeType &&
+          equals(settings, other.settings) &&
+          equals(diets, other.diets) &&
+          equals(meals, other.meals) &&
+          equals(baseIngredients, other.baseIngredients));
+
+  @override
+  int get hashCode =>
+      settings.hashCode ^
+      diets.hashCode ^
+      meals.hashCode ^
+      baseIngredients.hashCode;
+
+  @override
   String toString() =>
       'App(settings: $settings, diets: $diets, meals: $meals, baseIngredients: $baseIngredients)';
+
+  App copyWithApp(
+          {Settings? settings,
+          Map<String, Diet>? diets,
+          Map<String, Meal>? meals,
+          Map<String, Ingredient>? baseIngredients}) =>
+      App(
+          settings: settings ?? this.settings,
+          diets: diets ?? this.diets,
+          meals: meals ?? this.meals,
+          baseIngredients: baseIngredients ?? this.baseIngredients);
 
   String toJson() => jsonEncode(toMap());
   Map<String, dynamic> toMap() =>
       {'__type': 'App', ...nestedJsonMap(attributes__)};
+
+  factory App.fromJson(String json) => App.fromMap(jsonDecode(json));
+
+  factory App.fromMap(Map map) {
+    Settings settings = dejsonify(map['settings']);
+    Map dietsTemp = dejsonify(map['diets']);
+    Map mealsTemp = dejsonify(map['meals']);
+    Map baseIngredientsTemp = dejsonify(map['baseIngredients']);
+
+    Map<String, Diet> diets = Map<String, Diet>.from(
+        dietsTemp.map((__k0, __v0) => MapEntry(__k0 as String, __v0 as Diet)));
+
+    Map<String, Meal> meals = Map<String, Meal>.from(
+        mealsTemp.map((__k0, __v0) => MapEntry(__k0 as String, __v0 as Meal)));
+
+    Map<String, Ingredient> baseIngredients = Map<String, Ingredient>.from(
+        baseIngredientsTemp
+            .map((__k0, __v0) => MapEntry(__k0 as String, __v0 as Ingredient)));
+
+    return App(
+        settings: settings,
+        diets: diets,
+        meals: meals,
+        baseIngredients: baseIngredients);
+  }
   // </Dataclass>
   // </editor-fold>
 
   // </editor-fold>
 }
-// class App {
-//   Settings settings;
-//   List<Diet> diets;
-//   List<Meal> meals;
-//   List<Ingredient> baseIngredients;
-//
-//   static late final App _singleton;
-//
-//   factory App() {
-//     return _singleton;
-//   }
-//
-//   App._internal({
-//     required this.settings,
-//     required this.diets,
-//     required this.meals,
-//     required this.baseIngredients,
-//   });
-//
-//   List<MealComponentFactory> get ingredients =>
-//       [...baseIngredients, ...meals.where((element) => element.isSubRecipe)];
-// }
 
 /// Diet Branch
 
@@ -146,16 +211,20 @@ class Diet {
   AnthroMetrics anthroMetrics;
   DRIS dris;
 
-  DRIS get dayDri => dris / days.length;
   Nutrients get averageNutrition {
     List<Nutrients> dayNut = days.map((e) => e.nutrients).toList();
     Nutrients sum = Nutrients.sum(dayNut);
     return sum / dayNut.length;
   }
 
-  Day createDay() {}
-  Meal createMeal() {}
-  Ingredient createIngredient() {}
+  void createDay() {
+    days.add(Day(name: days.length.toString(), meals: []));
+  }
+
+  // For update access by index setter days[index] = newDay;
+  void removeDay(int day) {
+    days.removeAt(day);
+  }
 
   // <editor-fold desc="Dataclass Section">
   @Generate()
@@ -240,6 +309,22 @@ class Day {
   List<MealComponent> meals;
 
   Nutrients get nutrients => throw UnimplementedError();
+
+  void addDayMeal(Meal meal) {
+    meals.add(meal.toMealComponent('servings', 1, meal));
+  }
+
+  void deleteDayMeal(int index) {
+    meals.removeAt(index);
+  }
+
+  void updateMealServingSize(int index, String measure, num newAmount) {
+    MealComponent newMeal = meals[index]
+        .reference
+        .toMealComponent(measure, newAmount, meals[index].reference);
+    meals[index] = newMeal;
+  }
+
   // <editor-fold desc="Dataclass Section">
   @Generate()
   // <Dataclass>
