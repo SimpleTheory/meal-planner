@@ -222,6 +222,7 @@ class Diet {
   }
 
   // For update access by index setter days[index] = newDay;
+
   void removeDay(int day) {
     days.removeAt(day);
   }

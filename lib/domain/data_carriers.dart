@@ -986,7 +986,12 @@ class DRI {
     if (upperLimit == 0) {
       upperLimit = null;
     }
+    if (unit.toLowerCase() == 'grams'){unit = 'g';}
     substitutions();
+  }
+  factory DRI.sugars(AnthroMetrics anthro){
+    int val = anthro.sex == Sex.M ? 36 : 25;
+    return DRI('Sugars', unit: 'g', upperLimit: val);
   }
 
   @override
@@ -1220,6 +1225,16 @@ class DRIS {
     );
   }
 
+  static Future<DRIS> fromAPI(AnthroMetrics metrics) async {
+    String responseBody = await driCalc(metrics);
+    List<DRI> listDRIS  = parseDRI(responseBody, metrics);
+    listDRIS.add(DRI.sugars(metrics));
+    DRIS value = DRIS.fromMap(prepDRIMapFromAPI(listDRIS));
+    value.calories.upperLimit = value.calories.dri;
+    value.calories.dri = value.calories.dri! * .9;
+    return value;
+  }
+
   // <editor-fold desc="Dataclass Section">
   DRIS({
     required this.calcium,
@@ -1259,11 +1274,11 @@ class DRIS {
     required this.zinc,
   }) {
     transFat = DRI('Trans Fat', unit: 'g', upperLimit: 1);
-    saturatedFat =
-        DRI('Saturated Fat', unit: 'g', upperLimit: calories.dri! / 90);
+    saturatedFat = // 90 bc 10% of cal should be sat * 9kcal per g fat
+        DRI('Saturated Fat', unit: 'g', upperLimit: calories.upperLimit ?? calories.dri! / 90);
     unsaturatedFat = DRI('Unsaturated Fat',
         unit: 'g',
-        dri: totalFat.dri! - unsaturatedFat.upperLimit!,
+        dri: totalFat.dri! * .9,
         upperLimit: totalFat.upperLimit);
   }
 

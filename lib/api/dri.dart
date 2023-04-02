@@ -1,6 +1,7 @@
 import 'dart:core';
 import 'package:ari_utils/ari_utils.dart';
 import 'package:beautiful_soup_dart/beautiful_soup.dart';
+import 'package:client_cookie/client_cookie.dart';
 import 'package:dio/dio.dart';
 import 'package:dio_cookie_manager/dio_cookie_manager.dart';
 import 'package:cookie_jar/cookie_jar.dart';
@@ -38,7 +39,8 @@ const List<String>exclusionList = [
   'Non-Essential',
   'Arsenic',
   'Silicon',
-  'Sulfate'
+  'Sulfate',
+  'Pregnancy/Lactation status'
 ];
 
 
@@ -56,18 +58,40 @@ num? toNum(number) {
 }
 
 Future<String> driCalc(AnthroMetrics metrics) async {
-  CookieJar cookieJar = CookieJar();
+  // CookieJar cookieJar = CookieJar();
   Dio dio = Dio();
-  dio.interceptors.add(CookieManager(cookieJar));
+  // dio.interceptors.add(CookieManager(cookieJar));
   Response baseResponse = await dio.get(
       driCalcBaseUrl,
-      options: Options(headers: {'Cookie': 'CFIWebMonPersistent-77=%7B%22LastAccept%22%3Anull%2C%22LastDecline%22%3A1679639108697%7D; ApplicationGatewayAffinityCORS=6cd89f82ce3b87d4f94610b80ec75719; ApplicationGatewayAffinity=6cd89f82ce3b87d4f94610b80ec75719; GUIDCookie=92dd616e-d3c1-4ab7-9b06-dd71f3873498; SSESS36ddc8e3532cfd4477f8a08bedf459b4=cIOwTFWiEX6x03SXl31OGZMhaLUMEnqM8%2CU68Y01JyR5h03u; CFIWebMonSession=%7B%22GUID%22%3A%22c144b9ab-a5ac-7c19-d4f1-679639074244%22%2C%22EmailPhone%22%3A%22%22%2C%22HttpReferer%22%3A%22https%3A//www.google.com/%22...usda.gov/human-nutrition-and-food-safety/dri-calculator/results%22%2C%22SiteReferrer%22%3A%22https%3A//www.google.com/%22%2C%22LastPopUpPage%22%3A%22https%3A//www.nal.usda.gov/human-nutrition-and-food-safety/dri-calculator%22%2C%22TimeSpentonSite%22%3A0%2C%22GoogleAnalyticsValue%22%3A%2292dd616e-d3c1-4ab7-9b06-dd71f3873498%22%2C%22Dimension%22%3A%22%22%2C%22AdditionalAttributes%22%3A%7B%7D%2C%22ClickTracker%22%3A%22%22%2C%22PageIndex%22%3A0%2C%22AllCookies%22%3A%22%22%2C%22AllCustomVariables%22%3A%22%22%7D'}
-      ));
+      options: Options(headers: {
+        'Accept': ' text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
+        'Accept-Encoding': ' gzip, deflate, br',
+        'Accept-Language': ' en-US,en;q=0.5',
+        'Connection': ' keep-alive',
+        'Content-Type': ' application/x-www-form-urlencoded',
+        // WEBMONSESSION NOT NEEDED AT ALL
+        // GUID NOT NEEDED
+        'Origin': ' https://www.nal.usda.gov',
+        'Prefer': ' safe',
+        'Referer': ' https://www.nal.usda.gov/human-nutrition-and-food-safety/dri-calculator',
+        'Sec-Fetch-Dest': ' document',
+        'Sec-Fetch-Mode': ' navigate',
+        'Sec-Fetch-Site': ' same-origin',
+        'Sec-Fetch-User': ' ?1',
+        'Upgrade-Insecure-Requests': ' 1',
+        'User-Agent': ' Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/109.0',
+      })
+      );
   // Needs a base cookie to work as above ^ find out what makes it work
+  // print('-------------------');
   // print(baseResponse.headers);
-  // print(baseResponse.requestOptions.headers);
-  // List<ClientCookie> clientCookie = baseResponse.headers['set-cookie']!.map((e) => ClientCookie.fromSetCookie(e)).toList();
+  // print(baseResponse.headers.map['set-cookie']![0]);
+  // print(baseResponse.headers.map['set-cookie']![1]);
+
+  // print(cookieJar);
+  List<ClientCookie> clientCookie = baseResponse.headers['set-cookie']!.map((e) => ClientCookie.fromSetCookie(e)).toList();
   // print(clientCookie.map((e) => e.toReqHeader).toList());
+  // print({'Cookie': clientCookie.map((e) => e.toReqHeader).toList().join('; ')});
   Map<String,String> baseDict = Map<String, String>.from(constDirPostDict);
   baseDict['form_build_id'] = getFormBuildId(baseResponse.data);
   final Map<String, String> postDict = Map<String, String>.from(baseDict)..addAll(metrics.toDictForPost());
@@ -75,9 +99,30 @@ Future<String> driCalc(AnthroMetrics metrics) async {
   Response driResponse = await dio.post(
     driCalcBaseUrl,
     data: FormData.fromMap(postDict),
-    // options: Options(headers: {for (ClientCookie cookie in clientCookie) cookie.name: cookie.value})
+    options: Options(headers: {
+      'Accept': ' text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
+      'Accept-Encoding': ' gzip, deflate, br',
+      'Accept-Language': ' en-US,en;q=0.5',
+      'Connection': ' keep-alive',
+      'Content-Type': ' application/x-www-form-urlencoded',
+      // WEBMONSESSION NOT NEEDED AT ALL
+      // GUID NOT NEEDED
+      'Cookie': ' ApplicationGatewayAffinityCORS=${clientCookie[0].value}; ApplicationGatewayAffinity=${clientCookie[0].value}; SSESS36ddc8e3532cfd4477f8a08bedf459b4=af17rFmPXaXK3YTkaWNbwIrnR2fMGr7uft1GZL58vgI-BBKF',
+      'Origin': ' https://www.nal.usda.gov',
+      'Prefer': ' safe',
+      'Referer': ' https://www.nal.usda.gov/human-nutrition-and-food-safety/dri-calculator',
+      'Sec-Fetch-Dest': ' document',
+      'Sec-Fetch-Mode': ' navigate',
+      'Sec-Fetch-Site': ' same-origin',
+      'Sec-Fetch-User': ' ?1',
+      'Upgrade-Insecure-Requests': ' 1',
+      'User-Agent': ' Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/109.0',
+    })
+    // options: Options(headers: {'cookie': clientCookie.map((e) => e.toReqHeader).toList().join('; ')})
+    // options: Options(headers: {'Cookie': '${baseResponse.headers.map['set-cookie']![0]}${baseResponse.headers.map['set-cookie']![1]}'})
   );
-
+  // print('---------------------------------------------');
+  // print(driResponse.headers);
   return driResponse.data;
 }
 
@@ -134,7 +179,8 @@ List<DRI> extraDRIS = [
   DRI('EPA', dri: 200, upperLimit: 1800, unit: 'mg'),
   DRI('DHA', dri: 200, upperLimit: 1800, unit: 'mg'),
   DRI('DPA', dri: 50, unit: 'mg'),
-  DRI('Trans Fat', unit: 'g', upperLimit: 1)
+  DRI('Trans Fat', unit: 'g', upperLimit: 1),
+  DRI('Cholesterol', unit: 'mg', upperLimit: 300),
 ];
 
 Map<String, DRI> prepDRIMapFromAPI(List<DRI> list){
@@ -146,11 +192,20 @@ Map<String, DRI> prepDRIMapFromAPI(List<DRI> list){
         newMap['ala'] = dri;
         continue;
       }
+      else if (dri.name == 'Total Fiber'){
+        newMap['fiber'] = dri;
+        continue;
+      }
       List<String> preSpace_postSpace = dri.name.split(' ');
       preSpace_postSpace[0] = preSpace_postSpace[0].toLowerCase();
       newMap[preSpace_postSpace[0] + preSpace_postSpace[1]] = dri;
     }
     else{
+      if (dri.name == 'Fat'){
+        dri.name = 'Total Fat';
+        newMap['totalFat'] = dri;
+        continue;
+      }
       newMap[dri.name.toLowerCase()] = dri;
     }
   }
