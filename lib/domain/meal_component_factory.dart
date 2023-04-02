@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:dataclasses/dataclasses.dart';
+import 'package:nutrition_app/api/nutritionix.dart';
 import 'package:nutrition_app/domain.dart';
 import 'package:nutrition_app/mydataclasses/metadata.dart';
 
@@ -39,9 +40,51 @@ class Ingredient extends MealComponentFactory {
   IngredientSource source;
   dynamic sourceMetadata;
 
-  // factory Ingredient.fromApi(source){
-  //   TODO
-  // }
+  factory Ingredient.fromApi(Settings settings, sourceMetadata) {
+    IngredientSource source;
+    String json;
+    if (sourceMetadata is int) {
+      source = IngredientSource.upc;
+      json = apiCallFromUpc(sourceMetadata, settings);
+    } else if (sourceMetadata is String) {
+      source = IngredientSource.string;
+      json = apiCallFromString(sourceMetadata, settings);
+    } else {
+      throw Exception('$sourceMetadata type(${sourceMetadata.runtimeType})is '
+          'not String or int and cannot be called from nutritionix API');
+    }
+    Map body = jsonDecode(json);
+    return Ingredient.fromResponseBody(
+        responseBody: body, source: source, sourceMetadata: sourceMetadata);
+  }
+  factory Ingredient.fromResponseBody(
+      {required Map responseBody,
+      required IngredientSource source,
+      required sourceMetadata}) {
+    /// assert serving_qty == 1
+    /// serving_unit
+    // Ingredient(name: name, baseNutrient: baseNutrient, altMeasures2grams: altMeasures2grams, source: source, sourceMetadata: )
+    final baseNutrient = BaseNutrients(
+        grams: responseBody['serving_weight_grams'],
+        nutrients: Nutrients.fromRepsonseBody(responseBody));
+    Map<String, num> altMeasures2grams = {
+      responseBody['serving_unit']: responseBody['serving_weight_grams'],
+      ...{
+        for (Map alt in responseBody['alt_measures'])
+          alt['measure']: alt['serving_weight']
+      }
+    };
+    String name = responseBody['food_name'];
+    String? photo =
+        responseBody['photo']['highres'] ?? responseBody['photo']['thumb'];
+    return Ingredient(
+        name: name,
+        baseNutrient: baseNutrient,
+        photo: photo == null ? null : Uri.parse(photo),
+        altMeasures2grams: altMeasures2grams,
+        source: source,
+        sourceMetadata: sourceMetadata);
+  }
 
   // <editor-fold desc="Dataclass Section">
   @Generate()

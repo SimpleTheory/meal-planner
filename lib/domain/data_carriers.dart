@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:dataclasses/dataclasses.dart';
+import 'package:nutrition_app/api/nutritionix.dart';
 import 'package:nutrition_app/domain.dart';
 import 'package:nutrition_app/api/dri.dart';
 import 'package:nutrition_app/mydataclasses/metadata.dart';
@@ -9,11 +10,11 @@ import 'package:nutrition_app/mydataclasses/metadata.dart';
 @Dataclass(constructor: false, copyWith: false, toStr: false)
 class Nutrient {
   final num value;
-  final int? apiId;
   final String unit;
   final String name;
 
   bool checkIfSame(Nutrient other) => name == other.name;
+
   void error(Nutrient other) {
     throw Exception('Can\'t operate on $name with ${other.name} as they are'
         'not the same nutrient');
@@ -52,103 +53,112 @@ class Nutrient {
         'unit: $unit}';
   }
 
-  Nutrient copyWith(num? value) => Nutrient(
-      value: value ?? this.value, apiId: apiId, unit: unit, name: name);
+  Nutrient copyWith(num? value) =>
+      Nutrient(value: value ?? this.value, unit: unit, name: name);
 
   Nutrient({
     required this.value,
-    required this.apiId,
     required this.unit,
     required this.name,
   });
-  Nutrient.Calcium(this.value,
-      {this.apiId = 301, this.unit = "mg", this.name = "Calcium"});
+
+  Nutrient.Calcium(this.value, {this.unit = "mg", this.name = "Calcium"});
+
   Nutrient.Carbohydrate(this.value,
-      {this.apiId = 205, this.unit = "g", this.name = "Carbohydrate"});
+      {this.unit = "g", this.name = "Carbohydrate"});
+
   Nutrient.Cholesterol(this.value,
-      {this.apiId = 601, this.unit = "mg", this.name = "Cholesterol"});
-  Nutrient.Calories(this.value,
-      {this.apiId = 208, this.unit = "kcal", this.name = "Calories"});
+      {this.unit = "mg", this.name = "Cholesterol"});
+
+  Nutrient.Calories(this.value, {this.unit = "kcal", this.name = "Calories"});
+
   Nutrient.SaturatedFat(this.value,
-      {this.apiId = 606, this.unit = "g", this.name = "SaturatedFat"});
-  Nutrient.TotalFat(this.value,
-      {this.apiId = 204, this.unit = "g", this.name = "TotalFat"});
-  Nutrient.TransFat(this.value,
-      {this.apiId = 605, this.unit = "g", this.name = "TransFat"});
-  Nutrient.Iron(this.value,
-      {this.apiId = 303, this.unit = "mg", this.name = "Iron"});
-  Nutrient.Fiber(this.value,
-      {this.apiId = 291, this.unit = "g", this.name = "Fiber"});
-  Nutrient.Potassium(this.value,
-      {this.apiId = 306, this.unit = "mg", this.name = "Potassium"});
-  Nutrient.Sodium(this.value,
-      {this.apiId = 307, this.unit = "mg", this.name = "Sodium"});
-  Nutrient.Protein(this.value,
-      {this.apiId = 203, this.unit = "g", this.name = "Protein"});
-  Nutrient.Sugars(this.value,
-      {this.apiId = 269, this.unit = "g", this.name = "Sugars"});
-  Nutrient.Choline(this.value,
-      {this.apiId = 421, this.unit = "mg", this.name = "Choline"});
-  Nutrient.Copper(this.value,
-      {this.apiId = 312, this.unit = "mg", this.name = "Copper"});
-  Nutrient.ALA(this.value,
-      {this.apiId = 851, this.unit = "g", this.name = "ALA"});
+      {this.unit = "g", this.name = "SaturatedFat"});
+
+  Nutrient.TotalFat(this.value, {this.unit = "g", this.name = "TotalFat"});
+
+  Nutrient.TransFat(this.value, {this.unit = "g", this.name = "TransFat"});
+
+  Nutrient.Iron(this.value, {this.unit = "mg", this.name = "Iron"});
+
+  Nutrient.Fiber(this.value, {this.unit = "g", this.name = "Fiber"});
+
+  Nutrient.Potassium(this.value, {this.unit = "mg", this.name = "Potassium"});
+
+  Nutrient.Sodium(this.value, {this.unit = "mg", this.name = "Sodium"});
+
+  Nutrient.Protein(this.value, {this.unit = "g", this.name = "Protein"});
+
+  Nutrient.Sugars(this.value, {this.unit = "g", this.name = "Sugars"});
+
+  Nutrient.Choline(this.value, {this.unit = "mg", this.name = "Choline"});
+
+  Nutrient.Copper(this.value, {this.unit = "mg", this.name = "Copper"});
+
+  Nutrient.ALA(this.value, {this.unit = "g", this.name = "ALA"});
+
   Nutrient.LinoleicAcid(this.value,
-      {this.apiId = 685, this.unit = "g", this.name = "LinoleicAcid"});
-  Nutrient.EPA(this.value,
-      {this.apiId = 629, this.unit = "g", this.name = "EPA"});
-  Nutrient.DPA(this.value,
-      {this.apiId = 631, this.unit = "g", this.name = "DPA"});
-  Nutrient.DHA(this.value,
-      {this.apiId = 621, this.unit = "g", this.name = "DHA"});
-  Nutrient.Folate(this.value,
-      {this.apiId = 417, this.unit = "µg", this.name = "Folate"});
-  Nutrient.Magnesium(this.value,
-      {this.apiId = 304, this.unit = "mg", this.name = "Magnesium"});
-  Nutrient.Manganese(this.value,
-      {this.apiId = 315, this.unit = "mg", this.name = "Manganese"});
-  Nutrient.Niacin(this.value,
-      {this.apiId = 406, this.unit = "mg", this.name = "Niacin"});
-  Nutrient.Phosphorus(this.value,
-      {this.apiId = 305, this.unit = "mg", this.name = "Phosphorus"});
+      {this.unit = "g", this.name = "LinoleicAcid"});
+
+  Nutrient.EPA(this.value, {this.unit = "g", this.name = "EPA"});
+
+  Nutrient.DPA(this.value, {this.unit = "g", this.name = "DPA"});
+
+  Nutrient.DHA(this.value, {this.unit = "g", this.name = "DHA"});
+
+  Nutrient.Folate(this.value, {this.unit = "µg", this.name = "Folate"});
+
+  Nutrient.Magnesium(this.value, {this.unit = "mg", this.name = "Magnesium"});
+
+  Nutrient.Manganese(this.value, {this.unit = "mg", this.name = "Manganese"});
+
+  Nutrient.Niacin(this.value, {this.unit = "mg", this.name = "Niacin"});
+
+  Nutrient.Phosphorus(this.value, {this.unit = "mg", this.name = "Phosphorus"});
+
   Nutrient.PantothenicAcid(this.value,
-      {this.apiId = 410, this.unit = "mg", this.name = "PantothenicAcid"});
-  Nutrient.Riboflavin(this.value,
-      {this.apiId = 405, this.unit = "mg", this.name = "Riboflavin"});
-  Nutrient.Selenium(this.value,
-      {this.apiId = 317, this.unit = "µg", this.name = "Selenium"});
-  Nutrient.Thiamin(this.value,
-      {this.apiId = 404, this.unit = "mg", this.name = "Thiamin"});
-  Nutrient.VitaminE(this.value,
-      {this.apiId = 323, this.unit = "mg", this.name = "VitaminE"});
-  Nutrient.VitaminA(this.value,
-      {this.apiId = 320, this.unit = "µg", this.name = "VitaminA"});
-  Nutrient.VitaminB12(this.value,
-      {this.apiId = 418, this.unit = "µg", this.name = "VitaminB12"});
-  Nutrient.VitaminB6(this.value,
-      {this.apiId = 415, this.unit = "mg", this.name = "VitaminB6"});
-  Nutrient.VitaminC(this.value,
-      {this.apiId = 401, this.unit = "mg", this.name = "VitaminC"});
-  Nutrient.VitaminD(this.value,
-      {this.apiId = 328, this.unit = "µg", this.name = "VitaminD"});
-  Nutrient.VitaminK(this.value,
-      {this.apiId = 430, this.unit = "µg", this.name = "VitaminK"});
-  Nutrient.Zinc(this.value,
-      {this.apiId = 309, this.unit = "mg", this.name = "Zinc"});
+      {this.unit = "mg", this.name = "PantothenicAcid"});
+
+  Nutrient.Riboflavin(this.value, {this.unit = "mg", this.name = "Riboflavin"});
+
+  Nutrient.Selenium(this.value, {this.unit = "µg", this.name = "Selenium"});
+
+  Nutrient.Thiamin(this.value, {this.unit = "mg", this.name = "Thiamin"});
+
+  Nutrient.VitaminE(this.value, {this.unit = "mg", this.name = "VitaminE"});
+
+  Nutrient.VitaminA(this.value, {this.unit = "µg", this.name = "VitaminA"});
+
+  Nutrient.VitaminB12(this.value, {this.unit = "µg", this.name = "VitaminB12"});
+
+  Nutrient.VitaminB6(this.value, {this.unit = "mg", this.name = "VitaminB6"});
+
+  Nutrient.VitaminC(this.value, {this.unit = "mg", this.name = "VitaminC"});
+
+  Nutrient.VitaminD(this.value, {this.unit = "µg", this.name = "VitaminD"});
+
+  Nutrient.VitaminK(this.value, {this.unit = "µg", this.name = "VitaminK"});
+
+  Nutrient.Zinc(this.value, {this.unit = "mg", this.name = "Zinc"});
+
   Nutrient.UnsaturatedFat(this.value,
-      {this.apiId, this.unit = 'g', this.name = 'UnstauratedFat'});
+      {this.unit = 'g', this.name = 'UnstauratedFat'});
+
 //</editor-fold>
 
   // <editor-fold desc="Dataclass Section">
   @Generate()
   // <Dataclass>
 
-  factory Nutrient.staticConstructor(
-          {required value, required unit, required name, apiId}) =>
-      Nutrient(value: value, unit: unit, name: name, apiId: apiId);
+  factory Nutrient.staticConstructor({
+    required value,
+    required unit,
+    required name,
+  }) =>
+      Nutrient(value: value, unit: unit, name: name);
 
   Map<String, dynamic> get attributes__ =>
-      {"value": value, "apiId": apiId, "unit": unit, "name": name};
+      {"value": value, "unit": unit, "name": name};
 
   @override
   bool operator ==(Object other) =>
@@ -156,13 +166,11 @@ class Nutrient {
       (other is Nutrient &&
           runtimeType == other.runtimeType &&
           equals(value, other.value) &&
-          equals(apiId, other.apiId) &&
           equals(unit, other.unit) &&
           equals(name, other.name));
 
   @override
-  int get hashCode =>
-      value.hashCode ^ apiId.hashCode ^ unit.hashCode ^ name.hashCode;
+  int get hashCode => value.hashCode ^ unit.hashCode ^ name.hashCode;
 
   String toJson() => jsonEncode(toMap());
   Map<String, dynamic> toMap() =>
@@ -172,13 +180,12 @@ class Nutrient {
 
   factory Nutrient.fromMap(Map map) {
     num value = map['value'];
-    int? apiId = map['apiId'];
     String unit = map['unit'];
     String name = map['name'];
 
     // No casting
 
-    return Nutrient(value: value, apiId: apiId, unit: unit, name: name);
+    return Nutrient(value: value, unit: unit, name: name);
   }
   // </Dataclass>
 
@@ -411,89 +418,134 @@ class Nutrients {
     }
     return listOfNutrients.reduce((previous, current) => previous + current);
   }
-  
 
+  factory Nutrients.fromRepsonseBody(Map responseBody) {
+    List<Map> temp = responseBody['full_nutrients'];
+    Map<int, num> nut = {};
+    for (Map map in temp) {
+      nut[map['attr_id']] = map['value'];
+    }
+    return Nutrients(
+      calcium: apiId2nutrient[301]!(nut[301] ?? 0),
+      carbohydrate: apiId2nutrient[205]!(nut[205] ?? 0),
+      cholesterol: apiId2nutrient[601]!(nut[601] ?? 0),
+      calories: apiId2nutrient[208]!(nut[208] ?? 0),
+      saturatedFat: apiId2nutrient[606]!(nut[606] ?? 0),
+      totalFat: apiId2nutrient[204]!(nut[204] ?? 0),
+      transFat: apiId2nutrient[605]!(nut[605] ?? 0),
+      iron: apiId2nutrient[303]!(nut[303] ?? 0),
+      fiber: apiId2nutrient[291]!(nut[291] ?? 0),
+      potassium: apiId2nutrient[306]!(nut[306] ?? 0),
+      sodium: apiId2nutrient[307]!(nut[307] ?? 0),
+      protein: apiId2nutrient[203]!(nut[203] ?? 0),
+      sugars: apiId2nutrient[269]!(nut[269] ?? 0),
+      choline: apiId2nutrient[421]!(nut[421] ?? 0),
+      copper: apiId2nutrient[312]!(nut[312] ?? 0),
+      ala: apiId2nutrient[851]!(nut[851] ?? 0),
+      linoleicAcid: apiId2nutrient[685]!(nut[685] ?? 0),
+      epa: apiId2nutrient[629]!(nut[629] ?? 0),
+      dpa: apiId2nutrient[631]!(nut[631] ?? 0),
+      dha: apiId2nutrient[621]!(nut[621] ?? 0),
+      folate: apiId2nutrient[417]!(nut[417] ?? 0),
+      magnesium: apiId2nutrient[304]!(nut[304] ?? 0),
+      manganese: apiId2nutrient[315]!(nut[315] ?? 0),
+      niacin: apiId2nutrient[406]!(nut[406] ?? 0),
+      phosphorus: apiId2nutrient[305]!(nut[305] ?? 0),
+      pantothenicAcid: apiId2nutrient[410]!(nut[410] ?? 0),
+      riboflavin: apiId2nutrient[405]!(nut[405] ?? 0),
+      selenium: apiId2nutrient[317]!(nut[317] ?? 0),
+      thiamin: apiId2nutrient[404]!(nut[404] ?? 0),
+      vitaminE: apiId2nutrient[323]!(nut[323] ?? 0),
+      vitaminA: apiId2nutrient[320]!(nut[320] ?? 0),
+      vitaminB12: apiId2nutrient[418]!(nut[418] ?? 0),
+      vitaminB6: apiId2nutrient[415]!(nut[415] ?? 0),
+      vitaminC: apiId2nutrient[401]!(nut[401] ?? 0),
+      vitaminD: apiId2nutrient[328]!(nut[328] ?? 0),
+      vitaminK: apiId2nutrient[430]!(nut[430] ?? 0),
+      zinc: apiId2nutrient[309]!(nut[309] ?? 0),
+    );
+  }
 
   // <editor-fold desc="Dataclass Section">
 
   // <editor-fold desc="From Values Constructor">
   factory Nutrients.fromValues(
-      num calcium,
-      num carbohydrate,
-      num cholesterol,
-      num calories,
-      num saturatedFat,
-      num totalFat,
-      num transFat,
-      num iron,
-      num fiber,
-      num potassium,
-      num sodium,
-      num protein,
-      num sugars,
-      num choline,
-      num copper,
-      num ala,
-      num linoleicAcid,
-      num epa,
-      num dpa,
-      num dha,
-      num folate,
-      num magnesium,
-      num manganese,
-      num niacin,
-      num phosphorus,
-      num pantothenicAcid,
-      num riboflavin,
-      num selenium,
-      num thiamin,
-      num vitaminE,
-      num vitaminA,
-      num vitaminB12,
-      num vitaminB6,
-      num vitaminC,
-      num vitaminD,
-      num vitaminK,
-      num zinc
-      )=> Nutrients(
-      calcium:
-      Nutrient.Calcium(calcium),
-      carbohydrate: Nutrient.Carbohydrate(carbohydrate),
-      cholesterol: Nutrient.Cholesterol(cholesterol),
-      calories: Nutrient.Calories(calories),
-      saturatedFat: Nutrient.SaturatedFat(saturatedFat),
-      totalFat: Nutrient.TotalFat(totalFat),
-      transFat: Nutrient.TransFat(transFat),
-      iron: Nutrient.Iron(iron),
-      fiber: Nutrient.Fiber(fiber),
-      potassium: Nutrient.Potassium(potassium),
-      sodium: Nutrient.Sodium(sodium),
-      protein: Nutrient.Protein(protein),
-      sugars: Nutrient.Sugars(sugars),
-      choline: Nutrient.Choline(choline),
-      copper: Nutrient.Copper(copper),
-      ala: Nutrient.ALA(ala),
-      linoleicAcid: Nutrient.LinoleicAcid(linoleicAcid),
-      epa: Nutrient.EPA(epa),
-      dpa: Nutrient.DPA(dpa),
-      dha: Nutrient.DHA(dha),
-      folate: Nutrient.Folate(folate),
-      magnesium: Nutrient.Magnesium(magnesium),
-      manganese: Nutrient.Manganese(manganese),
-      niacin: Nutrient.Niacin(niacin),
-      phosphorus: Nutrient.Phosphorus(phosphorus),
-      pantothenicAcid: Nutrient.PantothenicAcid(pantothenicAcid),
-      riboflavin: Nutrient.Riboflavin(riboflavin),
-      selenium: Nutrient.Selenium(selenium),
-      thiamin: Nutrient.Thiamin(thiamin),
-      vitaminE: Nutrient.VitaminE(vitaminE),
-      vitaminA: Nutrient.VitaminA(vitaminA),
-      vitaminB12: Nutrient.VitaminB12(vitaminB12),
-      vitaminB6: Nutrient.VitaminB6(vitaminB6),
-      vitaminC: Nutrient.VitaminC(vitaminC),
-      vitaminD: Nutrient.VitaminD(vitaminD),
-      vitaminK: Nutrient.VitaminK(vitaminK),
-      zinc: Nutrient.Zinc(zinc));
+          num calcium,
+          num carbohydrate,
+          num cholesterol,
+          num calories,
+          num saturatedFat,
+          num totalFat,
+          num transFat,
+          num iron,
+          num fiber,
+          num potassium,
+          num sodium,
+          num protein,
+          num sugars,
+          num choline,
+          num copper,
+          num ala,
+          num linoleicAcid,
+          num epa,
+          num dpa,
+          num dha,
+          num folate,
+          num magnesium,
+          num manganese,
+          num niacin,
+          num phosphorus,
+          num pantothenicAcid,
+          num riboflavin,
+          num selenium,
+          num thiamin,
+          num vitaminE,
+          num vitaminA,
+          num vitaminB12,
+          num vitaminB6,
+          num vitaminC,
+          num vitaminD,
+          num vitaminK,
+          num zinc) =>
+      Nutrients(
+          calcium: Nutrient.Calcium(calcium),
+          carbohydrate: Nutrient.Carbohydrate(carbohydrate),
+          cholesterol: Nutrient.Cholesterol(cholesterol),
+          calories: Nutrient.Calories(calories),
+          saturatedFat: Nutrient.SaturatedFat(saturatedFat),
+          totalFat: Nutrient.TotalFat(totalFat),
+          transFat: Nutrient.TransFat(transFat),
+          iron: Nutrient.Iron(iron),
+          fiber: Nutrient.Fiber(fiber),
+          potassium: Nutrient.Potassium(potassium),
+          sodium: Nutrient.Sodium(sodium),
+          protein: Nutrient.Protein(protein),
+          sugars: Nutrient.Sugars(sugars),
+          choline: Nutrient.Choline(choline),
+          copper: Nutrient.Copper(copper),
+          ala: Nutrient.ALA(ala),
+          linoleicAcid: Nutrient.LinoleicAcid(linoleicAcid),
+          epa: Nutrient.EPA(epa),
+          dpa: Nutrient.DPA(dpa),
+          dha: Nutrient.DHA(dha),
+          folate: Nutrient.Folate(folate),
+          magnesium: Nutrient.Magnesium(magnesium),
+          manganese: Nutrient.Manganese(manganese),
+          niacin: Nutrient.Niacin(niacin),
+          phosphorus: Nutrient.Phosphorus(phosphorus),
+          pantothenicAcid: Nutrient.PantothenicAcid(pantothenicAcid),
+          riboflavin: Nutrient.Riboflavin(riboflavin),
+          selenium: Nutrient.Selenium(selenium),
+          thiamin: Nutrient.Thiamin(thiamin),
+          vitaminE: Nutrient.VitaminE(vitaminE),
+          vitaminA: Nutrient.VitaminA(vitaminA),
+          vitaminB12: Nutrient.VitaminB12(vitaminB12),
+          vitaminB6: Nutrient.VitaminB6(vitaminB6),
+          vitaminC: Nutrient.VitaminC(vitaminC),
+          vitaminD: Nutrient.VitaminD(vitaminD),
+          vitaminK: Nutrient.VitaminK(vitaminK),
+          zinc: Nutrient.Zinc(zinc));
+
   // </editor-fold>
 
   // <Dataclass>
@@ -964,6 +1016,7 @@ class DRI {
   num? dri;
   num? upperLimit;
   String unit;
+  String? note;
 
   bool compare(val) {
     throw UnimplementedError();
@@ -979,17 +1032,20 @@ class DRI {
       upperLimit: upperLimit == null ? null : upperLimit! / num);
 
   // <editor-fold desc="Dataclass Objects">
-  DRI(this.name, {this.dri, this.upperLimit, required this.unit}) {
+  DRI(this.name, {this.dri, this.upperLimit, required this.unit, this.note}) {
     if (dri == 0) {
       dri = null;
     }
     if (upperLimit == 0) {
       upperLimit = null;
     }
-    if (unit.toLowerCase() == 'grams'){unit = 'g';}
+    if (unit.toLowerCase() == 'grams') {
+      unit = 'g';
+    }
     substitutions();
   }
-  factory DRI.sugars(AnthroMetrics anthro){
+
+  factory DRI.sugars(AnthroMetrics anthro) {
     int val = anthro.sex == Sex.M ? 36 : 25;
     return DRI('Sugars', unit: 'g', upperLimit: val);
   }
@@ -1013,6 +1069,14 @@ class DRI {
     if (name == 'Magnesium') {
       upperLimit = null;
     }
+  }
+
+  /// TODO: Add information about specific nutrients that may otherwise be missed,
+  /// like no UL for natty magnesium but supplements dangerous etc
+  void addNote() {
+    // switch (name){
+    //   case 'Magnesium': note = 'TODO';
+    // }
   }
 
   factory DRI.driMacro(List<String> instantiationString,
@@ -1076,21 +1140,22 @@ class DRI {
       'dri': dri,
       'upperLimit': upperLimit,
       'unit': unit,
+      'note': note
     };
   }
 
   factory DRI.fromMap(Map<String, dynamic> map) {
-    return DRI(
-      map['name'] as String,
-      dri: map['dri'] as num?,
-      upperLimit: map['upperLimit'] as num?,
-      unit: map['unit'] as String,
-    );
+    return DRI(map['name'] as String,
+        dri: map['dri'] as num?,
+        upperLimit: map['upperLimit'] as num?,
+        unit: map['unit'] as String,
+        note: map['note'] as String);
   }
 
   DRI copyWith({dri, upperLimit}) => DRI(name,
       dri: dri ?? this.dri,
       upperLimit: upperLimit ?? this.upperLimit,
+      note: note,
       unit: unit);
 //</editor-fold>
 }
@@ -1135,6 +1200,7 @@ class DRIS {
   late DRI transFat;
   late DRI unsaturatedFat;
   late DRI saturatedFat;
+
   // Create desired percentages as a setter
   // CREATE MACRO SETTERS
   // TODO Comparer to nutrients
@@ -1227,7 +1293,7 @@ class DRIS {
 
   static Future<DRIS> fromAPI(AnthroMetrics metrics) async {
     String responseBody = await driCalc(metrics);
-    List<DRI> listDRIS  = parseDRI(responseBody, metrics);
+    List<DRI> listDRIS = parseDRI(responseBody, metrics);
     listDRIS.add(DRI.sugars(metrics));
     DRIS value = DRIS.fromMap(prepDRIMapFromAPI(listDRIS));
     value.calories.upperLimit = value.calories.dri;
@@ -1275,11 +1341,10 @@ class DRIS {
   }) {
     transFat = DRI('Trans Fat', unit: 'g', upperLimit: 1);
     saturatedFat = // 90 bc 10% of cal should be sat * 9kcal per g fat
-        DRI('Saturated Fat', unit: 'g', upperLimit: calories.upperLimit ?? calories.dri! / 90);
+        DRI('Saturated Fat',
+            unit: 'g', upperLimit: calories.upperLimit ?? calories.dri! / 90);
     unsaturatedFat = DRI('Unsaturated Fat',
-        unit: 'g',
-        dri: totalFat.dri! * .9,
-        upperLimit: totalFat.upperLimit);
+        unit: 'g', dri: totalFat.dri! * .9, upperLimit: totalFat.upperLimit);
   }
 
   @Generate()
