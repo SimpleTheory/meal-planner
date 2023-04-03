@@ -3,8 +3,9 @@ import 'package:ari_utils/ari_utils.dart';
 import 'package:beautiful_soup_dart/beautiful_soup.dart';
 import 'package:client_cookie/client_cookie.dart';
 import 'package:dio/dio.dart';
-import 'package:dio_cookie_manager/dio_cookie_manager.dart';
-import 'package:cookie_jar/cookie_jar.dart';
+// import 'package:dio_cookie_manager/dio_cookie_manager.dart';
+// import 'package:cookie_jar/cookie_jar.dart';
+import 'package:nutrition_app/api/nutritionix.dart';
 import 'package:nutrition_app/domain.dart';
 
 
@@ -61,69 +62,74 @@ Future<String> driCalc(AnthroMetrics metrics) async {
   // CookieJar cookieJar = CookieJar();
   Dio dio = Dio();
   // dio.interceptors.add(CookieManager(cookieJar));
-  Response baseResponse = await dio.get(
-      driCalcBaseUrl,
-      options: Options(headers: {
-        'Accept': ' text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
-        'Accept-Encoding': ' gzip, deflate, br',
-        'Accept-Language': ' en-US,en;q=0.5',
-        'Connection': ' keep-alive',
-        'Content-Type': ' application/x-www-form-urlencoded',
-        // WEBMONSESSION NOT NEEDED AT ALL
-        // GUID NOT NEEDED
-        'Origin': ' https://www.nal.usda.gov',
-        'Prefer': ' safe',
-        'Referer': ' https://www.nal.usda.gov/human-nutrition-and-food-safety/dri-calculator',
-        'Sec-Fetch-Dest': ' document',
-        'Sec-Fetch-Mode': ' navigate',
-        'Sec-Fetch-Site': ' same-origin',
-        'Sec-Fetch-User': ' ?1',
-        'Upgrade-Insecure-Requests': ' 1',
-        'User-Agent': ' Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/109.0',
-      })
+  try{
+            Response baseResponse = await dio.get(
+          driCalcBaseUrl,
+          options: Options(headers: {
+            'Accept': ' text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
+            'Accept-Encoding': ' gzip, deflate, br',
+            'Accept-Language': ' en-US,en;q=0.5',
+            'Connection': ' keep-alive',
+            'Content-Type': ' application/x-www-form-urlencoded',
+            // WEBMONSESSION NOT NEEDED AT ALL
+            // GUID NOT NEEDED
+            'Origin': ' https://www.nal.usda.gov',
+            'Prefer': ' safe',
+            'Referer': ' https://www.nal.usda.gov/human-nutrition-and-food-safety/dri-calculator',
+            'Sec-Fetch-Dest': ' document',
+            'Sec-Fetch-Mode': ' navigate',
+            'Sec-Fetch-Site': ' same-origin',
+            'Sec-Fetch-User': ' ?1',
+            'Upgrade-Insecure-Requests': ' 1',
+            'User-Agent': ' Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/109.0',
+          })
       );
-  // Needs a base cookie to work as above ^ find out what makes it work
-  // print('-------------------');
-  // print(baseResponse.headers);
-  // print(baseResponse.headers.map['set-cookie']![0]);
-  // print(baseResponse.headers.map['set-cookie']![1]);
+      // Needs a base cookie to work as above ^ find out what makes it work
+      // print('-------------------');
+      // print(baseResponse.headers);
+      // print(baseResponse.headers.map['set-cookie']![0]);
+      // print(baseResponse.headers.map['set-cookie']![1]);
 
-  // print(cookieJar);
-  List<ClientCookie> clientCookie = baseResponse.headers['set-cookie']!.map((e) => ClientCookie.fromSetCookie(e)).toList();
-  // print(clientCookie.map((e) => e.toReqHeader).toList());
-  // print({'Cookie': clientCookie.map((e) => e.toReqHeader).toList().join('; ')});
-  Map<String,String> baseDict = Map<String, String>.from(constDirPostDict);
-  baseDict['form_build_id'] = getFormBuildId(baseResponse.data);
-  final Map<String, String> postDict = Map<String, String>.from(baseDict)..addAll(metrics.toDictForPost());
-  // print(postDict);
-  Response driResponse = await dio.post(
-    driCalcBaseUrl,
-    data: FormData.fromMap(postDict),
-    options: Options(headers: {
-      'Accept': ' text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
-      'Accept-Encoding': ' gzip, deflate, br',
-      'Accept-Language': ' en-US,en;q=0.5',
-      'Connection': ' keep-alive',
-      'Content-Type': ' application/x-www-form-urlencoded',
-      // WEBMONSESSION NOT NEEDED AT ALL
-      // GUID NOT NEEDED
-      'Cookie': ' ApplicationGatewayAffinityCORS=${clientCookie[0].value}; ApplicationGatewayAffinity=${clientCookie[0].value}; SSESS36ddc8e3532cfd4477f8a08bedf459b4=af17rFmPXaXK3YTkaWNbwIrnR2fMGr7uft1GZL58vgI-BBKF',
-      'Origin': ' https://www.nal.usda.gov',
-      'Prefer': ' safe',
-      'Referer': ' https://www.nal.usda.gov/human-nutrition-and-food-safety/dri-calculator',
-      'Sec-Fetch-Dest': ' document',
-      'Sec-Fetch-Mode': ' navigate',
-      'Sec-Fetch-Site': ' same-origin',
-      'Sec-Fetch-User': ' ?1',
-      'Upgrade-Insecure-Requests': ' 1',
-      'User-Agent': ' Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/109.0',
-    })
-    // options: Options(headers: {'cookie': clientCookie.map((e) => e.toReqHeader).toList().join('; ')})
-    // options: Options(headers: {'Cookie': '${baseResponse.headers.map['set-cookie']![0]}${baseResponse.headers.map['set-cookie']![1]}'})
-  );
-  // print('---------------------------------------------');
-  // print(driResponse.headers);
-  return driResponse.data;
+      // print(cookieJar);
+      List<ClientCookie> clientCookie = baseResponse.headers['set-cookie']!.map((e) => ClientCookie.fromSetCookie(e)).toList();
+      // print(clientCookie.map((e) => e.toReqHeader).toList());
+      // print({'Cookie': clientCookie.map((e) => e.toReqHeader).toList().join('; ')});
+      Map<String,String> baseDict = Map<String, String>.from(constDirPostDict);
+      baseDict['form_build_id'] = getFormBuildId(baseResponse.data);
+      final Map<String, String> postDict = Map<String, String>.from(baseDict)..addAll(metrics.toDictForPost());
+      // print(postDict);
+      Response driResponse = await dio.post(
+        driCalcBaseUrl,
+        data: FormData.fromMap(postDict),
+        options: Options(headers: {
+          'Accept': ' text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
+          'Accept-Encoding': ' gzip, deflate, br',
+          'Accept-Language': ' en-US,en;q=0.5',
+          'Connection': ' keep-alive',
+          'Content-Type': ' application/x-www-form-urlencoded',
+          // WEBMONSESSION NOT NEEDED AT ALL
+          // GUID NOT NEEDED
+          'Cookie': ' ApplicationGatewayAffinityCORS=${clientCookie[0].value}; ApplicationGatewayAffinity=${clientCookie[0].value}; SSESS36ddc8e3532cfd4477f8a08bedf459b4=af17rFmPXaXK3YTkaWNbwIrnR2fMGr7uft1GZL58vgI-BBKF',
+          'Origin': ' https://www.nal.usda.gov',
+          'Prefer': ' safe',
+          'Referer': ' https://www.nal.usda.gov/human-nutrition-and-food-safety/dri-calculator',
+          'Sec-Fetch-Dest': ' document',
+          'Sec-Fetch-Mode': ' navigate',
+          'Sec-Fetch-Site': ' same-origin',
+          'Sec-Fetch-User': ' ?1',
+          'Upgrade-Insecure-Requests': ' 1',
+          'User-Agent': ' Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/109.0',
+        })
+        // options: Options(headers: {'cookie': clientCookie.map((e) => e.toReqHeader).toList().join('; ')})
+        // options: Options(headers: {'Cookie': '${baseResponse.headers.map['set-cookie']![0]}${baseResponse.headers.map['set-cookie']![1]}'})
+      );
+      // print('---------------------------------------------');
+      // print(driResponse.headers);
+      return driResponse.data;
+  }
+  on DioError catch(err){
+    throw getApiException(err);
+  }
 }
 
 String getFormBuildId(String html) {

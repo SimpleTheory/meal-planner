@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:nutrition_app/api/exceptions.dart';
 import 'package:nutrition_app/domain.dart';
 
 final dio = Dio();
@@ -28,14 +29,13 @@ Future<Response> apiCallFromUpc(int upc, Settings settings) async {
     // print(response.data);
     return response;
   } on DioError catch (e) {
-    print(e);
-    print(e.error);
-    print(e.response);
-    print(e.type);
-    print(e.message);
-    print(e.requestOptions);
-    rethrow;
-    // TODO: HANDLE ERROR
+    // print(e);
+    // print(e.error);
+    // print(e.response);
+    // print(e.type);
+    // print(e.message);
+    // print(e.requestOptions);
+    throw getApiException(e, settings: settings, source: upc);
   }
 }
 
@@ -59,19 +59,44 @@ Future<Response> apiCallFromString(String string, Settings settings) async {
     return response;
   }
   on DioError catch(e){
-    // TODO: HANDLE ERROR
-    print(e.error);
-    print(e.response);
-    print(e.type);
-    print(e.message);
-    print(e.requestOptions);
-    rethrow;
+    // print(e.error);
+    // print(e.response);
+    // print(e.type);
+    // print(e.message);
+    // print(e.requestOptions);
+    throw getApiException(e, settings: settings, source: string);
   }
   catch (e) {
     print('-----------');
     print(e);
     rethrow;
   }
+}
+
+Exception getApiException(DioError err, {Settings? settings, source}){
+  // No internet
+  if (err.error != null){
+    final errString = err.error.toString();
+    if (errString.contains('SocketException')){
+      return NoInternet('No internet');
+    }
+  }
+  // 404
+  if (err.response?.data['message'] == 'resource not found'){
+    String src = ' ';
+    if(source is String) {src = ' Text: ';}
+    if(source is int){src=' UPC: ';}
+    // 404
+    return FoodNotFound('Food not found with:$src$source');
+  }
+  // 401
+  if (err.response?.data['message'] == 'invalid app id/key' && settings != null){
+    // 401
+    return InvalidKey('There is an invalid key in the settings for the API ID or key.'
+        ' Please check the values ${settings.appId} and ${settings.apikey} to see if they are correct.');
+  }
+
+  return err;
 }
 
 typedef NutrientConstructor = Nutrient Function(num value, {String name, String unit});

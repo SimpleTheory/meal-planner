@@ -1,18 +1,31 @@
-class APIError implements Exception {
+abstract class APIError{}
+class InvalidKey implements Exception, APIError {
   final String message;
 
-  APIError(this.message);
+  InvalidKey(this.message);
 
   @override
   String toString() {
-    return "APIError: $message";
+    return "InvalidKey: $message";
   }
 }
-class InvalidKey extends APIError{
-  InvalidKey(super.message);
-}
-class FoodNotFound extends APIError{
-  FoodNotFound(super.message);
-}
+class NoInternet implements Exception, APIError {
+  final String message;
 
-// TODO create function that properly raises error according to the situation for API calls.
+  NoInternet(this.message);
+
+  @override
+  String toString() {
+    return "NoInternet: $message";
+  }
+}
+class FoodNotFound implements Exception, APIError {
+  final String message;
+
+  FoodNotFound(this.message);
+
+  @override
+  String toString() {
+    return "FoodNotFound: $message";
+  }
+}
