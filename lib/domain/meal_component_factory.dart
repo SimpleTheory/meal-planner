@@ -60,6 +60,7 @@ class Ingredient extends MealComponentFactory {
     return Ingredient.fromResponseBody(
         responseBody: body, source: source, sourceMetadata: sourceMetadata);
   }
+
   factory Ingredient.fromResponseBody(
       {required Map responseBody,
       required IngredientSource source,
@@ -70,13 +71,20 @@ class Ingredient extends MealComponentFactory {
     final baseNutrient = BaseNutrients(
         grams: responseBody['serving_weight_grams'],
         nutrients: Nutrients.fromResponseBody(responseBody));
-    Map<String, num> altMeasures2grams = {
-      responseBody['serving_unit']: responseBody['serving_weight_grams'],
-      ...{
-        for (Map alt in responseBody['alt_measures'])
-          alt['measure']: alt['serving_weight']
-      }
-    };
+    Map<String, num> altMeasures2grams;
+    if (responseBody['alt_measures'] != null) {
+      altMeasures2grams = {
+        responseBody['serving_unit']: responseBody['serving_weight_grams'],
+        ...{
+          for (Map alt in responseBody['alt_measures'])
+            alt['measure']: alt['serving_weight']
+        }
+      };
+    }
+    else{
+      altMeasures2grams = {
+        responseBody['serving_unit']: responseBody['serving_weight_grams'],};
+    }
     String name = responseBody['food_name'];
     String? photo =
         responseBody['photo']['highres'] ?? responseBody['photo']['thumb'];

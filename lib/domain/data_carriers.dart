@@ -47,11 +47,7 @@ class Nutrient {
   //<editor-fold desc="Custom Data Methods and Constructors">
 
   @override
-  String toString() {
-    return '$name{'
-        'value: $value'
-        'unit: $unit}';
-  }
+  String toString() => '$name(value: $value, unit: $unit)';
 
   Nutrient copyWith(num? value) =>
       Nutrient(value: value ?? this.value, unit: unit, name: name);
@@ -1724,8 +1720,55 @@ class BaseNutrients {
     required this.nutrients,
   });
 
+  // <editor-fold desc="Dataclass Section">
   @Generate()
+  // <Dataclass>
 
+  factory BaseNutrients.staticConstructor({
+    required grams,
+    required nutrients,
+  }) =>
+      BaseNutrients(grams: grams, nutrients: nutrients);
+
+  Map<String, dynamic> get attributes__ =>
+      {"grams": grams, "nutrients": nutrients};
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is BaseNutrients &&
+          runtimeType == other.runtimeType &&
+          equals(grams, other.grams) &&
+          equals(nutrients, other.nutrients));
+
+  @override
+  int get hashCode => grams.hashCode ^ nutrients.hashCode;
+
+  @override
+  String toString() => 'BaseNutrients(grams: $grams, nutrients: $nutrients)';
+
+  BaseNutrients copyWithBaseNutrients({num? grams, Nutrients? nutrients}) =>
+      BaseNutrients(
+          grams: grams ?? this.grams, nutrients: nutrients ?? this.nutrients);
+
+  String toJson() => jsonEncode(toMap());
+  Map<String, dynamic> toMap() =>
+      {'__type': 'BaseNutrients', ...nestedJsonMap(attributes__)};
+
+  factory BaseNutrients.fromJson(String json) =>
+      BaseNutrients.fromMap(jsonDecode(json));
+
+  factory BaseNutrients.fromMap(Map map) {
+    num grams = map['grams'];
+    Nutrients nutrients = dejsonify(map['nutrients']);
+
+    // No casting
+
+    return BaseNutrients(grams: grams, nutrients: nutrients);
+  }
+  // </Dataclass>
+
+  // </editor-fold>
 }
 
 /// Settings Based Data Carriers
