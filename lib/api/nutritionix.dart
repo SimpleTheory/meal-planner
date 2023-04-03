@@ -2,8 +2,8 @@ import 'package:dio/dio.dart';
 import 'package:nutrition_app/domain.dart';
 
 final dio = Dio();
-// TODO TYPE API CALLS
-/// Use in a try block
+
+/// Use in a try block TODO WRITE DOCUMENTATION FOR EVERYTHING
 Future<Response> apiCallFromUpc(int upc, Settings settings) async {
   const url = 'https://trackapi.nutritionix.com/v2/search/item';
   final queryParameters = {
@@ -35,7 +35,7 @@ Future<Response> apiCallFromUpc(int upc, Settings settings) async {
     print(e.message);
     print(e.requestOptions);
     rethrow;
-    // TODO HANDLE ERROR
+    // TODO: HANDLE ERROR
   }
 }
 
@@ -59,7 +59,7 @@ Future<Response> apiCallFromString(String string, Settings settings) async {
     return response;
   }
   on DioError catch(e){
-    // TODO HANDLE ERROR
+    // TODO: HANDLE ERROR
     print(e.error);
     print(e.response);
     print(e.type);

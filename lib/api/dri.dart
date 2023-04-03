@@ -170,11 +170,6 @@ int toInches(int feet, int inches){
 //   }
 // }
 
-// CREATE FUNCTIONS TO MANUALLY ADD:
-//    EPA 200 - 1800 mg
-//    DHA 200 - 1800 mg
-//    DPA 50 - ? mg
-//    SAT AND UNSAT FAT (CREATE IN CONSTRUCTOR)
 List<DRI> extraDRIS = [
   DRI('EPA', dri: 200, upperLimit: 1800, unit: 'mg'),
   DRI('DHA', dri: 200, upperLimit: 1800, unit: 'mg'),

@@ -408,7 +408,7 @@ class Nutrients {
         zinc: Nutrient.Zinc(zinc.value / other),
       );
 
-  static Nutrients sum(List<Nutrients> listOfNutrients) {
+  static Nutrients sum(Iterable<Nutrients> listOfNutrients) {
     if (listOfNutrients.isEmpty) {
       return Nutrients.zero();
     }
@@ -1016,7 +1016,7 @@ class DRI {
 
   bool compare(val) {
     throw UnimplementedError();
-    // TODO IMPLEMENT COMPARISON TO NUM OR NUTRIENT
+    // TODO: IMPLEMENT COMPARISON TO NUM OR NUTRIENT
   }
 
   DRI operator *(num num) => copyWith(
@@ -1197,8 +1197,8 @@ class DRIS {
   late DRI unsaturatedFat;
   late DRI saturatedFat;
 
-  // Create desired percentages as a setter
-  // CREATE MACRO SETTERS
+  // TODO Create desired percentages as a setter
+  // TODO CREATE MACRO SETTERS
   // TODO Comparer to nutrients
   factory DRIS.fromPreparedList(List<DRI> list) {
     Map<String, DRI> map = {for (DRI dri in list) dri.name: dri};

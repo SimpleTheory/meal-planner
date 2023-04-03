@@ -1,0 +1,4 @@
+Implement and make decisions with regard to:
+    DRI -- Nutrient comparisons
+    Handle API call errors
+    

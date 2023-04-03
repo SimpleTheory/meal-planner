@@ -219,6 +219,7 @@ class Meal extends MealComponentFactory {
   bool isSubRecipe;
   @override
   Uri? photo;
+  String notes = '';
 
   // <editor-fold desc="Dataclass Section">
   Meal(
@@ -226,6 +227,7 @@ class Meal extends MealComponentFactory {
       required this.ingredients,
       this.servings = 1,
       this.photo,
+      this.notes = '',
       required this.isSubRecipe})
       : super(
             BaseNutrients(
@@ -245,6 +247,7 @@ class Meal extends MealComponentFactory {
                   servings
             },
             name);
+
   Map<String, dynamic> get attributes__ => {
         "name": name,
         "ingredients": ingredients,
@@ -252,9 +255,10 @@ class Meal extends MealComponentFactory {
         "isSubRecipe": isSubRecipe,
         "photo": photo,
         "baseNutrient": baseNutrient,
-        "altMeasures2grams": altMeasures2grams
+        "altMeasures2grams": altMeasures2grams,
+        "notes": notes
       };
-  @Generate()
+  //@Generate()
   // <Dataclass>
 
   factory Meal.staticConstructor(
@@ -262,13 +266,15 @@ class Meal extends MealComponentFactory {
           required ingredients,
           required servings,
           required isSubRecipe,
-          photo}) =>
+          photo,
+          notes}) =>
       Meal(
           name: name,
           ingredients: ingredients,
           servings: servings,
           isSubRecipe: isSubRecipe,
-          photo: photo);
+          photo: photo,
+          notes: notes);
 
   @override
   bool operator ==(Object other) =>
@@ -279,6 +285,7 @@ class Meal extends MealComponentFactory {
           equals(ingredients, other.ingredients) &&
           equals(servings, other.servings) &&
           equals(isSubRecipe, other.isSubRecipe) &&
+          equals(notes, other.notes) &&
           equals(photo, other.photo));
 
   @override
@@ -287,23 +294,26 @@ class Meal extends MealComponentFactory {
       ingredients.hashCode ^
       servings.hashCode ^
       isSubRecipe.hashCode ^
-      photo.hashCode;
+      photo.hashCode ^
+      notes.hashCode;
 
   @override
   String toString() =>
-      'Meal(name: $name, ingredients: $ingredients, servings: $servings, isSubRecipe: $isSubRecipe, photo: $photo)';
+      'Meal(name: $name, ingredients: $ingredients, servings: $servings, isSubRecipe: $isSubRecipe, photo: $photo, notes: $notes)';
 
   Meal copyWithMeal(
           {String? name,
           List<MealComponent>? ingredients,
           int? servings,
           bool? isSubRecipe,
+          String? notes,
           Uri? photo}) =>
       Meal(
           name: name ?? this.name,
           ingredients: ingredients ?? this.ingredients,
           servings: servings ?? this.servings,
           isSubRecipe: isSubRecipe ?? this.isSubRecipe,
+          notes: notes ?? this.notes,
           photo: photo ?? this.photo);
 
   String toJson() => jsonEncode(toMap());
@@ -317,6 +327,7 @@ class Meal extends MealComponentFactory {
     List ingredientsTemp = dejsonify(map['ingredients']);
     int servings = map['servings'];
     bool isSubRecipe = map['isSubRecipe'];
+    String notes = map['notes'];
     Uri? photo = dejsonify(map['photo']);
 
     List<MealComponent> ingredients = List<MealComponent>.from(ingredientsTemp);
@@ -326,6 +337,7 @@ class Meal extends MealComponentFactory {
         ingredients: ingredients,
         servings: servings,
         isSubRecipe: isSubRecipe,
+        notes: notes,
         photo: photo);
   }
   // </Dataclass>

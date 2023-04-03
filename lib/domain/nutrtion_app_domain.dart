@@ -16,25 +16,24 @@ class App {
       ];
 
   // What can an app do?
+  // TODO: Make this actually good
   void addMeal(Meal meal) {
     meals[meal.name] = meal;
   }
-
   void addBaseIngredient(Ingredient ingredient) {
     baseIngredients[ingredient.name] = ingredient;
   }
-
   void addDiet(Diet diet) {
     diets[diet.name] = diet;
   }
 
   // Update Meal, Diet: just access key with copyWith
+
   // Delete: meal, ingredient, diet
   void deleteMeal(Meal meal) {}
   void deleteBaseIngredient(Ingredient ingredient) {
     baseIngredients[ingredient.name] = ingredient;
   }
-
   void deleteDiet(Diet diet) {
     diets[diet.name] = diet;
   }
@@ -208,11 +207,10 @@ class App {
 class Diet {
   String name;
   List<Day> days;
-  AnthroMetrics anthroMetrics;
   DRIS dris;
 
   Nutrients get averageNutrition {
-    List<Nutrients> dayNut = days.map((e) => e.nutrients).toList();
+    final dayNut = days.map((e) => e.nutrients);
     Nutrients sum = Nutrients.sum(dayNut);
     return sum / dayNut.length;
   }
@@ -234,22 +232,19 @@ class Diet {
   Diet({
     required this.name,
     required this.days,
-    required this.anthroMetrics,
     required this.dris,
   });
 
   factory Diet.staticConstructor({
     required name,
     required days,
-    required anthroMetrics,
     required dris,
   }) =>
-      Diet(name: name, days: days, anthroMetrics: anthroMetrics, dris: dris);
+      Diet(name: name, days: days, dris: dris);
 
   Map<String, dynamic> get attributes__ => {
         "name": name,
         "days": days,
-        "anthroMetrics": anthroMetrics,
         "dris": dris
       };
 
@@ -260,26 +255,23 @@ class Diet {
           runtimeType == other.runtimeType &&
           equals(name, other.name) &&
           equals(days, other.days) &&
-          equals(anthroMetrics, other.anthroMetrics) &&
           equals(dris, other.dris));
 
   @override
   int get hashCode =>
-      name.hashCode ^ days.hashCode ^ anthroMetrics.hashCode ^ dris.hashCode;
+      name.hashCode ^ days.hashCode  ^ dris.hashCode;
 
   @override
   String toString() =>
-      'Diet(name: $name, days: $days, anthroMetrics: $anthroMetrics, dris: $dris)';
+      'Diet(name: $name, days: $days, dris: $dris)';
 
   Diet copyWithDiet(
           {String? name,
           List<Day>? days,
-          AnthroMetrics? anthroMetrics,
           DRIS? dris}) =>
       Diet(
           name: name ?? this.name,
           days: days ?? this.days,
-          anthroMetrics: anthroMetrics ?? this.anthroMetrics,
           dris: dris ?? this.dris);
 
   String toJson() => jsonEncode(toMap());
@@ -291,13 +283,12 @@ class Diet {
   factory Diet.fromMap(Map map) {
     String name = map['name'];
     List daysTemp = dejsonify(map['days']);
-    AnthroMetrics anthroMetrics = dejsonify(map['anthroMetrics']);
     DRIS dris = dejsonify(map['dris']);
 
     List<Day> days = List<Day>.from(daysTemp);
 
     return Diet(
-        name: name, days: days, anthroMetrics: anthroMetrics, dris: dris);
+        name: name, days: days, dris: dris);
   }
   // </Dataclass>
 
@@ -309,7 +300,7 @@ class Day {
   String name;
   List<MealComponent> meals;
 
-  Nutrients get nutrients => throw UnimplementedError();
+  Nutrients get nutrients => Nutrients.sum(meals.map((e) => e.nutrients));
 
   void addDayMeal(Meal meal) {
     meals.add(meal.toMealComponent('servings', 1, meal));
