@@ -3,7 +3,8 @@ import 'package:nutrition_app/domain.dart';
 
 final dio = Dio();
 // TODO TYPE API CALLS
-apiCallFromUpc(int upc, Settings settings) async {
+/// Use in a try block
+Future<Response> apiCallFromUpc(int upc, Settings settings) async {
   const url = 'https://trackapi.nutritionix.com/v2/search/item';
   final queryParameters = {
     'upc': upc.toString(),
@@ -28,11 +29,17 @@ apiCallFromUpc(int upc, Settings settings) async {
     return response;
   } on DioError catch (e) {
     print(e);
+    print(e.error);
+    print(e.response);
+    print(e.type);
+    print(e.message);
+    print(e.requestOptions);
+    rethrow;
     // TODO HANDLE ERROR
   }
 }
 
-apiCallFromString(String string, Settings settings) async {
+Future<Response> apiCallFromString(String string, Settings settings) async {
   const url = 'https://trackapi.nutritionix.com/v2/natural/nutrients';
   final headers = {
     'x-app-id': settings.appId,
@@ -58,10 +65,12 @@ apiCallFromString(String string, Settings settings) async {
     print(e.type);
     print(e.message);
     print(e.requestOptions);
+    rethrow;
   }
   catch (e) {
     print('-----------');
     print(e);
+    rethrow;
   }
 }
 

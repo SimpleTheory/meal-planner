@@ -580,7 +580,7 @@ List<ReflectedClass> dataclasses = [
             false,
             null,
             false,
-            Nutrients.fromRepsonseBody),
+            Nutrients.fromResponseBody),
         Method.create(
             'fromValues',
             ReflectedType.create(Nutrients, 'Nutrients'),

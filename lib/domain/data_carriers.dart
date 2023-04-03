@@ -419,8 +419,8 @@ class Nutrients {
     return listOfNutrients.reduce((previous, current) => previous + current);
   }
 
-  factory Nutrients.fromRepsonseBody(Map responseBody) {
-    List<Map> temp = responseBody['full_nutrients'];
+  factory Nutrients.fromResponseBody(Map responseBody) {
+    List temp = responseBody['full_nutrients'];
     Map<int, num> nut = {};
     for (Map map in temp) {
       nut[map['attr_id']] = map['value'];
@@ -1714,6 +1714,7 @@ class DRIS {
 // </editor-fold>
 }
 
+@Dataclass(constructor: false)
 class BaseNutrients {
   num grams;
   Nutrients nutrients;
@@ -1722,6 +1723,9 @@ class BaseNutrients {
     required this.grams,
     required this.nutrients,
   });
+
+  @Generate()
+
 }
 
 /// Settings Based Data Carriers

@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:dataclasses/dataclasses.dart';
+import 'package:dio/dio.dart';
 import 'package:nutrition_app/api/nutritionix.dart';
 import 'package:nutrition_app/domain.dart';
 import 'package:nutrition_app/mydataclasses/metadata.dart';
@@ -40,20 +41,22 @@ class Ingredient extends MealComponentFactory {
   IngredientSource source;
   dynamic sourceMetadata;
 
-  factory Ingredient.fromApi(Settings settings, sourceMetadata) {
+  /// Use in a try except block
+  /// TODO: Create different errors for this (like invalid api)
+  static Future<Ingredient> fromApi(Settings settings, sourceMetadata) async {
     IngredientSource source;
-    String json;
+    Response json;
     if (sourceMetadata is int) {
       source = IngredientSource.upc;
-      json = apiCallFromUpc(sourceMetadata, settings);
+      json = await apiCallFromUpc(sourceMetadata, settings);
     } else if (sourceMetadata is String) {
       source = IngredientSource.string;
-      json = apiCallFromString(sourceMetadata, settings);
+      json = await apiCallFromString(sourceMetadata, settings);
     } else {
       throw Exception('$sourceMetadata type(${sourceMetadata.runtimeType})is '
           'not String or int and cannot be called from nutritionix API');
     }
-    Map body = jsonDecode(json);
+    Map body = json.data['foods'][0];
     return Ingredient.fromResponseBody(
         responseBody: body, source: source, sourceMetadata: sourceMetadata);
   }
@@ -66,7 +69,7 @@ class Ingredient extends MealComponentFactory {
     // Ingredient(name: name, baseNutrient: baseNutrient, altMeasures2grams: altMeasures2grams, source: source, sourceMetadata: )
     final baseNutrient = BaseNutrients(
         grams: responseBody['serving_weight_grams'],
-        nutrients: Nutrients.fromRepsonseBody(responseBody));
+        nutrients: Nutrients.fromResponseBody(responseBody));
     Map<String, num> altMeasures2grams = {
       responseBody['serving_unit']: responseBody['serving_weight_grams'],
       ...{
