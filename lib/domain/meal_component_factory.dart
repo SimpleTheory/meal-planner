@@ -21,6 +21,7 @@ abstract class MealComponentFactory {
   }
 
   Uri? get photo => null;
+  baseIngredients(); // MealComponent | List<MealComponent>
 }
 
 /// Meal Component Implementation
@@ -96,6 +97,9 @@ class Ingredient extends MealComponentFactory {
         source: source,
         sourceMetadata: sourceMetadata);
   }
+
+  @override
+  baseIngredients() => this;
 
   // <editor-fold desc="Dataclass Section">
   @Generate()
@@ -220,6 +224,10 @@ class Meal extends MealComponentFactory {
   @override
   Uri? photo;
   String notes = '';
+
+  @override
+  List<MealComponent> baseIngredients()=>
+    ingredients.map<MealComponent>((e) => e.getBaseIngredients()).toList();
 
   // <editor-fold desc="Dataclass Section">
   Meal(

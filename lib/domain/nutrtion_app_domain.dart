@@ -2,6 +2,7 @@ import 'package:nutrition_app/mydataclasses/metadata.dart';
 import 'dart:convert';
 import 'package:dataclasses/dataclasses.dart';
 import 'package:nutrition_app/domain.dart';
+import 'package:nutrition_app/utils/utils.dart';
 
 /// AGG ROOT
 @Dataclass()
@@ -31,15 +32,12 @@ class App {
 
   // Delete: meal, ingredient, diet
   void deleteMeal(Meal meal) {}
-  void deleteBaseIngredient(Ingredient ingredient) {
-    baseIngredients[ingredient.name] = ingredient;
-  }
-  void deleteDiet(Diet diet) {
-    diets[diet.name] = diet;
-  }
+  void deleteBaseIngredient(Ingredient ingredient) {}
+  void deleteDiet(Diet diet) {}
 
   factory App.newApp(Settings settings) =>
       App(settings: settings, diets: {}, meals: {}, baseIngredients: {});
+
 
   // <editor-fold desc="Dataclass Section">
 
@@ -225,6 +223,25 @@ class Diet {
     days.removeAt(day);
   }
 
+  List<MealComponent> getShoppingList(){
+    List container = [];
+    for (Day day in days){
+      for (MealComponent meal in day.meals){
+        container.add(meal.getBaseIngredients());
+      }
+    }
+    List<MealComponent> flattened = flatten<MealComponent>(container).toList();
+    final result = combineListValuesToMap<MealComponent, String, MealComponent>(
+        flattened,
+        (elemToKey) => elemToKey.name,
+        (elemToValue) => elemToValue,
+        (existingSameKeyValue, newSameKeyValue) =>
+            existingSameKeyValue.copyWithMealComponent(
+                grams: existingSameKeyValue.grams + newSameKeyValue.grams
+            ));
+    return result.values.toList();
+  }
+
   // <editor-fold desc="Dataclass Section">
   @Generate()
   // <Dataclass>
@@ -379,6 +396,19 @@ class MealComponent {
   Nutrients get nutrients {
     num ratio = grams / reference.baseNutrient.grams;
     return reference.baseNutrient.nutrients * ratio;
+  }
+  String get name => reference.name;
+
+  /// Returns List<MealComponent> or itself, depending on whether this references
+  /// a Meal (List) or an Ingredient (Itself). In order to recursively get all
+  /// leaf nodes.
+  getBaseIngredients(){
+    if (reference is Ingredient){
+      return this;
+    }
+    else{
+      return reference.baseIngredients();
+    }
   }
 
   // <editor-fold desc="Dataclass Section">
