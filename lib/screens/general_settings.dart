@@ -1,43 +1,116 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
-class IndexPage extends StatelessWidget {
-  const IndexPage({Key? key}) : super(key: key);
+
+class GeneralSettingsPage extends StatelessWidget {
+  const GeneralSettingsPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     // Wrap with bloc
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Nutrition App'),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(0, 6, 8, 8),
-            child: IconButton(icon: const Icon(CupertinoIcons.gear), onPressed: (){},))
-    ],
-      ),
-      body: Column(
-        children: const [
-          ExpansionTile(
-              title: Text('Diets'),
-              children: [
-                // TODO: List tile widget for all diets
-              ],
+        appBar: AppBar(title: const Text('General Settings')),
+        body: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            children: [
+              Row(
+                children: [
+                  InkWell(
+                    onTap: (){},
+                    child: Container(
+                        padding: const EdgeInsets.all(12),
+                        child: Text('Imperial')),
+                  ),
+                  InkWell(
+                    onTap: (){},
+                    child: Container(
+                        padding: const EdgeInsets.all(12),
+                        child: Text('Metric')),
+                  )
+                ],
+              ),
+              Row(
+                children: [
+                  Text('Height: '),
+                  Flexible(
+                    child: TextField(
+                      decoration: InputDecoration(
+                        labelText: 'centimeters',
+                      ),
+                      keyboardType: TextInputType.number,
+                      inputFormatters: <TextInputFormatter>[
+                          FilteringTextInputFormatter.digitsOnly
+                        ]
+                    ),
+                  )
+                  ],
+              ),
+              Row(
+                children: [
+                  Text('Weight: '),
+                  Flexible(
+                    child: TextField(
+                      decoration: InputDecoration(
+                        labelText: 'kilograms',
+                      ),
+                      keyboardType: TextInputType.number,
+                      inputFormatters: <TextInputFormatter>[
+                          FilteringTextInputFormatter.digitsOnly
+                        ]
+                    ),
+                  )
+                  ],
+              ),
+              Row(
+                children: [
+                  Text('Sex: '),
+                  InkWell(
+                    onTap: (){},
+                    child: Container(
+                        padding: const EdgeInsets.all(12),
+                        child: Text('Male')),
+                  ),
+                  InkWell(
+                    onTap: (){},
+                    child: Container(
+                        padding: const EdgeInsets.all(12),
+                        child: Text('Female')),
+                  ),
+                ],
+              ),
+              Row(
+                children: [
+                  Text('API Key: '),
+                  Flexible(child: TextField())
+                ],
+              ),
+              Row(
+                children: [
+                  Text('API ID: '),
+                  Flexible(child: TextField())
+                ],
+              ),
+              Row(
+                children: [
+                  Text('Dark mode: '),
+                  /// Default = settings dark mode (which will be sys pref) onChange updates settings,
+                  Switch(value: true, onChanged: (val)=>!val),
+                ],
+              ),
+              Row(
+                children: [
+                  Text('Estimated Activity Level: '),
+                  DropdownButton<String>(
+                    value: 'Sedentary',
+                    onChanged: (String? activityLevel) {},
+                    items: <String>['Sedentary', 'Low Active', 'Active', 'Very Active'].map<DropdownMenuItem<String>>(
+                            (String value) => DropdownMenuItem<String>(value: value, child: Text(value))).toList())
+                ],
+              ),
+            ],
           ),
-          ExpansionTile(
-              title: Text('Meals'),
-              children: [
-                // TODO: List tile widget for all meals
-              ],
-          ),
-          ExpansionTile(
-              title: Text('Ingredients'),
-              children: [
-                // TODO: List tile widget for all ingredients
-              ],
-          ),
-        ],
-      ),
+        )
     );
   }
 }

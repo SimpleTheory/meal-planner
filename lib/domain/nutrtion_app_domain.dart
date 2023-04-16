@@ -206,6 +206,7 @@ class Diet {
   String name;
   List<Day> days;
   DRIS dris;
+  // TODO persistent shopping list with categories
 
   Nutrients get averageNutrition {
     final dayNut = days.map((e) => e.nutrients);
