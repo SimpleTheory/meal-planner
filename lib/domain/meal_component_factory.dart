@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:nutrition_app/api/nutritionix.dart';
 import 'package:nutrition_app/domain.dart';
 import 'package:nutrition_app/mydataclasses/metadata.dart';
+import 'package:nutrition_app/utils/utils.dart';
 
 /// Interfaces
 abstract class MealComponentFactory {
@@ -80,10 +81,10 @@ class Ingredient extends MealComponentFactory {
             alt['measure']: alt['serving_weight']
         }
       };
-    }
-    else{
+    } else {
       altMeasures2grams = {
-        responseBody['serving_unit']: responseBody['serving_weight_grams'],};
+        responseBody['serving_unit']: responseBody['serving_weight_grams'],
+      };
     }
     String name = responseBody['food_name'];
     String? photo =
@@ -225,8 +226,12 @@ class Meal extends MealComponentFactory {
   String notes = '';
 
   @override
-  List<MealComponent> baseIngredients()=>
-    ingredients.map<MealComponent>((e) => e.getBaseIngredients()).toList();
+  List<MealComponent> baseIngredients() =>
+      combineListValuesToMap<MealComponent, String, MealComponent>(
+  flatten<MealComponent>(ingredients.map((e) => e.getBaseIngredients())).toList(),
+  (MealComponent key)=>key.name,
+  (MealComponent value)=>value,
+  (MealComponent k1, MealComponent k2)=>k1.copyWithMealComponent(grams: k1.grams+k2.grams)).values.toList();
 
   // <editor-fold desc="Dataclass Section">
   Meal(
@@ -247,7 +252,7 @@ class Meal extends MealComponentFactory {
                         ingredients.map((e) => e.nutrients).toList()) /
                     servings),
             {
-              'servings': (ingredients
+              'serving': (ingredients
                       .map((e) => e.grams)
                       .toList()
                       .reduce((previous, current) => previous + current)) /

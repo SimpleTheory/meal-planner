@@ -21,9 +21,11 @@ class App {
   void addMeal(Meal meal) {
     meals[meal.name] = meal;
   }
+
   void addBaseIngredient(Ingredient ingredient) {
     baseIngredients[ingredient.name] = ingredient;
   }
+
   void addDiet(Diet diet) {
     diets[diet.name] = diet;
   }
@@ -37,7 +39,6 @@ class App {
 
   factory App.newApp(Settings settings) =>
       App(settings: settings, diets: {}, meals: {}, baseIngredients: {});
-
 
   // <editor-fold desc="Dataclass Section">
 
@@ -224,10 +225,10 @@ class Diet {
     days.removeAt(day);
   }
 
-  List<MealComponent> getShoppingList(){
+  List<MealComponent> getShoppingList() {
     List container = [];
-    for (Day day in days){
-      for (MealComponent meal in day.meals){
+    for (Day day in days) {
+      for (MealComponent meal in day.meals) {
         container.add(meal.getBaseIngredients());
       }
     }
@@ -238,8 +239,7 @@ class Diet {
         (elemToValue) => elemToValue,
         (existingSameKeyValue, newSameKeyValue) =>
             existingSameKeyValue.copyWithMealComponent(
-                grams: existingSameKeyValue.grams + newSameKeyValue.grams
-            ));
+                grams: existingSameKeyValue.grams + newSameKeyValue.grams));
     return result.values.toList();
   }
 
@@ -260,11 +260,8 @@ class Diet {
   }) =>
       Diet(name: name, days: days, dris: dris);
 
-  Map<String, dynamic> get attributes__ => {
-        "name": name,
-        "days": days,
-        "dris": dris
-      };
+  Map<String, dynamic> get attributes__ =>
+      {"name": name, "days": days, "dris": dris};
 
   @override
   bool operator ==(Object other) =>
@@ -276,21 +273,15 @@ class Diet {
           equals(dris, other.dris));
 
   @override
-  int get hashCode =>
-      name.hashCode ^ days.hashCode  ^ dris.hashCode;
+  int get hashCode => name.hashCode ^ days.hashCode ^ dris.hashCode;
 
   @override
-  String toString() =>
-      'Diet(name: $name, days: $days, dris: $dris)';
+  String toString() => 'Diet(name: $name, days: $days, dris: $dris)';
 
-  Diet copyWithDiet(
-          {String? name,
-          List<Day>? days,
-          DRIS? dris}) =>
-      Diet(
-          name: name ?? this.name,
-          days: days ?? this.days,
-          dris: dris ?? this.dris);
+  Diet copyWithDiet({String? name, List<Day>? days, DRIS? dris}) => Diet(
+      name: name ?? this.name,
+      days: days ?? this.days,
+      dris: dris ?? this.dris);
 
   String toJson() => jsonEncode(toMap());
   Map<String, dynamic> toMap() =>
@@ -305,8 +296,7 @@ class Diet {
 
     List<Day> days = List<Day>.from(daysTemp);
 
-    return Diet(
-        name: name, days: days, dris: dris);
+    return Diet(name: name, days: days, dris: dris);
   }
   // </Dataclass>
 
@@ -403,11 +393,10 @@ class MealComponent {
   /// Returns List<MealComponent> or itself, depending on whether this references
   /// a Meal (List) or an Ingredient (Itself). In order to recursively get all
   /// leaf nodes.
-  getBaseIngredients(){
-    if (reference is Ingredient){
+  getBaseIngredients() {
+    if (reference is Ingredient) {
       return this;
-    }
-    else{
+    } else {
       return reference.baseIngredients();
     }
   }

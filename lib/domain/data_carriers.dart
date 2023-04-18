@@ -1136,7 +1136,8 @@ class DRI {
       'dri': dri,
       'upperLimit': upperLimit,
       'unit': unit,
-      'note': note
+      'note': note,
+      '__type': 'DRI'
     };
   }
 
@@ -1145,7 +1146,7 @@ class DRI {
         dri: map['dri'] as num?,
         upperLimit: map['upperLimit'] as num?,
         unit: map['unit'] as String,
-        note: map['note'] as String);
+        note: map['note'] as String?);
   }
 
   DRI copyWith({dri, upperLimit}) => DRI(name,
