@@ -1,4 +1,5 @@
 import 'dart:convert';
+// import 'package:ari_utils/ari_utils.dart';
 import 'package:dataclasses/dataclasses.dart';
 import 'package:nutrition_app/api/nutritionix.dart';
 import 'package:nutrition_app/domain.dart';
@@ -462,6 +463,47 @@ class Nutrients {
     );
   }
 
+    // void round(){
+  //   calcium = roundDecimal(calcium, 2);
+  //   carbohydrate = roundDecimal(carbohydrate, 2);
+  //   cholesterol = roundDecimal(cholesterol, 2);
+  //   calories = roundDecimal(calories, 2);
+  //   saturatedFat = roundDecimal(saturatedFat, 2);
+  //   totalFat = roundDecimal(totalFat, 2);
+  //   transFat = roundDecimal(transFat, 2);
+  //   iron = roundDecimal(iron, 2);
+  //   fiber = roundDecimal(fiber, 2);
+  //   potassium = roundDecimal(potassium, 2);
+  //   sodium = roundDecimal(sodium, 2);
+  //   protein = roundDecimal(protein, 2);
+  //   sugars = roundDecimal(sugars, 2);
+  //   choline = roundDecimal(choline, 2);
+  //   copper = roundDecimal(copper, 2);
+  //   ala = roundDecimal(ala, 2);
+  //   linoleicAcid = roundDecimal(linoleicAcid, 2);
+  //   epa = roundDecimal(epa, 2);
+  //   dpa = roundDecimal(dpa, 2);
+  //   dha = roundDecimal(dha, 2);
+  //   folate = roundDecimal(folate, 2);
+  //   magnesium = roundDecimal(magnesium, 2);
+  //   manganese = roundDecimal(manganese, 2);
+  //   niacin = roundDecimal(niacin, 2);
+  //   phosphorus = roundDecimal(phosphorus, 2);
+  //   pantothenicAcid = roundDecimal(pantothenicAcid, 2);
+  //   riboflavin = roundDecimal(riboflavin, 2);
+  //   selenium = roundDecimal(selenium, 2);
+  //   thiamin = roundDecimal(thiamin, 2);
+  //   vitaminE = roundDecimal(vitaminE, 2);
+  //   vitaminA = roundDecimal(vitaminA, 2);
+  //   vitaminB12 = roundDecimal(vitaminB12, 2);
+  //   vitaminB6 = roundDecimal(vitaminB6, 2);
+  //   vitaminC = roundDecimal(vitaminC, 2);
+  //   vitaminD = roundDecimal(vitaminD, 2);
+  //   vitaminK = roundDecimal(vitaminK, 2);
+  //   zinc = roundDecimal(zinc, 2);
+  //   unsaturatedFat = roundDecimal(unsaturatedFat, 2);
+  // }
+
   // <editor-fold desc="Dataclass Section">
 
   // <editor-fold desc="From Values Constructor">
@@ -796,7 +838,7 @@ class Nutrients {
   @override
   String toString() =>
       'Nutrients(calcium: $calcium, carbohydrate: $carbohydrate, cholesterol: $cholesterol, calories: $calories, saturatedFat: $saturatedFat, totalFat: $totalFat, transFat: $transFat, iron: $iron, fiber: $fiber, potassium: $potassium, sodium: $sodium, protein: $protein, sugars: $sugars, choline: $choline, copper: $copper, ala: $ala, linoleicAcid: $linoleicAcid, epa: $epa, dpa: $dpa, dha: $dha, folate: $folate, magnesium: $magnesium, manganese: $manganese, niacin: $niacin, phosphorus: $phosphorus, pantothenicAcid: $pantothenicAcid, riboflavin: $riboflavin, selenium: $selenium, thiamin: $thiamin, vitaminE: $vitaminE, vitaminA: $vitaminA, vitaminB12: $vitaminB12, vitaminB6: $vitaminB6, vitaminC: $vitaminC, vitaminD: $vitaminD, vitaminK: $vitaminK, zinc: $zinc, unsaturatedFat: $unsaturatedFat)';
-
+  String toStr()=>'Nutrients(calcium: ${calcium.value}${calcium.unit}, carbohydrate: ${carbohydrate.value}${carbohydrate.unit}, cholesterol: ${cholesterol.value}${cholesterol.unit}, calories: ${calories.value}${calories.unit}, saturatedFat: ${saturatedFat.value}${saturatedFat.unit}, totalFat: ${totalFat.value}${totalFat.unit}, transFat: ${transFat.value}${transFat.unit}, iron: ${iron.value}${iron.unit}, fiber: ${fiber.value}${fiber.unit}, potassium: ${potassium.value}${potassium.unit}, sodium: ${sodium.value}${sodium.unit}, protein: ${protein.value}${protein.unit}, sugars: ${sugars.value}${sugars.unit}, choline: ${choline.value}${choline.unit}, copper: ${copper.value}${copper.unit}, ala: ${ala.value}${ala.unit}, linoleicAcid: ${linoleicAcid.value}${linoleicAcid.unit}, epa: ${epa.value}${epa.unit}, dpa: ${dpa.value}${dpa.unit}, dha: ${dha.value}${dha.unit}, folate: ${folate.value}${folate.unit}, magnesium: ${magnesium.value}${magnesium.unit}, manganese: ${manganese.value}${manganese.unit}, niacin: ${niacin.value}${niacin.unit}, phosphorus: ${phosphorus.value}${phosphorus.unit}, pantothenicAcid: ${pantothenicAcid.value}${pantothenicAcid.unit}, riboflavin: ${riboflavin.value}${riboflavin.unit}, selenium: ${selenium.value}${selenium.unit}, thiamin: ${thiamin.value}${thiamin.unit}, vitaminE: ${vitaminE.value}${vitaminE.unit}, vitaminA: ${vitaminA.value}${vitaminA.unit}, vitaminB12: ${vitaminB12.value}${vitaminB12.unit}, vitaminB6: ${vitaminB6.value}${vitaminB6.unit}, vitaminC: ${vitaminC.value}${vitaminC.unit}, vitaminD: ${vitaminD.value}${vitaminD.unit}, vitaminK: ${vitaminK.value}${vitaminK.unit}, zinc: ${zinc.value}${zinc.unit}, unsaturatedFat: ${unsaturatedFat.value}${unsaturatedFat.unit})';
   Nutrients copyWith(
           {Nutrient? calcium,
           Nutrient? carbohydrate,
