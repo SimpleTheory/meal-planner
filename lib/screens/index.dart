@@ -17,29 +17,43 @@ class IndexPage extends StatelessWidget {
               child: IconButton(icon: const Icon(CupertinoIcons.gear), onPressed: (){Navigator.push(context, MaterialPageRoute(builder: (context) => const GeneralSettingsPage()));},))
         ],
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: const [
-            ExpansionTile(
-              title: Text('Diets'),
+      body: Column(
+        children: [
+          ExpansionTile(
+            title: Text('Diets'),
+            children: [
+              // TODO: List tile widget for all diets
+            ],
+          ),
+          ElevatedButton(
+            // title: Text('Meals'),
+            onPressed: () { },
+            child: const Text('Meals'),
+            // children: [
+            //   // TODO: List tile widget for all meals
+            // ],
+          ),
+          ElevatedButton(
+            // title: Text('Meals'),
+              onPressed: () { },
+              child: const Text('Ingredients'),
+            // children: [
+            //   // TODO: List tile widget for all meals
+            // ],
+          ),
+          const Text('DEBUG NAVIGATIONS'),
+          Expanded(
+            child: ListView(
               children: [
-                // TODO: List tile widget for all diets
+                ListTile(title: Text(''), onTap: (){}, tileColor: Colors.green),
+                ListTile(title: Text(''), onTap: (){},),
+                ListTile(title: Text(''), onTap: (){},),
+                ListTile(title: Text(''), onTap: (){},),
+
               ],
             ),
-            ExpansionTile(
-              title: Text('Meals'),
-              children: [
-                // TODO: List tile widget for all meals
-              ],
-            ),
-            ExpansionTile(
-              title: Text('Ingredients'),
-              children: [
-                // TODO: List tile widget for all ingredients
-              ],
-            ),
-          ],
-        ),
+          )
+        ],
       ),
     );
   }

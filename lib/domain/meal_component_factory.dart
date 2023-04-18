@@ -43,7 +43,6 @@ class Ingredient extends MealComponentFactory {
   dynamic sourceMetadata;
 
   /// Use in a try except block
-  /// TODO: Create different errors for this (like invalid api)
   static Future<Ingredient> fromApi(Settings settings, sourceMetadata) async {
     IngredientSource source;
     Response json;

@@ -565,20 +565,4 @@ void mealComponentTests() {
   });
 }
 
-void main() {
-  appDataclassMethods();
-  // appTests();
-  // settingsDataclassMethods();
-  // settingsTests();
-  // mealDataclassMethods();
-  // mealTests();
-  // ingredientDataclassMethods();
-  // ingredientTests();
-  // mealComponentDataclassMethods();
-  // mealComponentTests();
-  // dietDataclassMethods();
-  // dietTests();
-  // dayDataclassMethods();
-  // dayTests();
-
-}
+void main() {}
