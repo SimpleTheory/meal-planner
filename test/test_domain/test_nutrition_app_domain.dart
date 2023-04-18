@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:nutrition_app/mydataclasses/metadata.dart';
 import 'package:test/test.dart';
 import 'package:dataclasses/dataclasses.dart';
+import 'package:dataclasses/dataclasses.dart'  as dc_eq show equals;
 import 'package:nutrition_app/domain.dart';
 import 'dart:io';
 
@@ -486,7 +487,7 @@ void dietDataclassMethods() {
   });
 }
 
-@CreateTestTemplates(Diet, 'diet')
+//@CreateTestTemplates(Diet, 'diet')
 void dietTests() {
   group('Diet Tests', () {
     test('Diet.createDay', () {
@@ -502,9 +503,9 @@ void dietTests() {
     });
 
     test('Diet.getShoppingList', () {
-      // TODO: complete test
-      // List<MealComponent> result = diet.getShoppingList();
-      // expect(result, expectation);
+      List<MealComponent> result = diet.getShoppingList();
+      expect(
+          dc_eq.equals(result.map((e) => [e.name, e.grams]).toList(), [['pizza', 240], ['No Sugar Keto Cup, Dark Chocolate', 50], ['milk', 100]]), true);
     });
   });
 }
