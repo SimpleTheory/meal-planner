@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:nutrition_app/screens/general_settings.dart';
+import 'package:nutrition_app/screens/ingredients_page.dart';
 import 'package:nutrition_app/screens/meal_page.dart';
 
 class IndexPage extends StatelessWidget {
@@ -36,7 +37,7 @@ class IndexPage extends StatelessWidget {
           ),
           ElevatedButton(
             // title: Text('Meals'),
-              onPressed: () { },
+              onPressed: () {Navigator.push(context, MaterialPageRoute(builder: (context) => const IngredientPage()));},
               child: const Text('Ingredients'),
             // children: [
             //   // TODO: List tile widget for all meals
