@@ -1,3 +1,7 @@
+import 'dart:io';
+
+import 'package:flutter/material.dart';
+import 'package:flutter_emoji/flutter_emoji.dart';
 
 /// List: List to combine elements of
 /// Keyizer: Function to get key from an element of the list.
@@ -39,15 +43,15 @@ Map<T1, T2> combineListValuesToMap<E, T1, T2>
     (List<E> list,
     T1 Function(E elemToKey) keyizer,
     T2 Function(E elemToValue) valueizer,
-    T2 Function(T2 existingSameKeyValue, T2 newSameKeyValue) combinator){
+    T2 Function(T2 existingSameKeyValue, T2 newSameKeyValue) combinator) {
   Map<T1, T2> result = {};
-  for (E entry in list){
+  for (E entry in list) {
     T1 key = keyizer(entry);
     T2 value = valueizer(entry);
-    if (result[key] == null){
+    if (result[key] == null) {
       result[key] = value;
     }
-    else{
+    else {
       result[key] = combinator(result[key] as T2, value);
     }
   }
@@ -63,3 +67,52 @@ Iterable<T> flatten<T>(Iterable<dynamic> iterable) sync* {
     }
   }
 }
+
+extension ColumnPadding on Column{
+  Column pad(EdgeInsetsGeometry padding) =>
+      Column(
+        key: key,
+        mainAxisAlignment: mainAxisAlignment,
+        mainAxisSize: mainAxisSize,
+        crossAxisAlignment: crossAxisAlignment,
+        textBaseline: textBaseline,
+        textDirection: textDirection,
+        verticalDirection: verticalDirection,
+        children: children.map((e) => Padding(padding: padding, child: e)).toList(),
+      );
+}
+
+List<Padding> padWidgets(List<Widget> widgets, EdgeInsetsGeometry padding)=>
+    widgets.map((e) => Padding(padding: padding, child: e)).toList();
+
+extension RowPadding on Row{
+  Row pad(EdgeInsetsGeometry padding) =>
+      Row(
+        key: key,
+        mainAxisAlignment: mainAxisAlignment,
+        mainAxisSize: mainAxisSize,
+        crossAxisAlignment: crossAxisAlignment,
+        textBaseline: textBaseline,
+        textDirection: textDirection,
+        verticalDirection: verticalDirection,
+        children: children.map((e) => Padding(padding: padding, child: e)).toList(),
+      );
+}
+
+// TODO ADD ERRORS
+Image getImage(Uri? uri){
+  if (uri == null){
+    return Image.file(File('cache/images/null.png'));
+  }
+  // try{
+  if (uri.scheme == 'file'){
+    return Image.file(File(uri.path));
+    }
+  else{
+    return Image.network(uri.toString());
+    }
+  // } catch{}
+}
+final emoji = EmojiParser();
+final olive = emoji.get('olive').code;
+final butter = emoji.get('butter').code;

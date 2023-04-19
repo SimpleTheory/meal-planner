@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:nutrition_app/utils/utils.dart';
 
 
 class GeneralSettingsPage extends StatelessWidget {
@@ -109,7 +110,7 @@ class GeneralSettingsPage extends StatelessWidget {
                 ],
               ),
             ],
-          ),
+          ).pad(const EdgeInsets.all(8.0)),
         )
     );
   }
