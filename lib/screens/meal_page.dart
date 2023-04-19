@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:nutrition_app/utils/local_widgets.dart';
 import 'package:nutrition_app/utils/utils.dart';
 import 'package:nutrition_app/domain.dart';
 
@@ -48,6 +49,7 @@ class MealPage extends StatelessWidget {
               padding: EdgeInsets.fromLTRB(5, 0, 5, 0),
               child: ListView(
                 children: [
+                  plusSignTile(() { }),
                   mealTile(dummyObject),
                   mealTile(dummyObject),
                 ],
