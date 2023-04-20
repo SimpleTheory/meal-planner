@@ -28,6 +28,7 @@ class CustomIngredientPage extends StatelessWidget {
                 Flexible(child: TextFormField(
                     decoration: const InputDecoration(
                       labelText: 'grams',
+                      contentPadding: EdgeInsets.fromLTRB(10, 0, 0, 0)
                     ),
                     inputFormatters: <TextInputFormatter>[
                       FilteringTextInputFormatter.allow(RegExp(r'[\d.]+'))
@@ -42,6 +43,7 @@ class CustomIngredientPage extends StatelessWidget {
                 Flexible(child: TextFormField(
                     decoration: const InputDecoration(
                       labelText: 'name',
+                      contentPadding: EdgeInsets.fromLTRB(10, 0, 0, 0)
                     ),
                     inputFormatters: <TextInputFormatter>[
                       FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z]+'))
@@ -74,8 +76,9 @@ Widget nutrientFormField(String nutName)=>
             padding: const EdgeInsets.fromLTRB(20, 5, 50, 5),
             child: TextFormField(
                 decoration: InputDecoration(
+                  contentPadding: EdgeInsets.fromLTRB(10, 0, 0, 0),
                   // hintText: '0',
-                  // labelText:
+                  labelText: replaceTextForForm(nutName)
                 ),
                 inputFormatters: <TextInputFormatter>[
                   FilteringTextInputFormatter.allow(RegExp(r'[\d.]+'))
@@ -97,6 +100,7 @@ Row altMeasureFormField()=>
           child: TextFormField(
               decoration: const InputDecoration(
                 labelText: 'name',
+                contentPadding: EdgeInsets.fromLTRB(10, 0, 0, 0)
               ),
               inputFormatters: <TextInputFormatter>[
                 FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z \-]+'))
@@ -108,6 +112,8 @@ Row altMeasureFormField()=>
           padding: const EdgeInsets.fromLTRB(10, 3, 10, 3),
           child: TextFormField(
               decoration: const InputDecoration(
+
+                contentPadding: EdgeInsets.fromLTRB(10, 0, 0, 0),
                 labelText: 'grams',
               ),
               inputFormatters: <TextInputFormatter>[
