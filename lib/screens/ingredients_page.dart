@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:nutrition_app/screens/custom_ingredient.dart';
 import 'package:nutrition_app/utils/local_widgets.dart';
 import 'package:nutrition_app/utils/utils.dart';
 import 'package:nutrition_app/domain.dart';
+// import 'package:simple_barcode_scanner/simple_barcode_scanner.dart';
 
 final ingredients = [
   Ingredient.fromJson(
@@ -25,7 +28,7 @@ class IngredientPage extends StatelessWidget {
       body: Column(
         children: [
           Padding(
-              padding: EdgeInsets.fromLTRB(5, 8, 5, 2.5),
+              padding: const EdgeInsets.fromLTRB(5, 8, 5, 2.5),
               child: TextField(
                   decoration: InputDecoration(
                       border: OutlineInputBorder(
@@ -41,7 +44,7 @@ class IngredientPage extends StatelessWidget {
               padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
               child: ListView(
                 children: [
-                  plusSignTile(() { }),
+                  plusSignTile(() {openAddNewIngredientPopUp(context);}),
                   ...ingredients.map((e) => ingredientTile(e)),
                   // ...ingredients.map((e) => ingredientTile(e)),
                   // ...ingredients.map((e) => ingredientTile(e)),
@@ -108,3 +111,43 @@ ListTile ingredientTile(Ingredient ingredient){
     onTap: (){},
   );
 }
+
+openAddNewIngredientPopUp(BuildContext context)=>
+    showDialog(context: context,
+        builder: (context)=>AlertDialog(
+          title: const Text('Add New Ingredient'),
+          content: Column(
+            children: [
+              const Text('Input UPC or name of desired ingredient:'),
+              TextField(
+                  decoration: const InputDecoration(
+                    labelText: 'UPC or Name',
+                  ),
+                  inputFormatters: <TextInputFormatter>[
+                    FilteringTextInputFormatter.allow(RegExp('[A-Za-z0-9 ]+'))
+                  ]
+              ),
+              const Text('Or:'),
+              ElevatedButton(
+                  onPressed: (){},// async {
+                  //   var res = await Navigator.push(
+                  //     context,
+                  //     MaterialPageRoute(
+                  //       builder: (context) => const SimpleBarcodeScannerPage(),
+                  //     )
+                  //   );
+                  //   if (res is String) {
+                  //     res = int.parse(res);
+                  //     print(res);
+                  //   // ADD BLOC EVENT HERE
+                  //     }
+                  // },
+                  child: const Text('Scan UPC')),
+              ElevatedButton(
+                  onPressed: () {Navigator.push(context, MaterialPageRoute(builder: (context) => const IngredientModificationPage()));},
+                  child: const Text('Create Custom Ingredient')),
+            ],
+          ).pad(const EdgeInsets.all(8)),
+          actions: [TextButton(onPressed: (){Navigator.pop(context);}, child: const Text('Submit'))],
+        )
+    );
