@@ -144,7 +144,7 @@ openAddNewIngredientPopUp(BuildContext context)=>
                   // },
                   child: const Text('Scan UPC')),
               ElevatedButton(
-                  onPressed: () {Navigator.push(context, MaterialPageRoute(builder: (context) => const IngredientModificationPage()));},
+                  onPressed: () {Navigator.push(context, MaterialPageRoute(builder: (context) => const CustomIngredientPage()));},
                   child: const Text('Create Custom Ingredient')),
             ],
           ).pad(const EdgeInsets.all(8)),
