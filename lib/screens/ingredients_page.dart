@@ -81,10 +81,10 @@ ListTile ingredientTile(Ingredient ingredient){
     subtitle: Text(
         'Serving (${ingredient.baseNutrient.grams}g):  '
             "${ingredient.baseNutrient.nutrients.calories.value.round()}\u{1F525}  "
-            '${ingredient.baseNutrient.nutrients.carbohydrate.value.round()}\u{1F35E}  '
-            '${ingredient.baseNutrient.nutrients.protein.value.round()}\u{1F969}  '
+            '${ingredient.baseNutrient.nutrients.carbohydrate.value.round()}\u{1F35E}   '
+            '${ingredient.baseNutrient.nutrients.protein.value.round()}\u{1F969}   '
         // '${Ingredient.baseNutrient.nutrients.unsaturatedFat.value.round()}\u{1FAD2}  '
-            '${ingredient.baseNutrient.nutrients.unsaturatedFat.value.round()}$olive  '
+            '${ingredient.baseNutrient.nutrients.unsaturatedFat.value.round()}$olive   '
         // '${Ingredient.baseNutrient.nutrients.saturatedFat.value.round()}\u{1F9C8}',
             '${ingredient.baseNutrient.nutrients.saturatedFat.value.round()}$butter'
     ),
@@ -165,10 +165,10 @@ Widget confirmIngredient(Ingredient ingredient, BuildContext context) =>
             Text(
                 'Serving (${ingredient.baseNutrient.grams}g):  '
                     "${ingredient.baseNutrient.nutrients.calories.value.round()}\u{1F525}  "
-                    '${ingredient.baseNutrient.nutrients.carbohydrate.value.round()}\u{1F35E}  '
-                    '${ingredient.baseNutrient.nutrients.protein.value.round()}\u{1F969}  '
+                    '${ingredient.baseNutrient.nutrients.carbohydrate.value.round()}\u{1F35E}   '
+                    '${ingredient.baseNutrient.nutrients.protein.value.round()}\u{1F969}   '
                 // '${Ingredient.baseNutrient.nutrients.unsaturatedFat.value.round()}\u{1FAD2}  '
-                    '${ingredient.baseNutrient.nutrients.unsaturatedFat.value.round()}$olive  '
+                    '${ingredient.baseNutrient.nutrients.unsaturatedFat.value.round()}$olive   '
                 // '${Ingredient.baseNutrient.nutrients.saturatedFat.value.round()}\u{1F9C8}',
                     '${ingredient.baseNutrient.nutrients.saturatedFat.value.round()}$butter'
             ),
