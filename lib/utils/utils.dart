@@ -100,16 +100,16 @@ extension RowPadding on Row{
 }
 
 // TODO ADD ERRORS
-Image getImage(Uri? uri){
+Image getImage(Uri? uri, {double? width, double? height}){
   if (uri == null){
-    return Image.file(File('cache/images/null.png'));
+    return Image.file(File('cache/images/null.png'), width: width, height: height,);
   }
   // try{
   if (uri.scheme == 'file'){
-    return Image.file(File(uri.path));
+    return Image.file(File(uri.path), width: width, height: height,);
     }
   else{
-    return Image.network(uri.toString());
+    return Image.network(uri.toString(), width: width, height: height,);
     }
   // } catch{}
 }

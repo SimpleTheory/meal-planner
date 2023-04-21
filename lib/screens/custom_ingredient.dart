@@ -76,7 +76,7 @@ Widget nutrientFormField(String nutName)=>
             padding: const EdgeInsets.fromLTRB(20, 5, 50, 5),
             child: TextFormField(
                 decoration: InputDecoration(
-                  contentPadding: EdgeInsets.fromLTRB(10, 0, 0, 0),
+                  contentPadding: const EdgeInsets.fromLTRB(10, 0, 0, 0),
                   // hintText: '0',
                   labelText: replaceTextForForm(nutName)
                 ),

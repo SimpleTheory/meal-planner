@@ -79,7 +79,7 @@ ListTile ingredientTile(Ingredient ingredient){
       ],
     ),
     subtitle: Text(
-        'Serving:  '
+        'Serving (${ingredient.baseNutrient.grams}g):  '
             "${ingredient.baseNutrient.nutrients.calories.value.round()}\u{1F525}  "
             '${ingredient.baseNutrient.nutrients.carbohydrate.value.round()}\u{1F35E}  '
             '${ingredient.baseNutrient.nutrients.protein.value.round()}\u{1F969}  '
@@ -148,6 +148,43 @@ openAddNewIngredientPopUp(BuildContext context)=>
                   child: const Text('Create Custom Ingredient')),
             ],
           ).pad(const EdgeInsets.all(8)),
-          actions: [TextButton(onPressed: (){Navigator.pop(context);}, child: const Text('Submit'))],
+          actions: [
+            TextButton(onPressed: (){Navigator.pop(context);}, child: const Text('Submit'))
+          ],
         )
+    );
+
+Widget confirmIngredient(Ingredient ingredient, BuildContext context) =>
+    AlertDialog(
+      title: const Text('Confirm Ingredient'),
+      content: SingleChildScrollView(
+        child: Column(
+          children: [
+            Center(child: getImage(ingredient.photo, width: 200, height: 200)),
+            Center(child: Text(ingredient.name, style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),)),
+            Text(
+                'Serving (${ingredient.baseNutrient.grams}g):  '
+                    "${ingredient.baseNutrient.nutrients.calories.value.round()}\u{1F525}  "
+                    '${ingredient.baseNutrient.nutrients.carbohydrate.value.round()}\u{1F35E}  '
+                    '${ingredient.baseNutrient.nutrients.protein.value.round()}\u{1F969}  '
+                // '${Ingredient.baseNutrient.nutrients.unsaturatedFat.value.round()}\u{1FAD2}  '
+                    '${ingredient.baseNutrient.nutrients.unsaturatedFat.value.round()}$olive  '
+                // '${Ingredient.baseNutrient.nutrients.saturatedFat.value.round()}\u{1F9C8}',
+                    '${ingredient.baseNutrient.nutrients.saturatedFat.value.round()}$butter'
+            ),
+            Text('Source: ${ingredient.sourceMetadata}', style: const TextStyle(fontSize: 12),),
+            const Text('Is this the ingredient you were looking for?', style: TextStyle(fontSize: 16),)
+          ],
+        ).pad(const EdgeInsets.all(12)),
+      ),
+      actions: [
+        Row(
+          children: [
+            ElevatedButton(onPressed: (){Navigator.pop(context);}, child: const Text('No')),
+            const Spacer(),
+            ElevatedButton(onPressed: (){}, child: const Text('Yes'))
+          ],
+        )
+      ],
+      actionsPadding: const EdgeInsets.fromLTRB(40, 10, 40, 30),
     );
