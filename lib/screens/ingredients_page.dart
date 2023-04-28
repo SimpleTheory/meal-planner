@@ -50,9 +50,7 @@ class IngredientPage extends StatelessWidget {
   }
 }
 
-enum PopUpOptions{
-  edit, delete, duplicate
-}
+
 class IngredientPopUpEnumHolder{
   const IngredientPopUpEnumHolder(Ingredient ingredient, PopUpOptions option);
 }
@@ -114,6 +112,7 @@ openAddNewIngredientPopUp(BuildContext context)=>
                   decoration: const InputDecoration(
                     labelText: 'UPC or Name',
                   ),
+                  autofocus: true,
                   inputFormatters: <TextInputFormatter>[
                     FilteringTextInputFormatter.allow(RegExp('[A-Za-z0-9 ]+'))
                   ]

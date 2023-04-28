@@ -30,7 +30,7 @@ class MealPage extends StatelessWidget {
           ),
           Flexible(
             child: Padding(
-              padding: EdgeInsets.fromLTRB(5, 0, 5, 0),
+              padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
               child: ListView(
                 children: [
                   plusSignTile(() { }),
@@ -46,9 +46,6 @@ class MealPage extends StatelessWidget {
   }
 }
 
-enum PopUpOptions{
-  edit, delete, duplicate
-}
 class MealPopUpEnumHolder{
   const MealPopUpEnumHolder(Meal meal, PopUpOptions option);
 }

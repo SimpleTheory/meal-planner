@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:nutrition_app/domain.dart';
+import 'package:nutrition_app/utils/utils.dart';
 
 Widget plusSignTile(void Function()? onTap) =>
   Padding(
@@ -13,3 +15,19 @@ Widget plusSignTile(void Function()? onTap) =>
           ),
         ),
       );
+
+Text nutrientText({required Nutrients nutrients, num? grams, String? initText, TextStyle? style}){
+  String serving = grams == null ? '' : ' (${grams}g)';
+  initText ??= 'Serving$serving:  ';
+  return Text(
+      '$initText'
+          "${nutrients.calories.value.round()}\u{1F525}  "
+          '${nutrients.carbohydrate.value.round()}\u{1F35E}  '
+          '${nutrients.protein.value.round()}\u{1F969}  '
+      // '${meal.baseNutrient.nutrients.unsaturatedFat.value.round()}\u{1FAD2}  '
+          '${nutrients.unsaturatedFat.value.round()}$olive  '
+      // '${meal.baseNutrient.nutrients.saturatedFat.value.round()}\u{1F9C8}',
+          '${nutrients.saturatedFat.value.round()}$butter',
+    style: style,
+  );
+}

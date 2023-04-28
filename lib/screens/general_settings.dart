@@ -101,7 +101,7 @@ class GeneralSettingsPage extends StatelessWidget {
               ),
               Row(
                 children: [
-                  Text('Estimated Activity Level: '),
+                  const Text('Estimated Activity Level: '),
                   DropdownButton<String>(
                     value: 'Sedentary',
                     onChanged: (String? activityLevel) {},

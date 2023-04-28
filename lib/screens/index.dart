@@ -1,8 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:nutrition_app/screens/diet_details_screen.dart';
 import 'package:nutrition_app/screens/general_settings.dart';
 import 'package:nutrition_app/screens/ingredients_page.dart';
 import 'package:nutrition_app/screens/meal_page.dart';
+import 'package:nutrition_app/domain.dart';
+import 'package:nutrition_app/utils/local_widgets.dart';
 
 import '../temp_dummy_data.dart';
 
@@ -18,14 +21,18 @@ class IndexPage extends StatelessWidget {
         actions: [
           Padding(
               padding: const EdgeInsets.fromLTRB(0, 6, 8, 8),
-              child: IconButton(icon: const Icon(CupertinoIcons.gear), onPressed: (){Navigator.push(context, MaterialPageRoute(builder: (context) => const GeneralSettingsPage()));},))
+              child: IconButton(icon: const Icon(CupertinoIcons.gear), onPressed: (){
+                Navigator.push(context, MaterialPageRoute(builder: (context) => const GeneralSettingsPage()));
+                },))
         ],
       ),
       body: Column(
         children: [
           ExpansionTile(
-            title: Text('Diets'),
+            title: const Text('Diets'),
             children: [
+              plusSignTile(() {}),
+              dietTile(diet, context)
               // TODO: List tile widget for all diets
             ],
           ),
@@ -65,3 +72,25 @@ class IndexPage extends StatelessWidget {
     );
   }
 }
+
+class DietPopUpEnumHolder{
+  Diet diet;
+  PopUpOptions popUpOptions;
+  DietPopUpEnumHolder(this.diet, this.popUpOptions);
+
+}
+
+Widget dietTile(Diet diet, BuildContext context) =>
+    ListTile(
+      title: Text(diet.name),
+      onTap: (){
+        Navigator.push(context, MaterialPageRoute(builder: (context) => DietPage(diet: diet)));
+      },
+      trailing: PopupMenuButton(
+        itemBuilder: (BuildContext context) => [
+          PopupMenuItem(value: DietPopUpEnumHolder(diet, PopUpOptions.edit),child: const Text('Edit'),),
+          PopupMenuItem(value: DietPopUpEnumHolder(diet, PopUpOptions.delete), child: const Text('Delete')),
+          PopupMenuItem(value: DietPopUpEnumHolder(diet, PopUpOptions.duplicate),child: const Text('Duplicate'),),
+        ],
+      )
+    );
