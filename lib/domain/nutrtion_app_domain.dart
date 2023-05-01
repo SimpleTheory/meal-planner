@@ -202,11 +202,13 @@ class App {
 
 /// Diet Branch
 
-@Dataclass()
+@Dataclass(constructor: false)
 class Diet {
   String name;
   List<Day> days;
   DRIS dris;
+  late Map<String, List<MealComponent>> shoppingList;
+
   // TODO persistent shopping list with categories
 
   Nutrients get averageNutrition {
@@ -225,7 +227,7 @@ class Diet {
     days.removeAt(day);
   }
 
-  List<MealComponent> getShoppingList() {
+  List<MealComponent> initShoppingList() {
     List container = [];
     for (Day day in days) {
       for (MealComponent meal in day.meals) {
@@ -243,15 +245,55 @@ class Diet {
     return result.values.toList();
   }
 
-  // <editor-fold desc="Dataclass Section">
-  @Generate()
-  // <Dataclass>
+  void updateShoppingList(){
+    // TODO TEST
+    Map<MealComponent, String> currentShoppingDummy = {};
+    for (MapEntry<String, List<MealComponent>> keyList in shoppingList.entries){
+      currentShoppingDummy.addAll({for (MealComponent ing in keyList.value) ing : keyList.key});
+    }
+    Map<String, MealComponent> namesDummy = {for (MealComponent meal in currentShoppingDummy.keys) meal.name: meal};
+    for (MealComponent mealComponent in initShoppingList()){
+      if (currentShoppingDummy.keys.contains(mealComponent)){
+        continue;
+      }
+      else if(namesDummy.containsKey(mealComponent.name)){
+        final temp = currentShoppingDummy[namesDummy[mealComponent.name]];
+        currentShoppingDummy.remove(namesDummy[mealComponent.name]);
+        currentShoppingDummy[mealComponent] = temp!;
+      }
+      else{
+        currentShoppingDummy[mealComponent] = 'Good';
+      }
+    }
+    shoppingList = {
+      'Good': [],
+      'Running Low': [],
+      'Out of Stock': [],
+      'On the Way': []
+    };
+    for (MapEntry<MealComponent, String> entry in currentShoppingDummy.entries){
+      shoppingList[entry.value]?.add(entry.key);
+    }
+  }
 
+  // <editor-fold desc="Dataclass Section">
   Diet({
     required this.name,
     required this.days,
     required this.dris,
-  });
+    Map<String, List<MealComponent>>? shoppingList
+  }){
+    this.shoppingList = shoppingList ?? {
+      'Good': initShoppingList(),
+      'Running Low': [],
+      'Out of Stock': [],
+      'On the Way': []
+    };
+  }
+  @Generate()
+  // <Dataclass>
+
+
 
   factory Diet.staticConstructor({
     required name,

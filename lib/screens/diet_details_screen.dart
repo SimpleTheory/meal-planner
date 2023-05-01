@@ -20,7 +20,6 @@ class DietPage extends StatelessWidget {
             DrawerHeader(child: Text(diet.name)),
             ListTile(title: const Text('Days'), onTap: (){},),
             ListTile(title: const Text('Shopping List'), onTap: (){},),
-            ListTile(title: const Text('Average Day Breakdown'), onTap: (){},),
             ListTile(title: const Text('DRI Configuration'), onTap: (){},),
             ListTile(title: const Text('Return to Home Page'), onTap: (){Navigator.pop(context); Navigator.pop(context);},),
           ],
@@ -29,6 +28,21 @@ class DietPage extends StatelessWidget {
       ),
       body: ListView(
         children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(4, 16, 4, 3),
+            child: Container(
+              decoration: BoxDecoration(border: Border.all()),
+              child: Column(
+                children: [
+                  const Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: Center(child: Text('Average Day Breakdown:', style: TextStyle(fontSize: 27),)),
+                  ),
+                  dayStyleNutrientDisplay(diet.averageNutrition, diet.dris),
+                ],
+              ),
+            ),
+          ),
           plusSignTile(() {}),
           ...diet.days.map((e) => dayTile(e))
 
@@ -43,6 +57,7 @@ Widget dayTile(Day day){
     title: Center(child: Text('Day ${day.name}')),
     subtitle: Center(child: nutrientText(nutrients: day.nutrients, initText: '    Nutrients:  ')),
     children: [
+      dayStyleNutrientDisplay(day.nutrients, diet.dris),
       plusSignTile(() {}),
       ...day.meals.map<Widget>((e) => mealComponentTile(e))
     ],

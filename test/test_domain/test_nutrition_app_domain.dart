@@ -503,7 +503,7 @@ void dietTests() {
     });
 
     test('Diet.getShoppingList', () {
-      List<MealComponent> result = diet.getShoppingList();
+      List<MealComponent> result = diet.initShoppingList();
       expect(
           dc_eq.equals(result.map((e) => [e.name, e.grams]).toList(), [['pizza', 240], ['No Sugar Keto Cup, Dark Chocolate', 50], ['milk', 100]]), true);
     });

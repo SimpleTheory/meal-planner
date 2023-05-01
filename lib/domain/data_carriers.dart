@@ -1,10 +1,12 @@
 import 'dart:convert';
 // import 'package:ari_utils/ari_utils.dart';
+import 'package:ari_utils/ari_utils.dart';
 import 'package:dataclasses/dataclasses.dart';
 import 'package:nutrition_app/api/nutritionix.dart';
 import 'package:nutrition_app/domain.dart';
 import 'package:nutrition_app/api/dri.dart';
 import 'package:nutrition_app/mydataclasses/metadata.dart';
+import 'package:nutrition_app/utils/utils.dart';
 
 /// Data carriers (Nutrients and DRIs)
 
@@ -1055,10 +1057,44 @@ class DRI {
   num? upperLimit;
   String unit;
   String? note;
+  bool tracked = true;
 
-  bool compare(val) {
-    throw UnimplementedError();
-    // TODO: IMPLEMENT COMPARISON TO NUM OR NUTRIENT
+  String compare(val) {
+    if (val is Nutrient){
+      val = val.value;
+    }
+
+    evaluate(){
+    if (upperLimit == null && dri == null){
+      return roundDecimal(val, 2).toString();
+    }
+    else if (upperLimit == null){
+      if (val >= dri){
+        return roundDecimal(val, 2).toString();
+      }
+      else{return '-${roundDecimal((dri! - val).toDouble(), 2)}';}
+    }
+    else if (dri == null){
+      if (val <= upperLimit){
+        return roundDecimal(val, 2).toString();
+      }
+      else{
+        return '+${roundDecimal((val - upperLimit!).toDouble(), 2)}';
+      }
+    }
+    else{
+      if (dri! <= val && val <= upperLimit){
+        return roundDecimal(val, 2).toString();
+      }
+      else if (val > upperLimit){
+        return '+${roundDecimal((val - upperLimit!).toDouble(), 2)}';
+      }
+      else{
+        return '-${roundDecimal((dri! - val).toDouble(), 2)}';
+      }
+    }
+    }
+    return '${evaluate()} $unit';
   }
 
   DRI operator *(num num) => copyWith(
@@ -1070,7 +1106,7 @@ class DRI {
       upperLimit: upperLimit == null ? null : upperLimit! / num);
 
   // <editor-fold desc="Dataclass Objects">
-  DRI(this.name, {this.dri, this.upperLimit, required this.unit, this.note}) {
+  DRI(this.name, {this.dri, this.upperLimit, required this.unit, this.note, this.tracked=true}) {
     if (dri == 0) {
       dri = null;
     }
@@ -1179,6 +1215,7 @@ class DRI {
       'upperLimit': upperLimit,
       'unit': unit,
       'note': note,
+      'tracked': tracked,
       '__type': 'DRI'
     };
   }
@@ -1188,6 +1225,7 @@ class DRI {
         dri: map['dri'] as num?,
         upperLimit: map['upperLimit'] as num?,
         unit: map['unit'] as String,
+        tracked: map['tracked'] ?? true,
         note: map['note'] as String?);
   }
 
@@ -1195,7 +1233,9 @@ class DRI {
       dri: dri ?? this.dri,
       upperLimit: upperLimit ?? this.upperLimit,
       note: note,
-      unit: unit);
+      unit: unit,
+      tracked: tracked
+  );
 //</editor-fold>
 }
 
@@ -1340,6 +1380,23 @@ class DRIS {
     return value;
   }
 
+  Map<String, List> comparator(Nutrients nutrients){
+    // throw UnimplementedError();
+    Map<String, List> result = {};
+    for (String strNutrient in attributes__.keys){
+      DRI dri = attributes__[strNutrient];
+      if (!dri.tracked){continue;}
+      Nutrient nutrient = nutrients.attributes__[strNutrient];
+      String comparison = dri.compare(nutrient);
+      result[strNutrient] = [
+        dri,
+        nutrient,
+        comparison,
+      ];
+    }
+    return result;
+  }
+
   // <editor-fold desc="Dataclass Section">
   DRIS({
     required this.calcium,
@@ -1385,6 +1442,46 @@ class DRIS {
     unsaturatedFat = DRI('Unsaturated Fat',
         unit: 'g', dri: totalFat.dri! * .9, upperLimit: totalFat.upperLimit);
   }
+
+  static Map<String, String> representor = {
+    "calcium": emoji.get('bone').code,
+    "carbohydrate": emoji.get('bread').code,
+    "cholesterol": 'cholesterol',
+    "calories": emoji.get('fire').code,
+    "iron": 'Fe',
+    "fiber": '🚽',
+    "potassium": 'K',
+    "sodium": emoji.get('salt').code,
+    "protein": '🥩',
+    "sugars": '🍬',
+    "choline": 'choline',
+    "copper": 'Cu',
+    "ala": 'ala',
+    "linoleicAcid": 'linoleic acid',
+    "epa": 'epa',
+    "dpa": 'dpa',
+    "dha": 'dha',
+    "folate": 'B9',
+    "magnesium": 'Mg',
+    "manganese": 'Mn',
+    "niacin": 'B3',
+    "phosphorus": 'P',
+    "pantothenicAcid": 'B5',
+    "riboflavin": 'B2',
+    "selenium": 'Se',
+    "thiamin": 'B1',
+    "vitaminE": 'E',
+    "vitaminA": 'A',
+    "vitaminB12": 'B12',
+    "vitaminB6": 'B6',
+    "vitaminC": 'C',
+    "vitaminD": 'D',
+    "vitaminK": 'K',
+    "zinc": 'Zn',
+    "transFat": '🍤',
+    "unsaturatedFat": olive,
+    "saturatedFat": butter
+  };
 
   @Generate()
   // <Dataclass>

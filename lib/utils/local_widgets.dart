@@ -1,3 +1,4 @@
+import 'package:ari_utils/ari_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:nutrition_app/domain.dart';
 import 'package:nutrition_app/utils/utils.dart';
@@ -29,5 +30,34 @@ Text nutrientText({required Nutrients nutrients, num? grams, String? initText, T
       // '${meal.baseNutrient.nutrients.saturatedFat.value.round()}\u{1F9C8}',
           '${nutrients.saturatedFat.value.round()}$butter',
     style: style,
+  );
+}
+
+Widget dayStyleNutrientDisplay(Nutrients nutrients, DRIS dris){
+  final trackedNuts = dris.comparator(nutrients);
+  List<Widget> nutWidgets = [];
+  for (MapEntry<String, List> nut in trackedNuts.entries){
+    final color = nut.value[2].startsWith(RegExp(r'[+-]')) ? Colors.red : Colors.green;
+    nutWidgets.add(
+      Padding(
+        padding: const EdgeInsets.fromLTRB(16, 0, 0, 0),
+        child: Column(
+            children: [
+              Text(DRIS.representor[nut.key] ?? nut.key),
+              Text(nut.value[2], style: TextStyle(color: color))
+            ]
+        ),
+      )
+    );
+  }
+  return Container(
+    height: 50,
+    width: double.infinity,
+    child: ListView(
+      scrollDirection: Axis.horizontal,
+      shrinkWrap: true,
+      children: nutWidgets,
+
+    ),
   );
 }
