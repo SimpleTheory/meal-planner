@@ -1116,7 +1116,6 @@ class DRI {
     if (unit.toLowerCase() == 'grams') {
       unit = 'g';
     }
-    substitutions();
   }
 
   factory DRI.sugars(AnthroMetrics anthro) {
@@ -1142,6 +1141,15 @@ class DRI {
     }
     if (name == 'Magnesium') {
       upperLimit = null;
+    }
+    if (name == 'Choline'){
+      if (upperLimit != null) {
+        upperLimit = upperLimit! * 1000;
+      }
+      if (dri != null){
+      dri = dri! * 1000;
+      }
+      unit = 'g';
     }
   }
 
@@ -1181,7 +1189,9 @@ class DRI {
     if (name == 'Protein' && anthro != null) {
       ul = (anthro.weight * 0.8).round();
     }
-    return DRI(name, dri: dri, upperLimit: ul, unit: unit!);
+    DRI result = DRI(name, dri: dri, upperLimit: ul, unit: unit!);
+    result.substitutions();
+    return result;
   }
 
   factory DRI.driMicro(List<String> instantiationString) {
@@ -1190,8 +1200,10 @@ class DRI {
     String? dri = driLine?.group(1);
     String? unit = driLine?.group(2);
     String? ul = ulLine?.group(1);
-    return DRI(instantiationString[0],
+    DRI result =  DRI(instantiationString[0],
         dri: toNum(dri), upperLimit: toNum(ul), unit: unit!);
+    result.substitutions();
+    return result;
   }
 
   @override

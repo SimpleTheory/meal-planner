@@ -55,7 +55,7 @@ class DietPage extends StatelessWidget {
 Widget dayTile(Day day){
   return ExpansionTile(
     title: Center(child: Text('Day ${day.name}')),
-    subtitle: Center(child: nutrientText(nutrients: day.nutrients, initText: '    Nutrients:  ')),
+    subtitle: Center(child: nutrientText(nutrients: day.nutrients, initText: '')),
     // trailing: PopupMenuButton(
     //   itemBuilder: (BuildContext context) => [
     //   PopupMenuItem(value: DayPopUpEnumHolder(day, PopUpOptions.edit),child: const Text('Edit'),),
