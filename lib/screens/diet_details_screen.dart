@@ -56,9 +56,18 @@ Widget dayTile(Day day){
   return ExpansionTile(
     title: Center(child: Text('Day ${day.name}')),
     subtitle: Center(child: nutrientText(nutrients: day.nutrients, initText: '    Nutrients:  ')),
+    // trailing: PopupMenuButton(
+    //   itemBuilder: (BuildContext context) => [
+    //   PopupMenuItem(value: DayPopUpEnumHolder(day, PopUpOptions.edit),child: const Text('Edit'),),
+    //   PopupMenuItem(value: DayPopUpEnumHolder(day, PopUpOptions.delete), child: const Text('Delete')),
+    //   PopupMenuItem(value: DayPopUpEnumHolder(day, PopUpOptions.duplicate),child: const Text('Duplicate'),),
+    //   ]),
     children: [
       dayStyleNutrientDisplay(day.nutrients, diet.dris),
-      plusSignTile(() {}),
+      Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: plusSignTile(() {}),
+      ),
       ...day.meals.map<Widget>((e) => mealComponentTile(e))
     ],
     
@@ -70,14 +79,18 @@ class MealComponentPopUpEnumHolder{
   MealComponentPopUpEnumHolder(this.mealComponent, this.popUpOption);
 }
 
+class DayPopUpEnumHolder{
+  Day day;
+  PopUpOptions popUpOption;
+  DayPopUpEnumHolder(this.day, this.popUpOption);
+}
+
 Widget mealComponentTile(MealComponent meal){
   return ListTile(
     title: Row(
       children: [
         Text(meal.name),
-        SizedBox(
-          width: 100,
-          height: 40,
+        Flexible(
           child: TextFormField(initialValue: roundDecimal(meal.grams.toDouble(), 3).toString(),
             decoration: const InputDecoration(
               contentPadding: EdgeInsets.fromLTRB(10, 0, 0, 0),
@@ -95,7 +108,7 @@ Widget mealComponentTile(MealComponent meal){
             onChanged: (String? newAltMeasure){})
 
       ],
-    ).pad(const EdgeInsets.all(16)),
+    ),
     trailing: PopupMenuButton(
       itemBuilder: (BuildContext context) => [
         PopupMenuItem(value: MealComponentPopUpEnumHolder(meal, PopUpOptions.edit),child: const Text('Edit'),),
