@@ -86,29 +86,60 @@ class DayPopUpEnumHolder{
 }
 
 Widget mealComponentTile(MealComponent meal){
-  return ListTile(
-    title: Row(
-      children: [
-        Text(meal.name),
-        Flexible(
-          child: TextFormField(initialValue: roundDecimal(meal.grams.toDouble(), 3).toString(),
-            decoration: const InputDecoration(
-              contentPadding: EdgeInsets.fromLTRB(10, 0, 0, 0),
-              border: InputBorder.none
-          ),
-            inputFormatters: <TextInputFormatter>[
-              FilteringTextInputFormatter.allow(RegExp(r'[\d.]+'))
-            ],
-            keyboardType: const TextInputType.numberWithOptions(decimal: true),),
-        ),
-        DropdownButton<String>(
-          value: 'grams',
-            items: meal.reference.altMeasures2grams.keys.map<DropdownMenuItem<String>>
-              ((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
-            onChanged: (String? newAltMeasure){})
-
-      ],
-    ),
+  // return ListTile(
+  //   title: Row(
+  //     children: [
+  //       Text(meal.name),
+  //       Flexible(
+  //         child: TextFormField(initialValue: roundDecimal(meal.grams.toDouble(), 3).toString(),
+  //           decoration: const InputDecoration(
+  //             contentPadding: EdgeInsets.fromLTRB(10, 0, 0, 0),
+  //             border: InputBorder.none
+  //         ),
+  //           inputFormatters: <TextInputFormatter>[
+  //             FilteringTextInputFormatter.allow(RegExp(r'[\d.]+'))
+  //           ],
+  //           keyboardType: const TextInputType.numberWithOptions(decimal: true),),
+  //       ),
+  //       DropdownButton<String>(
+  //         value: 'grams',
+  //           items: meal.reference.altMeasures2grams.keys.map<DropdownMenuItem<String>>
+  //             ((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
+  //           onChanged: (String? newAltMeasure){})
+  //
+  //     ],
+  //   ),
+  //   trailing: PopupMenuButton(
+  //     itemBuilder: (BuildContext context) => [
+  //       PopupMenuItem(value: MealComponentPopUpEnumHolder(meal, PopUpOptions.edit),child: const Text('Edit'),),
+  //       PopupMenuItem(value: MealComponentPopUpEnumHolder(meal, PopUpOptions.delete), child: const Text('Delete')),
+  //       PopupMenuItem(value: MealComponentPopUpEnumHolder(meal, PopUpOptions.duplicate),child: const Text('Duplicate'),),
+  //     ],
+  //   ),
+  //   subtitle: nutrientText(nutrients: meal.nutrients, grams: meal.grams.round()),
+  //   // subtitle: RichText(
+  //   //   text: TextSpan(
+  //   //     children:[
+  //   //       TextSpan(text: 'Serving:  '),
+  //   //       TextSpan(text: "${meal.baseNutrient.nutrients.calories.value.round()}\u{1F525}  "),
+  //   //       TextSpan(text: '\u{1F525}  ', style: TextStyle(fontFamily: 'EmojiOne')),
+  //   //       TextSpan(text: '${meal.baseNutrient.nutrients.carbohydrate.value.round()}\u{1F35E}  '),
+  //   //       TextSpan(text: '\u{1F35E}  ', style: TextStyle(fontFamily: 'EmojiOne')),
+  //   //       TextSpan(text: '${meal.baseNutrient.nutrients.protein.value.round()}\u{1F969}  '),
+  //   //       TextSpan(text: '\u{1F969}  ', style: TextStyle(fontFamily: 'EmojiOne')),
+  //   //       // '${meal.baseNutrient.nutrients.unsaturatedFat.value.round()}\u{1FAD2}  '
+  //   //       TextSpan(text: '${meal.baseNutrient.nutrients.unsaturatedFat.value.round()}$olive  '),
+  //   //       TextSpan(text: '$olive  ', style: GoogleFonts.notoColorEmoji()),
+  //   //       // '${meal.baseNutrient.nutrients.saturatedFat.value.round()}\u{1F9C8}',
+  //   //       TextSpan(text: '${meal.baseNutrient.nutrients.saturatedFat.value.round()}$butter'),
+  //   //       TextSpan(text: '$butter  ', style: GoogleFonts.notoColorEmoji()),
+  //   //     ]
+  //   //   )
+  //   // ),
+  //   leading: getImage(meal.reference.photo),
+  //   onTap: (){},
+  // );
+  return ExpansionTile(
     trailing: PopupMenuButton(
       itemBuilder: (BuildContext context) => [
         PopupMenuItem(value: MealComponentPopUpEnumHolder(meal, PopUpOptions.edit),child: const Text('Edit'),),
@@ -116,7 +147,7 @@ Widget mealComponentTile(MealComponent meal){
         PopupMenuItem(value: MealComponentPopUpEnumHolder(meal, PopUpOptions.duplicate),child: const Text('Duplicate'),),
       ],
     ),
-    subtitle: nutrientText(nutrients: meal.nutrients, grams: meal.grams.round()),
+    // subtitle: nutrientText(nutrients: meal.nutrients, grams: meal.grams.round()),
     // subtitle: RichText(
     //   text: TextSpan(
     //     children:[
@@ -137,6 +168,30 @@ Widget mealComponentTile(MealComponent meal){
     //   )
     // ),
     leading: getImage(meal.reference.photo),
-    onTap: (){},
+    title: Text(meal.name),
+    expandedCrossAxisAlignment: CrossAxisAlignment.center,
+    // childrenPadding: const EdgeInsets.fromLTRB(40, 0, 0, 5),
+    children: [
+        mealStyleNutrientDisplay(meal.nutrients),
+        const Text('Serving Size: ', style: TextStyle(fontSize: 16),),
+        TextFormField(
+          initialValue: roundDecimal(meal.grams.toDouble(), 3).toString(),
+          textAlign: TextAlign.center,
+          decoration: const InputDecoration(
+            contentPadding: EdgeInsets.fromLTRB(10, 0, 0, 0),
+            border: InputBorder.none
+        ),
+          inputFormatters: <TextInputFormatter>[
+            FilteringTextInputFormatter.allow(RegExp(r'[\d.]+'))
+          ],
+          keyboardType: const TextInputType.numberWithOptions(decimal: true),
+        ),
+        DropdownButton<String>(
+          value: 'grams',
+            items: meal.reference.altMeasures2grams.keys.map<DropdownMenuItem<String>>
+              ((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
+            onChanged: (String? newAltMeasure){})
+
+      ],
   );
 }

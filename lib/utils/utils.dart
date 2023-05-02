@@ -68,6 +68,8 @@ Iterable<T> flatten<T>(Iterable<dynamic> iterable) sync* {
   }
 }
 
+bool isMobile() => Platform.isAndroid || Platform.isIOS;
+
 extension ColumnPadding on Column{
   Column pad(EdgeInsetsGeometry padding) =>
       Column(

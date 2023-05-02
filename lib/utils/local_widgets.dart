@@ -61,3 +61,30 @@ Widget dayStyleNutrientDisplay(Nutrients nutrients, DRIS dris){
     ),
   );
 }
+
+Widget mealStyleNutrientDisplay(Nutrients nutrients){
+  List<Widget> nutWidgets = [];
+  for (MapEntry<String, dynamic> nut in nutrients.attributes__.entries){
+    nutWidgets.add(
+      Padding(
+        padding: const EdgeInsets.fromLTRB(16, 0, 0, 0),
+        child: Column(
+            children: [
+              Text(DRIS.representor[nut.key] ?? nut.key),
+              Text(roundDecimal(nut.value.value.toDouble(), 2).toString())
+            ]
+        ),
+      )
+    );
+  }
+  return Container(
+    height: 50,
+    width: double.infinity,
+    child: ListView(
+      scrollDirection: Axis.horizontal,
+      shrinkWrap: true,
+      children: nutWidgets,
+
+    ),
+  );
+}

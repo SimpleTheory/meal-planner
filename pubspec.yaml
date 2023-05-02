@@ -46,6 +46,7 @@ dependencies:
   client_cookie: ^3.0.2
   cookie_jar: ^3.0.1
   flutter_emoji: ^2.4.0
+  permission_handler: ^10.2.0
 
 dev_dependencies:
   flutter_test:
