@@ -465,7 +465,7 @@ class Nutrients {
     );
   }
 
-    // void round(){
+  // void round(){
   //   calcium = roundDecimal(calcium, 2);
   //   carbohydrate = roundDecimal(carbohydrate, 2);
   //   cholesterol = roundDecimal(cholesterol, 2);
@@ -840,7 +840,8 @@ class Nutrients {
   @override
   String toString() =>
       'Nutrients(calcium: $calcium, carbohydrate: $carbohydrate, cholesterol: $cholesterol, calories: $calories, saturatedFat: $saturatedFat, totalFat: $totalFat, transFat: $transFat, iron: $iron, fiber: $fiber, potassium: $potassium, sodium: $sodium, protein: $protein, sugars: $sugars, choline: $choline, copper: $copper, ala: $ala, linoleicAcid: $linoleicAcid, epa: $epa, dpa: $dpa, dha: $dha, folate: $folate, magnesium: $magnesium, manganese: $manganese, niacin: $niacin, phosphorus: $phosphorus, pantothenicAcid: $pantothenicAcid, riboflavin: $riboflavin, selenium: $selenium, thiamin: $thiamin, vitaminE: $vitaminE, vitaminA: $vitaminA, vitaminB12: $vitaminB12, vitaminB6: $vitaminB6, vitaminC: $vitaminC, vitaminD: $vitaminD, vitaminK: $vitaminK, zinc: $zinc, unsaturatedFat: $unsaturatedFat)';
-  String toStr()=>'Nutrients(calcium: ${calcium.value}${calcium.unit}, carbohydrate: ${carbohydrate.value}${carbohydrate.unit}, cholesterol: ${cholesterol.value}${cholesterol.unit}, calories: ${calories.value}${calories.unit}, saturatedFat: ${saturatedFat.value}${saturatedFat.unit}, totalFat: ${totalFat.value}${totalFat.unit}, transFat: ${transFat.value}${transFat.unit}, iron: ${iron.value}${iron.unit}, fiber: ${fiber.value}${fiber.unit}, potassium: ${potassium.value}${potassium.unit}, sodium: ${sodium.value}${sodium.unit}, protein: ${protein.value}${protein.unit}, sugars: ${sugars.value}${sugars.unit}, choline: ${choline.value}${choline.unit}, copper: ${copper.value}${copper.unit}, ala: ${ala.value}${ala.unit}, linoleicAcid: ${linoleicAcid.value}${linoleicAcid.unit}, epa: ${epa.value}${epa.unit}, dpa: ${dpa.value}${dpa.unit}, dha: ${dha.value}${dha.unit}, folate: ${folate.value}${folate.unit}, magnesium: ${magnesium.value}${magnesium.unit}, manganese: ${manganese.value}${manganese.unit}, niacin: ${niacin.value}${niacin.unit}, phosphorus: ${phosphorus.value}${phosphorus.unit}, pantothenicAcid: ${pantothenicAcid.value}${pantothenicAcid.unit}, riboflavin: ${riboflavin.value}${riboflavin.unit}, selenium: ${selenium.value}${selenium.unit}, thiamin: ${thiamin.value}${thiamin.unit}, vitaminE: ${vitaminE.value}${vitaminE.unit}, vitaminA: ${vitaminA.value}${vitaminA.unit}, vitaminB12: ${vitaminB12.value}${vitaminB12.unit}, vitaminB6: ${vitaminB6.value}${vitaminB6.unit}, vitaminC: ${vitaminC.value}${vitaminC.unit}, vitaminD: ${vitaminD.value}${vitaminD.unit}, vitaminK: ${vitaminK.value}${vitaminK.unit}, zinc: ${zinc.value}${zinc.unit}, unsaturatedFat: ${unsaturatedFat.value}${unsaturatedFat.unit})';
+  String toStr() =>
+      'Nutrients(calcium: ${calcium.value}${calcium.unit}, carbohydrate: ${carbohydrate.value}${carbohydrate.unit}, cholesterol: ${cholesterol.value}${cholesterol.unit}, calories: ${calories.value}${calories.unit}, saturatedFat: ${saturatedFat.value}${saturatedFat.unit}, totalFat: ${totalFat.value}${totalFat.unit}, transFat: ${transFat.value}${transFat.unit}, iron: ${iron.value}${iron.unit}, fiber: ${fiber.value}${fiber.unit}, potassium: ${potassium.value}${potassium.unit}, sodium: ${sodium.value}${sodium.unit}, protein: ${protein.value}${protein.unit}, sugars: ${sugars.value}${sugars.unit}, choline: ${choline.value}${choline.unit}, copper: ${copper.value}${copper.unit}, ala: ${ala.value}${ala.unit}, linoleicAcid: ${linoleicAcid.value}${linoleicAcid.unit}, epa: ${epa.value}${epa.unit}, dpa: ${dpa.value}${dpa.unit}, dha: ${dha.value}${dha.unit}, folate: ${folate.value}${folate.unit}, magnesium: ${magnesium.value}${magnesium.unit}, manganese: ${manganese.value}${manganese.unit}, niacin: ${niacin.value}${niacin.unit}, phosphorus: ${phosphorus.value}${phosphorus.unit}, pantothenicAcid: ${pantothenicAcid.value}${pantothenicAcid.unit}, riboflavin: ${riboflavin.value}${riboflavin.unit}, selenium: ${selenium.value}${selenium.unit}, thiamin: ${thiamin.value}${thiamin.unit}, vitaminE: ${vitaminE.value}${vitaminE.unit}, vitaminA: ${vitaminA.value}${vitaminA.unit}, vitaminB12: ${vitaminB12.value}${vitaminB12.unit}, vitaminB6: ${vitaminB6.value}${vitaminB6.unit}, vitaminC: ${vitaminC.value}${vitaminC.unit}, vitaminD: ${vitaminD.value}${vitaminD.unit}, vitaminK: ${vitaminK.value}${vitaminK.unit}, zinc: ${zinc.value}${zinc.unit}, unsaturatedFat: ${unsaturatedFat.value}${unsaturatedFat.unit})';
   Nutrients copyWith(
           {Nutrient? calcium,
           Nutrient? carbohydrate,
@@ -1060,40 +1061,36 @@ class DRI {
   bool tracked = true;
 
   String compare(val) {
-    if (val is Nutrient){
+    if (val is Nutrient) {
       val = val.value;
     }
 
-    evaluate(){
-    if (upperLimit == null && dri == null){
-      return roundDecimal(val, 2).toString();
-    }
-    else if (upperLimit == null){
-      if (val >= dri){
+    evaluate() {
+      if (upperLimit == null && dri == null) {
         return roundDecimal(val, 2).toString();
+      } else if (upperLimit == null) {
+        if (val >= dri) {
+          return roundDecimal(val, 2).toString();
+        } else {
+          return '-${roundDecimal((dri! - val).toDouble(), 2)}';
+        }
+      } else if (dri == null) {
+        if (val <= upperLimit) {
+          return roundDecimal(val, 2).toString();
+        } else {
+          return '+${roundDecimal((val - upperLimit!).toDouble(), 2)}';
+        }
+      } else {
+        if (dri! <= val && val <= upperLimit) {
+          return roundDecimal(val, 2).toString();
+        } else if (val > upperLimit) {
+          return '+${roundDecimal((val - upperLimit!).toDouble(), 2)}';
+        } else {
+          return '-${roundDecimal((dri! - val).toDouble(), 2)}';
+        }
       }
-      else{return '-${roundDecimal((dri! - val).toDouble(), 2)}';}
     }
-    else if (dri == null){
-      if (val <= upperLimit){
-        return roundDecimal(val, 2).toString();
-      }
-      else{
-        return '+${roundDecimal((val - upperLimit!).toDouble(), 2)}';
-      }
-    }
-    else{
-      if (dri! <= val && val <= upperLimit){
-        return roundDecimal(val, 2).toString();
-      }
-      else if (val > upperLimit){
-        return '+${roundDecimal((val - upperLimit!).toDouble(), 2)}';
-      }
-      else{
-        return '-${roundDecimal((dri! - val).toDouble(), 2)}';
-      }
-    }
-    }
+
     return '${evaluate()} $unit';
   }
 
@@ -1106,7 +1103,12 @@ class DRI {
       upperLimit: upperLimit == null ? null : upperLimit! / num);
 
   // <editor-fold desc="Dataclass Objects">
-  DRI(this.name, {this.dri, this.upperLimit, required this.unit, this.note, this.tracked=true}) {
+  DRI(this.name,
+      {this.dri,
+      this.upperLimit,
+      required this.unit,
+      this.note,
+      this.tracked = true}) {
     if (dri == 0) {
       dri = null;
     }
@@ -1142,12 +1144,12 @@ class DRI {
     if (name == 'Magnesium') {
       upperLimit = null;
     }
-    if (name == 'Choline'){
+    if (name == 'Choline') {
       if (upperLimit != null) {
         upperLimit = upperLimit! * 1000;
       }
-      if (dri != null){
-      dri = dri! * 1000;
+      if (dri != null) {
+        dri = dri! * 1000;
       }
       unit = 'g';
     }
@@ -1200,7 +1202,7 @@ class DRI {
     String? dri = driLine?.group(1);
     String? unit = driLine?.group(2);
     String? ul = ulLine?.group(1);
-    DRI result =  DRI(instantiationString[0],
+    DRI result = DRI(instantiationString[0],
         dri: toNum(dri), upperLimit: toNum(ul), unit: unit!);
     result.substitutions();
     return result;
@@ -1246,8 +1248,7 @@ class DRI {
       upperLimit: upperLimit ?? this.upperLimit,
       note: note,
       unit: unit,
-      tracked: tracked
-  );
+      tracked: tracked);
 //</editor-fold>
 }
 
@@ -1392,12 +1393,14 @@ class DRIS {
     return value;
   }
 
-  Map<String, List> comparator(Nutrients nutrients){
+  Map<String, List> comparator(Nutrients nutrients) {
     // throw UnimplementedError();
     Map<String, List> result = {};
-    for (String strNutrient in attributes__.keys){
+    for (String strNutrient in attributes__.keys) {
       DRI dri = attributes__[strNutrient];
-      if (!dri.tracked){continue;}
+      if (!dri.tracked) {
+        continue;
+      }
       Nutrient nutrient = nutrients.attributes__[strNutrient];
       String comparison = dri.compare(nutrient);
       result[strNutrient] = [
@@ -1461,11 +1464,11 @@ class DRIS {
     "cholesterol": 'cholesterol',
     "calories": emoji.get('fire').code,
     "iron": 'Fe',
-    "fiber": '🚽',
+    "fiber": emoji.get('toilet').code,
     "potassium": 'K',
     "sodium": emoji.get('salt').code,
-    "protein": '🥩',
-    "sugars": '🍬',
+    "protein": emoji.get('steak').code,
+    "sugars": emoji.get('candy').code,
     "choline": 'choline',
     "copper": 'Cu',
     "ala": 'ala',
@@ -1490,7 +1493,7 @@ class DRIS {
     "vitaminD": 'D',
     "vitaminK": 'K',
     "zinc": 'Zn',
-    "transFat": '🍤',
+    "transFat": emoji.get('fried shrimp').code,
     "unsaturatedFat": olive,
     "saturatedFat": butter
   };

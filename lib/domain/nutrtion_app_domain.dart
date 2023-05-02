@@ -245,23 +245,25 @@ class Diet {
     return result.values.toList();
   }
 
-  void updateShoppingList(){
+  void updateShoppingList() {
     // TODO TEST
     Map<MealComponent, String> currentShoppingDummy = {};
-    for (MapEntry<String, List<MealComponent>> keyList in shoppingList.entries){
-      currentShoppingDummy.addAll({for (MealComponent ing in keyList.value) ing : keyList.key});
+    for (MapEntry<String, List<MealComponent>> keyList
+        in shoppingList.entries) {
+      currentShoppingDummy
+          .addAll({for (MealComponent ing in keyList.value) ing: keyList.key});
     }
-    Map<String, MealComponent> namesDummy = {for (MealComponent meal in currentShoppingDummy.keys) meal.name: meal};
-    for (MealComponent mealComponent in initShoppingList()){
-      if (currentShoppingDummy.keys.contains(mealComponent)){
+    Map<String, MealComponent> namesDummy = {
+      for (MealComponent meal in currentShoppingDummy.keys) meal.name: meal
+    };
+    for (MealComponent mealComponent in initShoppingList()) {
+      if (currentShoppingDummy.keys.contains(mealComponent)) {
         continue;
-      }
-      else if(namesDummy.containsKey(mealComponent.name)){
+      } else if (namesDummy.containsKey(mealComponent.name)) {
         final temp = currentShoppingDummy[namesDummy[mealComponent.name]];
         currentShoppingDummy.remove(namesDummy[mealComponent.name]);
         currentShoppingDummy[mealComponent] = temp!;
-      }
-      else{
+      } else {
         currentShoppingDummy[mealComponent] = 'Good';
       }
     }
@@ -271,29 +273,28 @@ class Diet {
       'Out of Stock': [],
       'On the Way': []
     };
-    for (MapEntry<MealComponent, String> entry in currentShoppingDummy.entries){
+    for (MapEntry<MealComponent, String> entry
+        in currentShoppingDummy.entries) {
       shoppingList[entry.value]?.add(entry.key);
     }
   }
 
   // <editor-fold desc="Dataclass Section">
-  Diet({
-    required this.name,
-    required this.days,
-    required this.dris,
-    Map<String, List<MealComponent>>? shoppingList
-  }){
-    this.shoppingList = shoppingList ?? {
-      'Good': initShoppingList(),
-      'Running Low': [],
-      'Out of Stock': [],
-      'On the Way': []
-    };
+  Diet(
+      {required this.name,
+      required this.days,
+      required this.dris,
+      Map<String, List<MealComponent>>? shoppingList}) {
+    this.shoppingList = shoppingList ??
+        {
+          'Good': initShoppingList(),
+          'Running Low': [],
+          'Out of Stock': [],
+          'On the Way': []
+        };
   }
   @Generate()
   // <Dataclass>
-
-
 
   factory Diet.staticConstructor({
     required name,
@@ -303,7 +304,7 @@ class Diet {
       Diet(name: name, days: days, dris: dris);
 
   Map<String, dynamic> get attributes__ =>
-      {"name": name, "days": days, "dris": dris};
+      {"name": name, "days": days, "dris": dris, "shoppingList": shoppingList};
 
   @override
   bool operator ==(Object other) =>
@@ -312,13 +313,16 @@ class Diet {
           runtimeType == other.runtimeType &&
           equals(name, other.name) &&
           equals(days, other.days) &&
-          equals(dris, other.dris));
+          equals(dris, other.dris) &&
+          equals(shoppingList, other.shoppingList));
 
   @override
-  int get hashCode => name.hashCode ^ days.hashCode ^ dris.hashCode;
+  int get hashCode =>
+      name.hashCode ^ days.hashCode ^ dris.hashCode ^ shoppingList.hashCode;
 
   @override
-  String toString() => 'Diet(name: $name, days: $days, dris: $dris)';
+  String toString() =>
+      'Diet(name: $name, days: $days, dris: $dris, shoppingList: $shoppingList)';
 
   Diet copyWithDiet({String? name, List<Day>? days, DRIS? dris}) => Diet(
       name: name ?? this.name,
@@ -430,6 +434,7 @@ class MealComponent {
     num ratio = grams / reference.baseNutrient.grams;
     return reference.baseNutrient.nutrients * ratio;
   }
+
   String get name => reference.name;
 
   /// Returns List<MealComponent> or itself, depending on whether this references

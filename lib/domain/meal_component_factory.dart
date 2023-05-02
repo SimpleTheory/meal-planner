@@ -173,7 +173,7 @@ class Ingredient extends MealComponentFactory {
           Map<String, num>? altMeasures2grams,
           Uri? photo,
           IngredientSource? source,
-          dynamic? sourceMetadata}) =>
+          dynamic sourceMetadata}) =>
       Ingredient(
           name: name ?? this.name,
           baseNutrient: baseNutrient ?? this.baseNutrient,
@@ -228,10 +228,12 @@ class Meal extends MealComponentFactory {
   @override
   List<MealComponent> baseIngredients() =>
       combineListValuesToMap<MealComponent, String, MealComponent>(
-  flatten<MealComponent>(ingredients.map((e) => e.getBaseIngredients())).toList(),
-  (MealComponent key)=>key.name,
-  (MealComponent value)=>value,
-  (MealComponent k1, MealComponent k2)=>k1.copyWithMealComponent(grams: k1.grams+k2.grams)).values.toList();
+          flatten<MealComponent>(ingredients.map((e) => e.getBaseIngredients()))
+              .toList(),
+          (MealComponent key) => key.name,
+          (MealComponent value) => value,
+          (MealComponent k1, MealComponent k2) => k1.copyWithMealComponent(
+              grams: k1.grams + k2.grams)).values.toList();
 
   // <editor-fold desc="Dataclass Section">
   Meal(
