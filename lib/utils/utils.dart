@@ -104,7 +104,7 @@ extension RowPadding on Row{
 // TODO ADD ERRORS
 Image getImage(Uri? uri, {double? width, double? height}){
   if (uri == null){
-    return Image.file(File('cache/images/null.png'), width: width, height: height,);
+    return Image.asset('cache/images/null.png', width: width, height: height,);
   }
   // try{
   if (uri.scheme == 'file'){

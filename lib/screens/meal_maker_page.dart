@@ -22,7 +22,7 @@ class MealMakerPage extends StatelessWidget {
             Center(
               child: GestureDetector(
                   onTap: (){},
-                  child: Image.file(File('cache/images/null.png'), width: 200, height: 200,)
+                  child: Image.asset('cache/images/null.png', width: 200, height: 200,)
               ),
             ),
             Row(
@@ -60,11 +60,11 @@ class MealMakerPage extends StatelessWidget {
               ],
             ),
             Row(children: [
-              Text('Subrecipe: '), Switch(value: false, onChanged: (bool isSubRecipe){})
+              Text('Subrecipe: ', style: TextStyle(fontSize: 20)), Switch(value: false, onChanged: (bool isSubRecipe){})
             ],),
-            Text('Alternate measures:'),
-            altMeasureFormField(),
+            Text('Alternate measures:', style: TextStyle(fontSize: 20),),
             plusSignTile(() {}),
+            altMeasureFormField(),
 
           ],
         ).pad(const EdgeInsets.all(12)),

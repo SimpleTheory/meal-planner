@@ -19,7 +19,7 @@ class CustomIngredientPage extends StatelessWidget {
             Center(
               child: GestureDetector(
                   onTap: (){},
-                  child: Image.file(File('cache/images/null.png'), width: 200, height: 200,)
+                  child: Image.asset('cache/images/null.png', width: 200, height: 200,)
               ),
             ),
             Row(
@@ -53,8 +53,8 @@ class CustomIngredientPage extends StatelessWidget {
               ],
             ),
             const Text('Alternate measures:'),
-            altMeasureFormField(),
             plusSignTile(() {}),
+            altMeasureFormField(),
             ...?type2dataclasses[Nutrients]?.attributes.keys.map((e) => nutrientFormField(e))
           ],
         ).pad(const EdgeInsets.all(12)),

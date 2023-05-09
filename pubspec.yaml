@@ -47,6 +47,7 @@ dependencies:
   cookie_jar: ^3.0.1
   flutter_emoji: ^2.4.0
   permission_handler: ^10.2.0
+  image_picker: ^0.8.7+4
 
 dev_dependencies:
   flutter_test:

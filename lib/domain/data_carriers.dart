@@ -1465,7 +1465,7 @@ class DRIS {
     "calories": emoji.get('fire').code,
     "iron": 'Fe',
     "fiber": emoji.get('toilet').code,
-    "potassium": 'K',
+    "potassium": emoji.get('banana').code,
     "sodium": emoji.get('salt').code,
     "protein": emoji.get('steak').code,
     "sugars": emoji.get('candy').code,

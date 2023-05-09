@@ -6,10 +6,10 @@
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
 
     <application
-        android:label="nutrition_app"
-        android:name="com.example.nutrition_app.MealPlannerApplication"
-        android:icon="@mipmap/ic_launcher">
-<!--        android:requestLegacyExternalStorage="true"-->
+        android:label="Nutrition App"
+        android:name="${applicationName}"
+        android:icon="@mipmap/ic_launcher"
+        android:requestLegacyExternalStorage="true">
         <activity
             android:name=".MainActivity"
             android:exported="true"
