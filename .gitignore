@@ -120,3 +120,4 @@ app.*.map.json
 /pubspec.lock
 /domain.png
 /test/tryingthingsout.dart
+/test/personal_diet_cmd/*

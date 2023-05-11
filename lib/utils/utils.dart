@@ -106,15 +106,34 @@ Image getImage(Uri? uri, {double? width, double? height}){
   if (uri == null){
     return Image.asset('cache/images/null.png', width: width, height: height,);
   }
-  // try{
+  try{
   if (uri.scheme == 'file'){
     return Image.file(File(uri.path), width: width, height: height,);
     }
   else{
     return Image.network(uri.toString(), width: width, height: height,);
     }
-  // } catch{}
+  } catch (e){
+    // Maybe add snackbar or alt image for no internet
+    return Image.asset('cache/images/null.png', width: width, height: height,);
+  }
 }
 final emoji = EmojiParser();
 final olive = emoji.get('olive').code;
 final butter = emoji.get('butter').code;
+
+AlertDialog deleteConfirmation({required void Function() onSubmit, required BuildContext context,String? obj}){
+  obj ??= 'this';
+  return AlertDialog(
+    content: Text('Are you sure you would like to delete $obj?'),
+    actions: [
+      Row(
+        children: [
+          TextButton(onPressed: () => Navigator.pop(context), child: const Text('cancel')),
+          const Spacer(),
+          TextButton(onPressed: onSubmit, child: const Text('submit'))
+        ],
+      ),
+    ],
+  );
+}

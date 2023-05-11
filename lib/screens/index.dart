@@ -7,6 +7,7 @@ import 'package:nutrition_app/screens/meal_maker_page.dart';
 import 'package:nutrition_app/screens/meal_page.dart';
 import 'package:nutrition_app/domain.dart';
 import 'package:nutrition_app/utils/local_widgets.dart';
+import 'package:nutrition_app/utils/utils.dart';
 
 import '../temp_dummy_data.dart';
 
@@ -64,6 +65,12 @@ class IndexPage extends StatelessWidget {
                 ListTile(title: Text('Meal Maker'), onTap: (){
                   Navigator.push(context, MaterialPageRoute(builder: (context) => const MealMakerPage()));
                 }, tileColor: Colors.green),
+                ListTile(title: Text('cancel dialog'),
+                    onTap: (){showDialog(
+                        context: context,
+                        builder: (context) => deleteConfirmation(onSubmit: (){}, context: context));},
+                    tileColor: Colors.green),
+                ListTile(title: Text(''), onTap: (){}, tileColor: Colors.green),
                 ListTile(title: Text(''), onTap: (){}, tileColor: Colors.green),
                 ListTile(title: Text(''), onTap: (){}, tileColor: Colors.green),
 

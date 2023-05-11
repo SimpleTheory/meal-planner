@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:nutrition_app/domain.dart';
-import 'package:nutrition_app/mydataclasses/metadata.dart';
-import 'dart:io';
 import 'package:nutrition_app/utils/local_widgets.dart';
 import 'package:nutrition_app/utils/utils.dart';
+
+final emptyNutrient = Nutrients.fromValues();
+
+// TODO: Modify CustomIngredientPage to also be Ingredient Details Page
 
 class CustomIngredientPage extends StatelessWidget {
   const CustomIngredientPage({Key? key}) : super(key: key);
@@ -12,7 +14,7 @@ class CustomIngredientPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Ingredients')),
+      appBar: AppBar(title: Text('Ingredients: NAME')),
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -52,10 +54,27 @@ class CustomIngredientPage extends StatelessWidget {
                 )),
               ],
             ),
-            const Text('Alternate measures:'),
-            plusSignTile(() {}),
-            altMeasureFormField(),
-            ...?type2dataclasses[Nutrients]?.attributes.keys.map((e) => nutrientFormField(e))
+            Container(
+              decoration: BoxDecoration(border: Border.all()),
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  children: [
+                    const Text('Alternate measures:'),
+                    plusSignTile(() {}, padding: EdgeInsets.fromLTRB(0, 16, 0, 0)),
+                    altMeasureFormField(),
+                  ],
+                ),
+              ),
+            ),
+            Container(
+              decoration: BoxDecoration(border: Border.all()),
+              child: Column(
+                // children: type2dataclasses[Nutrients]!.attributes.keys.map((e) => nutrientFormField(e)).toList(),
+                children: emptyNutrient.attributes__.values.map((e) => nutrientFormField(e)).toList(),
+              ),
+            )
+            // ...?type2dataclasses[Nutrients]?.attributes.keys.map((e) => nutrientFormField(e))
           ],
         ).pad(const EdgeInsets.all(12)),
       ),
@@ -63,13 +82,13 @@ class CustomIngredientPage extends StatelessWidget {
   }
 }
 
-Widget nutrientFormField(String nutName)=>
+Widget nutrientFormField(Nutrient nut)=>
   // TODO Add units to form field hint somehow
     Row(
       children: [
         Padding(
           padding: const EdgeInsets.fromLTRB(10, 5, 20, 5),
-          child: Text('${replaceTextForForm(nutName)}:'),
+          child: Text('${replaceTextForForm(nut.name)}:'),
         ),
         Flexible(
           child: Padding(
@@ -78,7 +97,7 @@ Widget nutrientFormField(String nutName)=>
                 decoration: InputDecoration(
                   contentPadding: const EdgeInsets.fromLTRB(10, 0, 0, 0),
                   // hintText: '0',
-                  labelText: replaceTextForForm(nutName)
+                  labelText: nut.unit
                 ),
                 inputFormatters: <TextInputFormatter>[
                   FilteringTextInputFormatter.allow(RegExp(r'[\d.]+'))
@@ -125,6 +144,10 @@ Row altMeasureFormField()=>
       ],
     );
 String replaceTextForForm(String input){
+  final lowercase = input.toLowerCase();
+  if (lowercase == 'ala' || lowercase == 'epa' || lowercase == 'dha' || lowercase == 'dpa'){
+    return input.toUpperCase();
+  }
   final uppercaseRegex = RegExp(r'([A-Z])', caseSensitive: true);
   input = input.replaceAllMapped(uppercaseRegex, (Match m) => ' ${m[1]}').trim();
   input = input.substring(0, 1).toUpperCase() + input.substring(1);

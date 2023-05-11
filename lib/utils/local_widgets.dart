@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:nutrition_app/domain.dart';
 import 'package:nutrition_app/utils/utils.dart';
 
-Widget plusSignTile(void Function()? onTap) =>
+Widget plusSignTile(void Function()? onTap, {EdgeInsets? padding}) =>
   Padding(
-    padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
+    padding: padding ?? const EdgeInsets.fromLTRB(10, 10, 10, 10),
       child: ListTile(
         onTap: onTap,
         title: const Center(child: Icon(Icons.add),),

@@ -4,7 +4,6 @@ import 'package:nutrition_app/screens/custom_ingredient.dart';
 import 'package:nutrition_app/screens/diet_details_screen.dart';
 import 'package:nutrition_app/utils/local_widgets.dart';
 import 'package:nutrition_app/utils/utils.dart';
-import 'dart:io';
 import 'package:nutrition_app/temp_dummy_data.dart';
 
 final current_meal = meals['breaky'];
@@ -55,16 +54,32 @@ class MealMakerPage extends StatelessWidget {
               physics: const NeverScrollableScrollPhysics(),
               shrinkWrap: true,
               children: [
+                mealStyleNutrientDisplay(current_meal!.baseNutrient.nutrients),
                 plusSignTile(() {}),
                 ...current_meal!.ingredients.map((e) => mealComponentTile(e)),
               ],
             ),
             Row(children: [
-              Text('Subrecipe: ', style: TextStyle(fontSize: 20)), Switch(value: false, onChanged: (bool isSubRecipe){})
+              const Text('Subrecipe: ', style: TextStyle(fontSize: 20)), Switch(value: false, onChanged: (bool isSubRecipe){})
             ],),
-            Text('Alternate measures:', style: TextStyle(fontSize: 20),),
+            const Text('Alternate measures:', style: TextStyle(fontSize: 20),),
             plusSignTile(() {}),
             altMeasureFormField(),
+            Container(
+              decoration: const BoxDecoration(border: Border(top: BorderSide(color: Colors.grey))),
+              child: Column(
+                children: const [
+                  Text('Notes:', style: TextStyle(fontSize: 20),),
+                  TextField(
+                    decoration: InputDecoration(contentPadding: EdgeInsets.fromLTRB(8, 8, 0, 8)),
+                    maxLines: null,
+                    keyboardType: TextInputType.multiline,
+                  ),
+                ],
+              ),
+            ),
+            ElevatedButton(onPressed: (){}, child: const Text('Submit'),),
+
 
           ],
         ).pad(const EdgeInsets.all(12)),
