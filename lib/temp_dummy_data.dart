@@ -34,7 +34,9 @@ Map<String, Meal> meals = {
       ingredients: [
         ingredients[2].toMealComponent('medium slice', 3, ingredients[2])
       ],
-      isSubRecipe: true),
+      isSubRecipe: true,
+      notes: '1.Cheese\n2.Tomato\n3.Dough\n4.Fire\nEnjoy!'
+  ),
   'breaky': Meal(
       name: 'breaky',
       ingredients: [

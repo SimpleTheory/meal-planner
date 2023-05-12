@@ -35,7 +35,6 @@ class IndexPage extends StatelessWidget {
             children: [
               plusSignTile(() {}),
               dietTile(diet, context)
-              // TODO: List tile widget for all diets
             ],
           ),
           ElevatedButton(
@@ -43,7 +42,6 @@ class IndexPage extends StatelessWidget {
             onPressed: () {Navigator.push(context, MaterialPageRoute(builder: (context) => const MealPage()));},
             child: const Text('Meals'),
             // children: [
-            //   // TODO: List tile widget for all meals
             // ],
           ),
           ElevatedButton(
@@ -51,7 +49,6 @@ class IndexPage extends StatelessWidget {
               onPressed: () {Navigator.push(context, MaterialPageRoute(builder: (context) => const IngredientPage()));},
               child: const Text('Ingredients'),
             // children: [
-            //   // TODO: List tile widget for all meals
             // ],
           ),
           const Text('DEBUG NAVIGATIONS'),

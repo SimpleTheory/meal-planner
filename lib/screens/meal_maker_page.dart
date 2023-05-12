@@ -56,7 +56,7 @@ class MealMakerPage extends StatelessWidget {
               children: [
                 mealStyleNutrientDisplay(current_meal!.baseNutrient.nutrients),
                 plusSignTile(() {}),
-                ...current_meal!.ingredients.map((e) => mealComponentTile(e)),
+                ...current_meal!.ingredients.map((e) => mealComponentTile(e, context)),
               ],
             ),
             Row(children: [

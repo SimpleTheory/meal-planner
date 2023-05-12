@@ -44,7 +44,7 @@ class DietPage extends StatelessWidget {
             ),
           ),
           plusSignTile(() {}),
-          ...diet.days.map((e) => dayTile(e))
+          ...diet.days.map((e) => dayTile(e, context))
 
         ],
       ),
@@ -52,7 +52,7 @@ class DietPage extends StatelessWidget {
   }
 }
 
-Widget dayTile(Day day){
+Widget dayTile(Day day, BuildContext context){
   return ExpansionTile(
     title: Center(child: Text('Day ${day.name}')),
     subtitle: Center(child: nutrientText(nutrients: day.nutrients, initText: '')),
@@ -68,7 +68,7 @@ Widget dayTile(Day day){
         padding: const EdgeInsets.all(8.0),
         child: plusSignTile(() {}),
       ),
-      ...day.meals.map<Widget>((e) => mealComponentTile(e))
+      ...day.meals.map<Widget>((e) => mealComponentTile(e, context))
     ],
     
   );
@@ -85,7 +85,7 @@ class DayPopUpEnumHolder{
   DayPopUpEnumHolder(this.day, this.popUpOption);
 }
 
-Widget mealComponentTile(MealComponent meal){
+Widget mealComponentTile(MealComponent meal, BuildContext context){
   // return ListTile(
   //   title: Row(
   //     children: [
@@ -139,14 +139,37 @@ Widget mealComponentTile(MealComponent meal){
   //   leading: getImage(meal.reference.photo),
   //   onTap: (){},
   // );
-  return ExpansionTile(
-    trailing: PopupMenuButton(
-      itemBuilder: (BuildContext context) => [
-        PopupMenuItem(value: MealComponentPopUpEnumHolder(meal, PopUpOptions.edit),child: const Text('Edit'),),
-        PopupMenuItem(value: MealComponentPopUpEnumHolder(meal, PopUpOptions.delete), child: const Text('Delete')),
-        PopupMenuItem(value: MealComponentPopUpEnumHolder(meal, PopUpOptions.duplicate),child: const Text('Duplicate'),),
+  Widget trailing = PopupMenuButton(
+    itemBuilder: (BuildContext context) => [
+      PopupMenuItem(value: MealComponentPopUpEnumHolder(meal, PopUpOptions.edit),child: const Text('Edit'),),
+      PopupMenuItem(value: MealComponentPopUpEnumHolder(meal, PopUpOptions.delete), child: const Text('Delete')),
+      PopupMenuItem(value: MealComponentPopUpEnumHolder(meal, PopUpOptions.duplicate),child: const Text('Duplicate'),),
+    ],
+  );
+  if (meal.reference is Meal){
+    final temp = meal.reference as Meal;
+    if (toBool(temp.notes)){
+      trailing = Row(
+        mainAxisSize: MainAxisSize.min,
+      children: [
+        IconButton(
+          onPressed: ()
+            {showDialog(context: context, builder: (context)=>mealNotesPopUp(meal.reference as Meal, context));},
+          icon: const Icon(Icons.info_outline),),
+        PopupMenuButton(
+          itemBuilder: (BuildContext context) => [
+            PopupMenuItem(value: MealComponentPopUpEnumHolder(meal, PopUpOptions.edit),child: const Text('Edit'),),
+            PopupMenuItem(value: MealComponentPopUpEnumHolder(meal, PopUpOptions.delete), child: const Text('Delete')),
+            PopupMenuItem(value: MealComponentPopUpEnumHolder(meal, PopUpOptions.duplicate),child: const Text('Duplicate'),),
+          ],
+        )
       ],
-    ),
+    );
+    }
+  }
+
+  return ExpansionTile(
+    trailing: trailing,
     // subtitle: nutrientText(nutrients: meal.nutrients, grams: meal.grams.round()),
     // subtitle: RichText(
     //   text: TextSpan(
@@ -175,11 +198,14 @@ Widget mealComponentTile(MealComponent meal){
         mealStyleNutrientDisplay(meal.nutrients),
         const Text('Serving Size: ', style: TextStyle(fontSize: 16),),
         TextFormField(
-          initialValue: roundDecimal(meal.grams.toDouble(), 3).toString(),
+          initialValue: meal.grams.isInt ? meal.grams.toInt().toString() : roundDecimal(meal.grams.toDouble(), 3).toString(),
           textAlign: TextAlign.center,
           decoration: const InputDecoration(
             contentPadding: EdgeInsets.fromLTRB(10, 0, 0, 0),
-            border: InputBorder.none
+            border: InputBorder.none,
+            // label: Center(child: Text('grams')),
+            // alignLabelWithHint: true,
+            // hintText: 'grams',
         ),
           inputFormatters: <TextInputFormatter>[
             FilteringTextInputFormatter.allow(RegExp(r'[\d.]+'))
@@ -195,3 +221,11 @@ Widget mealComponentTile(MealComponent meal){
       ],
   );
 }
+
+AlertDialog mealNotesPopUp(Meal meal, BuildContext context) => AlertDialog(
+  title: Text('${meal.name} Notes:'),
+  content: Text(meal.notes),
+  actions: [TextButton(onPressed: () {
+    Navigator.pop(context);
+  }, child: const Text('Return'))],
+);
