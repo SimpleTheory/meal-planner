@@ -46,229 +46,229 @@
     /// saturatedFat
 
 final Map<String, String> driNotes = {
-'calcium': 
+'Calcium':
 '''
 Write my note here
 '''
 ,
 // --------------------------------------
-'carbohydrate': 
+'Carbohydrate':
 '''
 Write my note here
 '''
 ,
 // --------------------------------------
-'cholesterol': 
+'Cholesterol':
 '''
 Write my note here
 '''
 ,
 // --------------------------------------
-'calories': 
+'Calories':
 '''
 Write my note here
 '''
 ,
 // --------------------------------------
-'totalFat': 
+'Total Fat':
 '''
 Write my note here
 '''
 ,
 // --------------------------------------
-'iron': 
+'Iron':
 '''
 Write my note here
 '''
 ,
 // --------------------------------------
-'fiber': 
+'Total Fiber':
 '''
 Write my note here
 '''
 ,
 // --------------------------------------
-'potassium': 
+'Potassium':
 '''
 Write my note here
 '''
 ,
 // --------------------------------------
-'sodium': 
+'Sodium':
 '''
 Write my note here
 '''
 ,
 // --------------------------------------
-'protein': 
+'Protein':
 '''
 Write my note here
 '''
 ,
 // --------------------------------------
-'sugars': 
+'Sugars':
 '''
 Write my note here
 '''
 ,
 // --------------------------------------
-'choline': 
+'Choline':
 '''
 Write my note here
 '''
 ,
 // --------------------------------------
-'copper': 
+'Copper':
 '''
 Write my note here
 '''
 ,
 // --------------------------------------
-'ala': 
+'α-Linolenic Acid':
 '''
 Write my note here
 '''
 ,
 // --------------------------------------
-'linoleicAcid': 
+'Linoleic Acid':
 '''
 Write my note here
 '''
 ,
 // --------------------------------------
-'epa': 
+'EPA':
 '''
 Write my note here
 '''
 ,
 // --------------------------------------
-'dpa': 
+'DPA':
 '''
 Write my note here
 '''
 ,
 // --------------------------------------
-'dha': 
+'DHA':
 '''
 Write my note here
 '''
 ,
 // --------------------------------------
-'folate': 
+'Folate':
 '''
 Write my note here
 '''
 ,
 // --------------------------------------
-'magnesium': 
+'Magnesium':
 '''
 Write my note here
 '''
 ,
 // --------------------------------------
-'manganese': 
+'Manganese':
 '''
 Write my note here
 '''
 ,
 // --------------------------------------
-'niacin': 
+'Niacin':
 '''
 Write my note here
 '''
 ,
 // --------------------------------------
-'phosphorus': 
+'Phosphorus':
 '''
 Write my note here
 '''
 ,
 // --------------------------------------
-'pantothenicAcid': 
+'Pantothenic Acid':
 '''
 Write my note here
 '''
 ,
 // --------------------------------------
-'riboflavin': 
+'Riboflavin':
 '''
 Write my note here
 '''
 ,
 // --------------------------------------
-'selenium': 
+'Selenium':
 '''
 Write my note here
 '''
 ,
 // --------------------------------------
-'thiamin': 
+'Thiamin':
 '''
 Write my note here
 '''
 ,
 // --------------------------------------
-'vitaminE': 
+'Vitamin E':
 '''
 Write my note here
 '''
 ,
 // --------------------------------------
-'vitaminA': 
+'Vitamin A':
 '''
 Write my note here
 '''
 ,
 // --------------------------------------
-'vitaminB12': 
+'Vitamin B12':
 '''
 Write my note here
 '''
 ,
 // --------------------------------------
-'vitaminB6': 
+'Vitamin B6':
 '''
 Write my note here
 '''
 ,
 // --------------------------------------
-'vitaminC': 
+'Vitamin C':
 '''
 Write my note here
 '''
 ,
 // --------------------------------------
-'vitaminD': 
+'Vitamin D':
 '''
 Write my note here
 '''
 ,
 // --------------------------------------
-'vitaminK': 
+'Vitamin K':
 '''
 Write my note here
 '''
 ,
 // --------------------------------------
-'zinc': 
+'Zinc':
 '''
 Write my note here
 '''
 ,
 // --------------------------------------
-'transFat': 
+'Trans Fat':
 '''
 Write my note here
 '''
 ,
 // --------------------------------------
-'unsaturatedFat': 
+'Unsaturated Fat':
 '''
 Write my note here
 '''
 ,
 // --------------------------------------
-'saturatedFat': 
+'Saturated Fat':
 '''
 Write my note here
 '''

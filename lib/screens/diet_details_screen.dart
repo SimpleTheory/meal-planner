@@ -2,6 +2,7 @@ import 'package:ari_utils/ari_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:nutrition_app/domain.dart';
+import 'package:nutrition_app/screens/dri_configs.dart';
 import 'package:nutrition_app/temp_dummy_data.dart';
 import 'package:nutrition_app/utils/local_widgets.dart';
 import 'package:nutrition_app/utils/utils.dart';
@@ -20,7 +21,7 @@ class DietPage extends StatelessWidget {
             DrawerHeader(child: Text(diet.name)),
             ListTile(title: const Text('Days'), onTap: (){},),
             ListTile(title: const Text('Shopping List'), onTap: (){},),
-            ListTile(title: const Text('DRI Configuration'), onTap: (){},),
+            ListTile(title: const Text('DRI Configuration'), onTap: (){Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const DRIConfigPage()));},),
             ListTile(title: const Text('Return to Home Page'), onTap: (){Navigator.pop(context); Navigator.pop(context);},),
           ],
           // DrawerHeader(child: Text(),)
