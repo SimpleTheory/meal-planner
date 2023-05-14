@@ -105,39 +105,41 @@ openAddNewIngredientPopUp(BuildContext context)=>
     showDialog(context: context,
         builder: (context)=>AlertDialog(
           title: const Text('Add New Ingredient'),
-          content: Column(
-            children: [
-              const Text('Input UPC or name of desired ingredient:'),
-              TextField(
-                  decoration: const InputDecoration(
-                    labelText: 'UPC or Name',
-                  ),
-                  autofocus: true,
-                  inputFormatters: <TextInputFormatter>[
-                    FilteringTextInputFormatter.allow(RegExp('[A-Za-z0-9 ]+'))
-                  ]
-              ),
-              const Text('Or:'),
-              ElevatedButton(
-                  onPressed: (){},// async {
-                  //   var res = await Navigator.push(
-                  //     context,
-                  //     MaterialPageRoute(
-                  //       builder: (context) => const SimpleBarcodeScannerPage(),
-                  //     )
-                  //   );
-                  //   if (res is String) {
-                  //     res = int.parse(res);
-                  //     print(res);
-                  //   // ADD BLOC EVENT HERE
-                  //     }
-                  // },
-                  child: const Text('Scan UPC')),
-              ElevatedButton(
-                  onPressed: () {Navigator.push(context, MaterialPageRoute(builder: (context) => const CustomIngredientPage()));},
-                  child: const Text('Create Custom Ingredient')),
-            ],
-          ).pad(const EdgeInsets.all(8)),
+          content: SingleChildScrollView(
+            child: Column(
+              children: [
+                const Text('Input UPC or name of desired ingredient:'),
+                TextField(
+                    decoration: const InputDecoration(
+                      labelText: 'UPC or Name',
+                    ),
+                    autofocus: true,
+                    inputFormatters: <TextInputFormatter>[
+                      FilteringTextInputFormatter.allow(RegExp('[A-Za-z0-9 ]+'))
+                    ]
+                ),
+                const Text('Or:'),
+                ElevatedButton(
+                    onPressed: (){},// async {
+                    //   var res = await Navigator.push(
+                    //     context,
+                    //     MaterialPageRoute(
+                    //       builder: (context) => const SimpleBarcodeScannerPage(),
+                    //     )
+                    //   );
+                    //   if (res is String) {
+                    //     res = int.parse(res);
+                    //     print(res);
+                    //   // ADD BLOC EVENT HERE
+                    //     }
+                    // },
+                    child: const Text('Scan UPC')),
+                ElevatedButton(
+                    onPressed: () {Navigator.push(context, MaterialPageRoute(builder: (context) => const CustomIngredientPage()));},
+                    child: const Text('Create Custom Ingredient')),
+              ],
+            ).pad(const EdgeInsets.all(2)),
+          ),
           actions: [
             TextButton(onPressed: (){Navigator.pop(context);}, child: const Text('Submit'))
           ],

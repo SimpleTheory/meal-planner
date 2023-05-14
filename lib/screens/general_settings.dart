@@ -11,6 +11,7 @@ class GeneralSettingsPage extends StatelessWidget {
     // Wrap with bloc
     return Scaffold(
         appBar: AppBar(title: const Text('General Settings')),
+        resizeToAvoidBottomInset: false,
         body: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(

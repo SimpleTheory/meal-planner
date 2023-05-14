@@ -1454,7 +1454,7 @@ class DRIS {
     transFat = DRI('Trans Fat', unit: 'g', upperLimit: 1);
     saturatedFat = // 90 bc 10% of cal should be sat * 9kcal per g fat
         DRI('Saturated Fat',
-            unit: 'g', upperLimit: calories.upperLimit ?? calories.dri! / 90);
+            unit: 'g', upperLimit: (calories.upperLimit ?? calories.dri!) / 90);
     unsaturatedFat = DRI('Unsaturated Fat',
         unit: 'g', dri: totalFat.dri! * .9, upperLimit: totalFat.upperLimit);
   }

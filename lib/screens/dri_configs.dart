@@ -107,7 +107,6 @@ The checkbox indicates you tracking that nutrient; any nutrient with a tick will
 If a field is empty that means that nutrient doesnt have that field, (IE an empty DRI means there is no daily recommended intake for that nutrient by default)  
 You can also leave things blank to remove their DRI or UL.
 
-
 You can click the ? icon to see more information about any specific nutrient that has it.
 
 '''.trim());
