@@ -15,18 +15,7 @@ class DietPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text(diet.name)),
-      drawer: Drawer(
-        child: ListView(
-          children: [
-            DrawerHeader(child: Text(diet.name)),
-            ListTile(title: const Text('Days'), onTap: (){},),
-            ListTile(title: const Text('Shopping List'), onTap: (){},),
-            ListTile(title: const Text('DRI Configuration'), onTap: (){Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const DRIConfigPage()));},),
-            ListTile(title: const Text('Return to Home Page'), onTap: (){Navigator.pop(context); Navigator.pop(context);},),
-          ],
-          // DrawerHeader(child: Text(),)
-        ),
-      ),
+      drawer: dietDrawer(diet, context),
       body: ListView(
         children: [
           Padding(

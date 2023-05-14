@@ -5,6 +5,7 @@ import 'package:nutrition_app/domain.dart';
 import 'package:nutrition_app/domain/dri_notes.dart';
 import 'package:nutrition_app/screens/custom_ingredient.dart';
 import 'package:nutrition_app/screens/diet_details_screen.dart';
+import 'package:nutrition_app/utils/local_widgets.dart';
 import '../temp_dummy_data.dart';
 
 class DRIConfigPage extends StatelessWidget {
@@ -15,21 +16,7 @@ class DRIConfigPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text(diet.name)),
-      drawer: Drawer(
-        child: ListView(
-          children: [
-            DrawerHeader(child: Text(diet.name)),
-            ListTile(title: const Text('Days'), onTap: (){Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => DietPage(diet: diet)));},),
-            ListTile(title: const Text('Shopping List'), onTap: () {},),
-            ListTile(title: const Text('DRI Configuration'), onTap: () {},),
-            ListTile(title: const Text('Return to Home Page'), onTap: () {
-              Navigator.pop(context);
-              Navigator.pop(context);
-            },),
-          ],
-          // DrawerHeader(child: Text(),)
-        ),
-      ),
+      drawer: dietDrawer(diet, context),
       body: SingleChildScrollView(
         child: Column(
           children: [

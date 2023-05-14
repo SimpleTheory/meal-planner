@@ -1,7 +1,10 @@
 import 'package:ari_utils/ari_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:nutrition_app/domain.dart';
+import 'package:nutrition_app/screens/diet_details_screen.dart';
 import 'package:nutrition_app/utils/utils.dart';
+
+import '../screens/dri_configs.dart';
 
 Widget plusSignTile(void Function()? onTap, {EdgeInsets? padding}) =>
   Padding(
@@ -88,3 +91,16 @@ Widget mealStyleNutrientDisplay(Nutrients nutrients){
     ),
   );
 }
+
+Drawer dietDrawer(Diet diet, BuildContext context)=>Drawer(
+  child: ListView(
+    children: [
+      DrawerHeader(child: Text(diet.name)),
+      ListTile(title: const Text('Days'), onTap: (){Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => DietPage(diet: diet)));},),
+      ListTile(title: const Text('Shopping List'), onTap: (){},),
+      ListTile(title: const Text('DRI Configuration'), onTap: (){Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const DRIConfigPage()));},),
+      ListTile(title: const Text('Return to Home Page'), onTap: (){Navigator.pop(context); Navigator.pop(context);},),
+    ],
+    // DrawerHeader(child: Text(),)
+  ),
+);
