@@ -1468,7 +1468,7 @@ class DRIS {
     "fiber": emoji.get('toilet').code,
     "potassium": emoji.get('banana').code,
     "sodium": emoji.get('salt').code,
-    "protein": emoji.get('steak').code,
+    "protein": '🥩',
     "sugars": emoji.get('candy').code,
     "choline": 'choline',
     "copper": 'Cu',
@@ -1494,7 +1494,7 @@ class DRIS {
     "vitaminD": 'D',
     "vitaminK": 'K',
     "zinc": 'Zn',
-    "transFat": emoji.get('fried shrimp').code,
+    "transFat": '🍤',
     "unsaturatedFat": olive,
     "saturatedFat": butter
   };

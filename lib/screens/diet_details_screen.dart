@@ -2,7 +2,6 @@ import 'package:ari_utils/ari_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:nutrition_app/domain.dart';
-import 'package:nutrition_app/screens/dri_configs.dart';
 import 'package:nutrition_app/temp_dummy_data.dart';
 import 'package:nutrition_app/utils/local_widgets.dart';
 import 'package:nutrition_app/utils/utils.dart';
@@ -185,7 +184,10 @@ Widget mealComponentTile(MealComponent meal, BuildContext context){
     expandedCrossAxisAlignment: CrossAxisAlignment.center,
     // childrenPadding: const EdgeInsets.fromLTRB(40, 0, 0, 5),
     children: [
-        mealStyleNutrientDisplay(meal.nutrients),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(0, 10, 0, 2),
+          child: mealStyleNutrientDisplay(meal.nutrients),
+        ),
         const Text('Serving Size: ', style: TextStyle(fontSize: 16),),
         TextFormField(
           initialValue: meal.grams.isInt ? meal.grams.toInt().toString() : roundDecimal(meal.grams.toDouble(), 3).toString(),

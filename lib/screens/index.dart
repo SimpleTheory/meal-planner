@@ -46,7 +46,11 @@ class IndexPage extends StatelessWidget {
           ),
           ElevatedButton(
             // title: Text('Meals'),
-              onPressed: () {Navigator.push(context, MaterialPageRoute(builder: (context) => const IngredientPage()));},
+              onPressed: () {Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      settings: const RouteSettings(name: "/IngredientsPage"),
+                      builder: (context) => const IngredientPage()));},
               child: const Text('Ingredients'),
             // children: [
             // ],
@@ -94,6 +98,7 @@ Widget dietTile(Diet diet, BuildContext context) =>
         Navigator.push(context, MaterialPageRoute(builder: (context) => DietPage(diet: diet)));
       },
       trailing: PopupMenuButton(
+        // onSelected: (dietPopUpSelection){},
         itemBuilder: (BuildContext context) => [
           PopupMenuItem(value: DietPopUpEnumHolder(diet, PopUpOptions.edit),child: const Text('Edit'),),
           PopupMenuItem(value: DietPopUpEnumHolder(diet, PopUpOptions.delete), child: const Text('Delete')),

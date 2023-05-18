@@ -47,13 +47,19 @@ class Ingredient extends MealComponentFactory {
   static Future<Ingredient> fromApi(Settings settings, sourceMetadata) async {
     IngredientSource source;
     Response json;
-    if (sourceMetadata is int) {
+    if (sourceMetadata is String) {
+      if (RegExp(r'^\d+$').hasMatch(sourceMetadata)){
+        return fromApi(settings, int.parse(sourceMetadata));
+      }
+      else {
+      source = IngredientSource.string;
+      json = await apiCallFromString(sourceMetadata, settings);}
+    }
+    else if (sourceMetadata is int) {
       source = IngredientSource.upc;
       json = await apiCallFromUpc(sourceMetadata, settings);
-    } else if (sourceMetadata is String) {
-      source = IngredientSource.string;
-      json = await apiCallFromString(sourceMetadata, settings);
-    } else {
+    }
+    else {
       throw Exception('$sourceMetadata type(${sourceMetadata.runtimeType})is '
           'not String or int and cannot be called from nutritionix API');
     }
@@ -70,6 +76,8 @@ class Ingredient extends MealComponentFactory {
     /// serving_unit
     // Ingredient(name: name, baseNutrient: baseNutrient, altMeasures2grams: altMeasures2grams, source: source, sourceMetadata: )
     final baseNutrient = BaseNutrients(
+        // TODO ADD CASE WHERE SERVING WEIGHT GRAMS IS NULL DEFAULT TO SERVING UNIT
+        // BREAK CASE GF SOY SAUCE
         grams: responseBody['serving_weight_grams'],
         nutrients: Nutrients.fromResponseBody(responseBody));
     Map<String, num> altMeasures2grams;

@@ -29,6 +29,10 @@ class DRIConfigPage extends StatelessWidget {
   }
 }
 
+/// change driForm to be a stless widget
+/// Move the map code into an init state of bloc
+/// Use ListView with lazyloader
+
 Widget driForm(DRI dri, BuildContext context) {
   // String? stringify(num? n) => n?.toString();
   // print(dri.name);

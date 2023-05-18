@@ -1,5 +1,5 @@
-Implement and make decisions with regard to:
-    DRI -- Nutrient comparisons
-    Handle API call errors
-
-Start planning app screens again
+See possibility of UPC scan
+Implement Image Picker
+Finish ShoppingListPage
+Review UI (and make corrections thereof)
+Strategize Blocs

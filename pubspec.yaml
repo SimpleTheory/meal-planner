@@ -48,6 +48,8 @@ dependencies:
   flutter_emoji: ^2.4.0
   permission_handler: ^10.2.0
   image_picker: ^0.8.7+4
+  flutter_zxing: ^1.2.0
+  drag_and_drop_lists: ^0.3.3
 
 dev_dependencies:
   flutter_test:

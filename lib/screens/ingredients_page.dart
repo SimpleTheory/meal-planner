@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:nutrition_app/screens/barcode_scan.dart';
 import 'package:nutrition_app/screens/custom_ingredient.dart';
 import 'package:nutrition_app/utils/local_widgets.dart';
 import 'package:nutrition_app/utils/utils.dart';
@@ -101,7 +102,8 @@ ListTile ingredientTile(Ingredient ingredient){
   );
 }
 
-openAddNewIngredientPopUp(BuildContext context)=>
+openAddNewIngredientPopUp(BuildContext context){
+  final myController = TextEditingController();
     showDialog(context: context,
         builder: (context)=>AlertDialog(
           title: const Text('Add New Ingredient'),
@@ -113,26 +115,17 @@ openAddNewIngredientPopUp(BuildContext context)=>
                     decoration: const InputDecoration(
                       labelText: 'UPC or Name',
                     ),
-                    autofocus: true,
+                    // autofocus: true,
                     inputFormatters: <TextInputFormatter>[
                       FilteringTextInputFormatter.allow(RegExp('[A-Za-z0-9 ]+'))
-                    ]
+                    ],
+                    controller: myController,
                 ),
                 const Text('Or:'),
                 ElevatedButton(
-                    onPressed: (){},// async {
-                    //   var res = await Navigator.push(
-                    //     context,
-                    //     MaterialPageRoute(
-                    //       builder: (context) => const SimpleBarcodeScannerPage(),
-                    //     )
-                    //   );
-                    //   if (res is String) {
-                    //     res = int.parse(res);
-                    //     print(res);
-                    //   // ADD BLOC EVENT HERE
-                    //     }
-                    // },
+                    onPressed: (){
+                      Navigator.push(context, MaterialPageRoute(builder: (context)=> const BarcodeReadingPage()));
+                    },
                     child: const Text('Scan UPC')),
                 ElevatedButton(
                     onPressed: () {Navigator.push(context, MaterialPageRoute(builder: (context) => const CustomIngredientPage()));},
@@ -141,10 +134,28 @@ openAddNewIngredientPopUp(BuildContext context)=>
             ).pad(const EdgeInsets.all(2)),
           ),
           actions: [
-            TextButton(onPressed: (){Navigator.pop(context);}, child: const Text('Submit'))
+            TextButton(
+                onPressed: (){
+                  print(myController.text);
+                  if (myController.text.isNotEmpty){
+                    try {
+                      final ing = Ingredient.fromApi(settings, myController.text);
+                      print(ing);
+                      // Navigator.pop(context);
+                      ing.then((value) => showDialog(
+                          context: context,
+                          builder: (context) => confirmIngredient(value, context)));
+                    } on Exception catch (e) {
+                      // TODO
+                      print(e);
+                    }
+                  }
+                  else{Navigator.pop(context);}
+                  },
+                child: const Text('Submit'))
           ],
         )
-    );
+    );}
 
 Widget confirmIngredient(Ingredient ingredient, BuildContext context) =>
     AlertDialog(
@@ -174,7 +185,12 @@ Widget confirmIngredient(Ingredient ingredient, BuildContext context) =>
           children: [
             ElevatedButton(onPressed: (){Navigator.pop(context);}, child: const Text('No')),
             const Spacer(),
-            ElevatedButton(onPressed: (){}, child: const Text('Yes'))
+            ElevatedButton(
+                onPressed: (){
+              // TODO: Add Bloc Functionality of adding Ingredient to App
+                  Navigator.of(context).popUntil(ModalRoute.withName('/IngredientsPage'));
+            },
+                child: const Text('Yes'))
           ],
         )
       ],

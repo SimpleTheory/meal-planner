@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_emoji/flutter_emoji.dart';
 
@@ -107,13 +106,14 @@ Image getImage(Uri? uri, {double? width, double? height}){
     return Image.asset('cache/images/null.png', width: width, height: height,);
   }
   try{
-  if (uri.scheme == 'file'){
-    return Image.file(File(uri.path), width: width, height: height,);
-    }
-  else{
-    return Image.network(uri.toString(), width: width, height: height,);
-    }
-  } catch (e){
+    if (uri.scheme == 'file'){
+      return Image.file(File(uri.path), width: width, height: height,);
+      }
+    else{
+      return Image.network(uri.toString(), width: width, height: height,);
+      }
+  }
+  catch (e){
     // Maybe add snackbar or alt image for no internet
     return Image.asset('cache/images/null.png', width: width, height: height,);
   }

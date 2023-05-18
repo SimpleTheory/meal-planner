@@ -1,6 +1,7 @@
 import 'package:ari_utils/ari_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:nutrition_app/domain.dart';
+import 'package:nutrition_app/screens/custom_ingredient.dart';
 import 'package:nutrition_app/screens/diet_details_screen.dart';
 import 'package:nutrition_app/utils/utils.dart';
 
@@ -46,7 +47,7 @@ Widget dayStyleNutrientDisplay(Nutrients nutrients, DRIS dris){
         padding: const EdgeInsets.fromLTRB(16, 0, 0, 0),
         child: Column(
             children: [
-              Text(DRIS.representor[nut.key] ?? nut.key),
+              Text(DRIS.representor[nut.key] ?? replaceTextForForm(nut.key)),
               Text(nut.value[2], style: TextStyle(color: color))
             ]
         ),
@@ -73,7 +74,7 @@ Widget mealStyleNutrientDisplay(Nutrients nutrients){
         padding: const EdgeInsets.fromLTRB(16, 0, 0, 0),
         child: Column(
             children: [
-              Text(DRIS.representor[nut.key] ?? nut.key),
+              Text(DRIS.representor[nut.key] ?? replaceTextForForm(nut.key)),
               Text(roundDecimal(nut.value.value.toDouble(), 2).toString())
             ]
         ),
