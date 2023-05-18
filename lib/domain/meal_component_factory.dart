@@ -11,10 +11,14 @@ abstract class MealComponentFactory {
   String name;
   BaseNutrients baseNutrient;
   Map<String, num> altMeasures2grams;
+  late String unit;
 
-  MealComponentFactory(this.baseNutrient, this.altMeasures2grams, this.name) {
-    altMeasures2grams['grams'] = 1;
+  MealComponentFactory(this.baseNutrient, this.altMeasures2grams, this.name,
+      {String baseUnit = 'grams'}) {
+    altMeasures2grams[baseUnit] = 1;
+    unit = baseUnit;
   }
+
   MealComponent toMealComponent(
       String measure, num quantity, MealComponentFactory reference) {
     num grams = quantity * altMeasures2grams[measure]!;
@@ -22,6 +26,7 @@ abstract class MealComponentFactory {
   }
 
   Uri? get photo => null;
+
   baseIngredients(); // MealComponent | List<MealComponent>
 }
 
@@ -39,6 +44,7 @@ class Ingredient extends MealComponentFactory {
   Map<String, num> altMeasures2grams;
   @override
   Uri? photo;
+
   // </editor-fold>
   IngredientSource source;
   dynamic sourceMetadata;
@@ -48,18 +54,16 @@ class Ingredient extends MealComponentFactory {
     IngredientSource source;
     Response json;
     if (sourceMetadata is String) {
-      if (RegExp(r'^\d+$').hasMatch(sourceMetadata)){
+      if (RegExp(r'^\d+$').hasMatch(sourceMetadata)) {
         return fromApi(settings, int.parse(sourceMetadata));
+      } else {
+        source = IngredientSource.string;
+        json = await apiCallFromString(sourceMetadata, settings);
       }
-      else {
-      source = IngredientSource.string;
-      json = await apiCallFromString(sourceMetadata, settings);}
-    }
-    else if (sourceMetadata is int) {
+    } else if (sourceMetadata is int) {
       source = IngredientSource.upc;
       json = await apiCallFromUpc(sourceMetadata, settings);
-    }
-    else {
+    } else {
       throw Exception('$sourceMetadata type(${sourceMetadata.runtimeType})is '
           'not String or int and cannot be called from nutritionix API');
     }
@@ -75,15 +79,16 @@ class Ingredient extends MealComponentFactory {
     /// assert serving_qty == 1
     /// serving_unit
     // Ingredient(name: name, baseNutrient: baseNutrient, altMeasures2grams: altMeasures2grams, source: source, sourceMetadata: )
+    final String? baseUnit = responseBody['serving_weight_grams'] == null ? null : responseBody['nf_metric_uom'];
     final baseNutrient = BaseNutrients(
         // TODO ADD CASE WHERE SERVING WEIGHT GRAMS IS NULL DEFAULT TO SERVING UNIT
         // BREAK CASE GF SOY SAUCE
-        grams: responseBody['serving_weight_grams'],
+        grams: responseBody['serving_weight_grams'] ?? responseBody['nf_metric_qty'],
         nutrients: Nutrients.fromResponseBody(responseBody));
     Map<String, num> altMeasures2grams;
     if (responseBody['alt_measures'] != null) {
       altMeasures2grams = {
-        responseBody['serving_unit']: responseBody['serving_weight_grams'],
+        responseBody['serving_unit']: responseBody['serving_weight_grams'] ?? responseBody['nf_metric_qty'],
         ...{
           for (Map alt in responseBody['alt_measures'])
             alt['measure']: alt['serving_weight']
@@ -91,26 +96,27 @@ class Ingredient extends MealComponentFactory {
       };
     } else {
       altMeasures2grams = {
-        responseBody['serving_unit']: responseBody['serving_weight_grams'],
+        responseBody['serving_unit']: responseBody['serving_weight_grams'] ?? responseBody['nf_metric_qty'],
       };
     }
     String name = responseBody['food_name'];
-    String? photo =
-        responseBody['photo']['highres'] ?? responseBody['photo']['thumb'];
+    String? photo = responseBody['photo']['highres'] ?? responseBody['photo']['thumb'];
     return Ingredient(
         name: name,
         baseNutrient: baseNutrient,
         photo: photo == null ? null : Uri.parse(photo),
         altMeasures2grams: altMeasures2grams,
         source: source,
-        sourceMetadata: sourceMetadata);
+        sourceMetadata: sourceMetadata,
+        baseUnit: baseUnit
+    );
   }
 
   @override
   baseIngredients() => this;
 
   // <editor-fold desc="Dataclass Section">
-  @Generate()
+
   // <Dataclass>
 
   Ingredient(
@@ -119,11 +125,13 @@ class Ingredient extends MealComponentFactory {
       required this.altMeasures2grams,
       required this.source,
       this.photo,
-      this.sourceMetadata})
+      this.sourceMetadata,
+      String? baseUnit})
       : super(
           baseNutrient,
           altMeasures2grams,
           name,
+          baseUnit: baseUnit ?? 'grams'
         );
 
   factory Ingredient.staticConstructor(
@@ -147,7 +155,8 @@ class Ingredient extends MealComponentFactory {
         "altMeasures2grams": altMeasures2grams,
         "photo": photo,
         "source": source,
-        "sourceMetadata": sourceMetadata
+        "sourceMetadata": sourceMetadata,
+        "unit": unit
       };
 
   @override
@@ -160,7 +169,9 @@ class Ingredient extends MealComponentFactory {
           equals(altMeasures2grams, other.altMeasures2grams) &&
           equals(photo, other.photo) &&
           equals(source, other.source) &&
-          equals(sourceMetadata, other.sourceMetadata));
+          equals(sourceMetadata, other.sourceMetadata) &&
+          equals(unit, other.unit)
+      );
 
   @override
   int get hashCode =>
@@ -169,11 +180,13 @@ class Ingredient extends MealComponentFactory {
       altMeasures2grams.hashCode ^
       photo.hashCode ^
       source.hashCode ^
-      sourceMetadata.hashCode;
+      sourceMetadata.hashCode ^
+      unit.hashCode
+  ;
 
   @override
   String toString() =>
-      'Ingredient(name: $name, baseNutrient: $baseNutrient, altMeasures2grams: $altMeasures2grams, photo: $photo, source: $source, sourceMetadata: $sourceMetadata)';
+      'Ingredient(name: $name, baseNutrient: $baseNutrient, altMeasures2grams: $altMeasures2grams, photo: $photo, source: $source, sourceMetadata: $sourceMetadata, unit: $unit)';
 
   Ingredient copyWithIngredient(
           {String? name,
@@ -181,16 +194,20 @@ class Ingredient extends MealComponentFactory {
           Map<String, num>? altMeasures2grams,
           Uri? photo,
           IngredientSource? source,
-          dynamic sourceMetadata}) =>
+          dynamic sourceMetadata,
+            String? baseUnit}) =>
       Ingredient(
           name: name ?? this.name,
           baseNutrient: baseNutrient ?? this.baseNutrient,
           altMeasures2grams: altMeasures2grams ?? this.altMeasures2grams,
           photo: photo ?? this.photo,
           source: source ?? this.source,
-          sourceMetadata: sourceMetadata ?? this.sourceMetadata);
+          sourceMetadata: sourceMetadata ?? this.sourceMetadata,
+          baseUnit: baseUnit ?? unit
+      );
 
   String toJson() => jsonEncode(toMap());
+
   Map<String, dynamic> toMap() =>
       {'__type': 'Ingredient', ...nestedJsonMap(attributes__)};
 
@@ -204,6 +221,7 @@ class Ingredient extends MealComponentFactory {
     Uri? photo = dejsonify(map['photo']);
     IngredientSource source = dejsonify(map['source']);
     dynamic sourceMetadata = dejsonify(map['sourceMetadata']);
+    String? unit = map['unit'];
 
     Map<String, num> altMeasures2grams = Map<String, num>.from(
         altMeasures2gramsTemp
@@ -215,9 +233,11 @@ class Ingredient extends MealComponentFactory {
         altMeasures2grams: altMeasures2grams,
         photo: photo,
         source: source,
-        sourceMetadata: sourceMetadata);
+        sourceMetadata: sourceMetadata,
+        baseUnit: unit
+    );
   }
-  // </Dataclass>
+// </Dataclass>
 
 // </editor-fold>
 }
@@ -280,6 +300,7 @@ class Meal extends MealComponentFactory {
         "altMeasures2grams": altMeasures2grams,
         "notes": notes
       };
+
   //@Generate()
   // <Dataclass>
 
@@ -339,6 +360,7 @@ class Meal extends MealComponentFactory {
           photo: photo ?? this.photo);
 
   String toJson() => jsonEncode(toMap());
+
   Map<String, dynamic> toMap() =>
       {'__type': 'Meal', ...nestedJsonMap(attributes__)};
 
@@ -362,7 +384,7 @@ class Meal extends MealComponentFactory {
         notes: notes,
         photo: photo);
   }
-  // </Dataclass>
+// </Dataclass>
 
 // </editor-fold>
 }

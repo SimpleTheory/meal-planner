@@ -26,7 +26,7 @@ class IngredientPage extends StatelessWidget {
                       border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(30.0)
                       ),
-                      contentPadding: EdgeInsets.all(20),
+                      contentPadding: const EdgeInsets.all(20),
                       suffixIcon: const Icon(Icons.search)
                   )
               )
@@ -74,7 +74,7 @@ class IngredientTile extends StatelessWidget {
           PopupMenuItem(value: IngredientPopUpEnumHolder(ingredient, PopUpOptions.duplicate),child: const Text('Duplicate'),),
         ],
       ),
-      subtitle: NutrientText(nutrients: ingredient.baseNutrient.nutrients),
+      subtitle: NutrientText(nutrients: ingredient.baseNutrient.nutrients, grams: ingredient.baseNutrient.grams,),
       // subtitle: Text(
       //     'Serving (${ingredient.baseNutrient.grams}g):  '
       //         "${ingredient.baseNutrient.nutrients.calories.value.round()}\u{1F525}  "
@@ -191,18 +191,18 @@ void openAddNewIngredientPopUp(BuildContext context){
           actions: [
             TextButton(
                 onPressed: (){
-                  print(myController.text);
+                  // print(myController.text);
                   if (myController.text.isNotEmpty){
                     try {
                       final ing = Ingredient.fromApi(settings, myController.text);
-                      print(ing);
+                      // print(ing);
                       // Navigator.pop(context);
                       ing.then((value) => showDialog(
                           context: context,
                           builder: (context) => confirmIngredient(value, context)));
                     } on Exception catch (e) {
                       // TODO
-                      print(e);
+                      // print(e);
                     }
                   }
                   else{Navigator.pop(context);}
@@ -220,16 +220,17 @@ AlertDialog confirmIngredient(Ingredient ingredient, BuildContext context) =>
           children: [
             Center(child: GetImage(ingredient.photo, width: 200, height: 200)),
             Center(child: Text(ingredient.name, style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),)),
-            Text(
-                'Serving (${ingredient.baseNutrient.grams}g):  '
-                    "${ingredient.baseNutrient.nutrients.calories.value.round()}\u{1F525}  "
-                    '${ingredient.baseNutrient.nutrients.carbohydrate.value.round()}\u{1F35E}   '
-                    '${ingredient.baseNutrient.nutrients.protein.value.round()}\u{1F969}   '
-                // '${Ingredient.baseNutrient.nutrients.unsaturatedFat.value.round()}\u{1FAD2}  '
-                    '${ingredient.baseNutrient.nutrients.unsaturatedFat.value.round()}$olive   '
-                // '${Ingredient.baseNutrient.nutrients.saturatedFat.value.round()}\u{1F9C8}',
-                    '${ingredient.baseNutrient.nutrients.saturatedFat.value.round()}$butter'
-            ),
+            NutrientText(nutrients: ingredient.baseNutrient.nutrients, grams: ingredient.baseNutrient.grams),
+            // Text(
+            //     'Serving (${ingredient.baseNutrient.grams}g):  '
+            //         "${ingredient.baseNutrient.nutrients.calories.value.round()}\u{1F525}  "
+            //         '${ingredient.baseNutrient.nutrients.carbohydrate.value.round()}\u{1F35E}   '
+            //         '${ingredient.baseNutrient.nutrients.protein.value.round()}\u{1F969}   '
+            //     // '${Ingredient.baseNutrient.nutrients.unsaturatedFat.value.round()}\u{1FAD2}  '
+            //         '${ingredient.baseNutrient.nutrients.unsaturatedFat.value.round()}$olive   '
+            //     // '${Ingredient.baseNutrient.nutrients.saturatedFat.value.round()}\u{1F9C8}',
+            //         '${ingredient.baseNutrient.nutrients.saturatedFat.value.round()}$butter'
+            // ),
             Text('Source: ${ingredient.sourceMetadata}', style: const TextStyle(fontSize: 12),),
             const Text('Is this the ingredient you were looking for?', style: TextStyle(fontSize: 16),)
           ],
