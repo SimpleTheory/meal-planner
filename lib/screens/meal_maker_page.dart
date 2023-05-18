@@ -54,17 +54,23 @@ class MealMakerPage extends StatelessWidget {
               physics: const NeverScrollableScrollPhysics(),
               shrinkWrap: true,
               children: [
-                mealStyleNutrientDisplay(current_meal!.baseNutrient.nutrients),
-                plusSignTile(() {}),
-                ...current_meal!.ingredients.map((e) => mealComponentTile(e, context)),
+                MealStyleNutrientDisplay(current_meal!.baseNutrient.nutrients),
+                PlusSignTile(() {}),
+                // ListView.builder(
+                //   itemBuilder: (context, index)=>MealComponentTile(current_meal!.ingredients[index]),
+                //   itemCount: ingredients.length,
+                //   shrinkWrap: true,
+                //   physics: const ClampingScrollPhysics(),
+                // )
+                ...current_meal!.ingredients.map((e) => MealComponentTile(e)),
               ],
             ),
             Row(children: [
               const Text('Subrecipe: ', style: TextStyle(fontSize: 20)), Switch(value: false, onChanged: (bool isSubRecipe){})
             ],),
             const Text('Alternate measures:', style: TextStyle(fontSize: 20),),
-            plusSignTile(() {}),
-            altMeasureFormField(),
+            PlusSignTile(() {}),
+            const AltMeasureFormField(),
             Container(
               decoration: const BoxDecoration(border: Border(top: BorderSide(color: Colors.grey))),
               child: Column(

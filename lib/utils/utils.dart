@@ -101,23 +101,56 @@ extension RowPadding on Row{
 }
 
 // TODO ADD ERRORS
-Image getImage(Uri? uri, {double? width, double? height}){
-  if (uri == null){
-    return Image.asset('cache/images/null.png', width: width, height: height,);
-  }
-  try{
-    if (uri.scheme == 'file'){
-      return Image.file(File(uri.path), width: width, height: height,);
-      }
-    else{
-      return Image.network(uri.toString(), width: width, height: height,);
-      }
-  }
-  catch (e){
-    // Maybe add snackbar or alt image for no internet
-    return Image.asset('cache/images/null.png', width: width, height: height,);
-  }
+// Image getImage(Uri? uri, {double? width, double? height}){
+//   if (uri == null){
+//     return Image.asset('cache/images/null.png', width: width, height: height,);
+//   }
+//   try{
+//     if (uri.scheme == 'file'){
+//       return Image.file(File(uri.path), width: width, height: height,);
+//       }
+//     else{
+//       return Image.network(uri.toString(), width: width, height: height,);
+//       }
+//   }
+//   catch (e){
+//     // Maybe add snackbar or alt image for no internet
+//     return Image.asset('cache/images/null.png', width: width, height: height,);
+//   }
+// }
+
+class GetImage extends StatefulWidget {
+  final Uri? uri;
+  final double? width;
+  final double? height;
+  const GetImage(this.uri, {Key? key, this.width, this.height}) : super(key: key);
+
+  @override
+  State<GetImage> createState() => _GetImageState();
 }
+
+class _GetImageState extends State<GetImage> {
+  @override
+  Widget build(BuildContext context) {
+    if (widget.uri == null){
+      return Image.asset('cache/images/null.png', width: widget.width, height: widget.height,);
+    }
+    try{
+      if (widget.uri!.scheme == 'file'){
+        return Image.file(File(widget.uri!.path), width: widget.width, height: widget.height,);
+      }
+      else{
+        return Image.network(widget.uri.toString(), width: widget.width, height: widget.height,);
+      }
+    }
+    catch (e){
+      // Maybe add snackbar or alt image for no internet
+      return Image.asset('cache/images/null.png', width: widget.width, height: widget.height,);
+    }
+  }
+  }
+
+
 final emoji = EmojiParser();
 final olive = emoji.get('olive').code;
 final butter = emoji.get('butter').code;

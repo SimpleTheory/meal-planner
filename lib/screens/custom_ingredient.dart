@@ -5,6 +5,7 @@ import 'package:nutrition_app/utils/local_widgets.dart';
 import 'package:nutrition_app/utils/utils.dart';
 
 final emptyNutrient = Nutrients.fromValues();
+final nutList = emptyNutrient.attributes__.values.toList();
 
 // TODO: Modify CustomIngredientPage to also be Ingredient Details Page
 
@@ -61,17 +62,21 @@ class CustomIngredientPage extends StatelessWidget {
                 child: Column(
                   children: [
                     const Text('Alternate measures:'),
-                    plusSignTile(() {}, padding: EdgeInsets.fromLTRB(0, 16, 0, 0)),
-                    altMeasureFormField(),
+                    PlusSignTile(() {}, padding: const EdgeInsets.fromLTRB(0, 16, 0, 0)),
+                    const AltMeasureFormField(),
                   ],
                 ),
               ),
             ),
             Container(
               decoration: BoxDecoration(border: Border.all()),
-              child: Column(
+              child: ListView.builder(
                 // children: type2dataclasses[Nutrients]!.attributes.keys.map((e) => nutrientFormField(e)).toList(),
-                children: emptyNutrient.attributes__.values.map((e) => nutrientFormField(e)).toList(),
+                itemBuilder: (BuildContext context, int index)=>NutrientFormField(nutList[index]),
+                itemCount: nutList.length,
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                // children: emptyNutrient.attributes__.values.map((e) => nutrientFormField(e)).toList(),
               ),
             )
             // ...?type2dataclasses[Nutrients]?.attributes.keys.map((e) => nutrientFormField(e))
@@ -82,9 +87,39 @@ class CustomIngredientPage extends StatelessWidget {
   }
 }
 
-Widget nutrientFormField(Nutrient nut)=>
-  // TODO Add units to form field hint somehow
-    Row(
+// Widget nutrientFormField(Nutrient nut)=>
+//     Row(
+//       children: [
+//         Padding(
+//           padding: const EdgeInsets.fromLTRB(10, 5, 20, 5),
+//           child: Text('${replaceTextForForm(nut.name)}:'),
+//         ),
+//         Flexible(
+//           child: Padding(
+//             padding: const EdgeInsets.fromLTRB(20, 5, 50, 5),
+//             child: TextFormField(
+//                 decoration: InputDecoration(
+//                   contentPadding: const EdgeInsets.fromLTRB(10, 0, 0, 0),
+//                   // hintText: '0',
+//                   labelText: nut.unit
+//                 ),
+//                 inputFormatters: <TextInputFormatter>[
+//                   FilteringTextInputFormatter.allow(RegExp(r'[\d.]+'))
+//                 ],
+//               keyboardType: const TextInputType.numberWithOptions(decimal: true),
+//             ),
+//           ),
+//         ),
+//       ],
+//     );
+
+class NutrientFormField extends StatelessWidget {
+  final Nutrient nut;
+  const NutrientFormField(this.nut, {Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
       children: [
         Padding(
           padding: const EdgeInsets.fromLTRB(10, 5, 20, 5),
@@ -94,55 +129,99 @@ Widget nutrientFormField(Nutrient nut)=>
           child: Padding(
             padding: const EdgeInsets.fromLTRB(20, 5, 50, 5),
             child: TextFormField(
-                decoration: InputDecoration(
+              decoration: InputDecoration(
                   contentPadding: const EdgeInsets.fromLTRB(10, 0, 0, 0),
                   // hintText: '0',
                   labelText: nut.unit
-                ),
-                inputFormatters: <TextInputFormatter>[
-                  FilteringTextInputFormatter.allow(RegExp(r'[\d.]+'))
-                ],
+              ),
+              inputFormatters: <TextInputFormatter>[
+                FilteringTextInputFormatter.allow(RegExp(r'[\d.]+'))
+              ],
               keyboardType: const TextInputType.numberWithOptions(decimal: true),
             ),
           ),
         ),
       ],
     );
+  }
+}
 
-Row altMeasureFormField()=>
-    Row(
+class AltMeasureFormField extends StatelessWidget {
+  const AltMeasureFormField({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         const Text('Name: '),
         Flexible(child: Padding(
           padding: const EdgeInsets.fromLTRB(10, 3, 10, 3),
           child: TextFormField(
-              decoration: const InputDecoration(
+            decoration: const InputDecoration(
                 labelText: 'name',
                 contentPadding: EdgeInsets.fromLTRB(10, 0, 0, 0)
-              ),
-              inputFormatters: <TextInputFormatter>[
-                FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z \-]+'))
-              ],
+            ),
+            inputFormatters: <TextInputFormatter>[
+              FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z \-]+'))
+            ],
           ),
         )),
         const Text('Grams: '),
         Flexible(child: Padding(
           padding: const EdgeInsets.fromLTRB(10, 3, 10, 3),
           child: TextFormField(
-              decoration: const InputDecoration(
+            decoration: const InputDecoration(
 
-                contentPadding: EdgeInsets.fromLTRB(10, 0, 0, 0),
-                labelText: 'grams',
-              ),
-              inputFormatters: <TextInputFormatter>[
-                FilteringTextInputFormatter.allow(RegExp(r'[\d.]+'))
-              ],
+              contentPadding: EdgeInsets.fromLTRB(10, 0, 0, 0),
+              labelText: 'grams',
+            ),
+            inputFormatters: <TextInputFormatter>[
+              FilteringTextInputFormatter.allow(RegExp(r'[\d.]+'))
+            ],
             keyboardType: const TextInputType.numberWithOptions(decimal: true),
           ),
         )),
       ],
     );
+  }
+}
+
+// Row altMeasureFormField()=>
+//     Row(
+//       crossAxisAlignment: CrossAxisAlignment.center,
+//       children: [
+//         const Text('Name: '),
+//         Flexible(child: Padding(
+//           padding: const EdgeInsets.fromLTRB(10, 3, 10, 3),
+//           child: TextFormField(
+//               decoration: const InputDecoration(
+//                 labelText: 'name',
+//                 contentPadding: EdgeInsets.fromLTRB(10, 0, 0, 0)
+//               ),
+//               inputFormatters: <TextInputFormatter>[
+//                 FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z \-]+'))
+//               ],
+//           ),
+//         )),
+//         const Text('Grams: '),
+//         Flexible(child: Padding(
+//           padding: const EdgeInsets.fromLTRB(10, 3, 10, 3),
+//           child: TextFormField(
+//               decoration: const InputDecoration(
+//
+//                 contentPadding: EdgeInsets.fromLTRB(10, 0, 0, 0),
+//                 labelText: 'grams',
+//               ),
+//               inputFormatters: <TextInputFormatter>[
+//                 FilteringTextInputFormatter.allow(RegExp(r'[\d.]+'))
+//               ],
+//             keyboardType: const TextInputType.numberWithOptions(decimal: true),
+//           ),
+//         )),
+//       ],
+//     );
+
 String replaceTextForForm(String input){
   final lowercase = input.toLowerCase();
   if (lowercase == 'ala' || lowercase == 'epa' || lowercase == 'dha' || lowercase == 'dpa'){

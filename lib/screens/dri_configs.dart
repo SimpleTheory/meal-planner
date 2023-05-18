@@ -9,21 +9,29 @@ import 'package:nutrition_app/utils/local_widgets.dart';
 import '../temp_dummy_data.dart';
 
 class DRIConfigPage extends StatelessWidget {
-
-  const DRIConfigPage({Key? key}) : super(key: key);
+  final List<DRI> dris = List<DRI>.from(diet.dris.attributes__.values);
+  DRIConfigPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text(diet.name)),
-      drawer: dietDrawer(diet, context),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            driConfigIntro,
-            ...diet.dris.attributes__.values.map((e) => driForm(e as DRI, context))
-          ],
-        ),
+      drawer: DietDrawer(diet),
+      // body: SingleChildScrollView(
+      //   child: Column(
+      //     children: [
+      //       driConfigIntro,
+      //       ...diet.dris.attributes__.values.map((e) => driForm(e as DRI, context))
+      //     ],
+      //   ),
+      // ),
+      body: ListView.builder(
+        itemBuilder: (BuildContext context, int index)=>DriForm(dris[index]),
+        itemCount: dris.length,
+        // children: [
+        //   driConfigIntro,
+        //   ...diet.dris.attributes__.values.map((e) => driForm(e as DRI, context))
+        // ],
       ),
     );
   }
@@ -33,47 +41,93 @@ class DRIConfigPage extends StatelessWidget {
 /// Move the map code into an init state of bloc
 /// Use ListView with lazyloader
 
-Widget driForm(DRI dri, BuildContext context) {
-  // String? stringify(num? n) => n?.toString();
-  // print(dri.name);
-  return Row(
-      children: [
-        Checkbox(value: dri.tracked, onChanged: (bool? changedTracked){}),
-        Padding(
-          padding: const EdgeInsets.fromLTRB(2, 1, 8, 1),
-          child: Text('${replaceTextForForm(dri.name)} (${dri.unit})'),
-        ),
-        Flexible(
-          child: TextFormField(
-            initialValue:dri.dri?.toString(),
-            decoration: const InputDecoration(
-              labelText: 'DRI',
-            ),
-            inputFormatters: <TextInputFormatter>[
-              FilteringTextInputFormatter.allow(RegExp(r'[\d.]+'))
-            ],
-            keyboardType: const TextInputType.numberWithOptions(decimal: true),
+class DriForm extends StatelessWidget {
+  final DRI dri;
+  const DriForm(this.dri, {Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+        children: [
+          Checkbox(value: dri.tracked, onChanged: (bool? changedTracked){}),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(2, 1, 8, 1),
+            child: Text('${replaceTextForForm(dri.name)} (${dri.unit})'),
           ),
-        ),
-        Flexible(
-          child: TextFormField(
-            initialValue:dri.upperLimit?.toString(),
-            decoration: const InputDecoration(
-              labelText: 'UL',
+          Flexible(
+            child: TextFormField(
+              initialValue:dri.dri?.toString(),
+              decoration: const InputDecoration(
+                labelText: 'DRI',
+              ),
+              inputFormatters: <TextInputFormatter>[
+                FilteringTextInputFormatter.allow(RegExp(r'[\d.]+'))
+              ],
+              keyboardType: const TextInputType.numberWithOptions(decimal: true),
             ),
-            inputFormatters: <TextInputFormatter>[
-              FilteringTextInputFormatter.allow(RegExp(r'[\d.]+'))
-            ],
-            keyboardType: const TextInputType.numberWithOptions(decimal: true),
           ),
-        ),
-        if (toBool(driNotes[dri.name])) IconButton(
-            onPressed: (){
-              showDialog(context: context, builder: (context) => driInformation(dri.name, context));},
-            icon: const Icon(Icons.help)),
-      ]
-  );
+          Flexible(
+            child: TextFormField(
+              initialValue:dri.upperLimit?.toString(),
+              decoration: const InputDecoration(
+                labelText: 'UL',
+              ),
+              inputFormatters: <TextInputFormatter>[
+                FilteringTextInputFormatter.allow(RegExp(r'[\d.]+'))
+              ],
+              keyboardType: const TextInputType.numberWithOptions(decimal: true),
+            ),
+          ),
+          if (toBool(driNotes[dri.name])) IconButton(
+              onPressed: (){
+                showDialog(context: context, builder: (context) => driInformation(dri.name, context));},
+              icon: const Icon(Icons.help)),
+        ]
+    );
+  }
 }
+
+// Widget driForm(DRI dri, BuildContext context) {
+//   // String? stringify(num? n) => n?.toString();
+//   // print(dri.name);
+//   return Row(
+//       children: [
+//         Checkbox(value: dri.tracked, onChanged: (bool? changedTracked){}),
+//         Padding(
+//           padding: const EdgeInsets.fromLTRB(2, 1, 8, 1),
+//           child: Text('${replaceTextForForm(dri.name)} (${dri.unit})'),
+//         ),
+//         Flexible(
+//           child: TextFormField(
+//             initialValue:dri.dri?.toString(),
+//             decoration: const InputDecoration(
+//               labelText: 'DRI',
+//             ),
+//             inputFormatters: <TextInputFormatter>[
+//               FilteringTextInputFormatter.allow(RegExp(r'[\d.]+'))
+//             ],
+//             keyboardType: const TextInputType.numberWithOptions(decimal: true),
+//           ),
+//         ),
+//         Flexible(
+//           child: TextFormField(
+//             initialValue:dri.upperLimit?.toString(),
+//             decoration: const InputDecoration(
+//               labelText: 'UL',
+//             ),
+//             inputFormatters: <TextInputFormatter>[
+//               FilteringTextInputFormatter.allow(RegExp(r'[\d.]+'))
+//             ],
+//             keyboardType: const TextInputType.numberWithOptions(decimal: true),
+//           ),
+//         ),
+//         if (toBool(driNotes[dri.name])) IconButton(
+//             onPressed: (){
+//               showDialog(context: context, builder: (context) => driInformation(dri.name, context));},
+//             icon: const Icon(Icons.help)),
+//       ]
+//   );
+// }
 
 AlertDialog driInformation(String driName, BuildContext context) => AlertDialog(
   title: Text('${replaceTextForForm(driName)}:'),

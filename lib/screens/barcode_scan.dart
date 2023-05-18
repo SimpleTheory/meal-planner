@@ -11,36 +11,68 @@ class BarcodeReadingPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Barcode Reader')),
-      body: barcodeReaderForFood(context),
+      body: const BarcodeReaderForFood(),
     );
   }
 }
 
-Widget barcodeReaderForFood(BuildContext context) => ReaderWidget(
-      onScan: (Code code) {
-        try {
-          if (code.isValid) {
-            print(code.text);
-            final ing = Ingredient.fromApi(settings, int.parse(code.text!));
-            print(ing);
-            // Navigator.pop(context);
-            ing.then((value) => showDialog(
-                context: context,
-                builder: (context) => confirmIngredient(value, context)));
-          }
-        } catch (err) {
-          print(err);
-          // todo write in snack bars for errs when functionality hits
-          // onErrFunc
+class BarcodeReaderForFood extends StatelessWidget {
+  const BarcodeReaderForFood({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) => ReaderWidget(
+    onScan: (Code code) {
+      try {
+        if (code.isValid) {
+          print(code.text);
+          final ing = Ingredient.fromApi(settings, int.parse(code.text!));
+          print(ing);
+          // Navigator.pop(context);
+          ing.then((value) => showDialog(
+              context: context,
+              builder: (context) => confirmIngredient(value, context)));
         }
-      },
-      onScanFailure: (code) {
-        print('failure $code');
+      } catch (err) {
+        print(err);
+        // todo write in snack bars for errs when functionality hits
         // onErrFunc
-      },
-      isMultiScan: false,
-      scanDelay: const Duration(milliseconds: 500),
-    );
+      }
+    },
+    onScanFailure: (code) {
+      print('failure $code');
+      // onErrFunc
+    },
+    isMultiScan: false,
+    scanDelay: const Duration(milliseconds: 500),
+  );
+}
+
+
+// Widget barcodeReaderForFood(BuildContext context) => ReaderWidget(
+//       onScan: (Code code) {
+//         try {
+//           if (code.isValid) {
+//             print(code.text);
+//             final ing = Ingredient.fromApi(settings, int.parse(code.text!));
+//             print(ing);
+//             // Navigator.pop(context);
+//             ing.then((value) => showDialog(
+//                 context: context,
+//                 builder: (context) => confirmIngredient(value, context)));
+//           }
+//         } catch (err) {
+//           print(err);
+//           // todo write in snack bars for errs when functionality hits
+//           // onErrFunc
+//         }
+//       },
+//       onScanFailure: (code) {
+//         print('failure $code');
+//         // onErrFunc
+//       },
+//       isMultiScan: false,
+//       scanDelay: const Duration(milliseconds: 500),
+//     );
 
 // void onErrFunc(){} TODO
 

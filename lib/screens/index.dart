@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:nutrition_app/screens/diet_details_screen.dart';
 import 'package:nutrition_app/screens/general_settings.dart';
 import 'package:nutrition_app/screens/ingredients_page.dart';
-import 'package:nutrition_app/screens/meal_maker_page.dart';
 import 'package:nutrition_app/screens/meal_page.dart';
 import 'package:nutrition_app/domain.dart';
 import 'package:nutrition_app/utils/local_widgets.dart';
@@ -33,8 +32,14 @@ class IndexPage extends StatelessWidget {
           ExpansionTile(
             title: const Text('Diets'),
             children: [
-              plusSignTile(() {}),
-              dietTile(diet, context)
+              PlusSignTile(() {}),
+              // ListView.builder(
+              //   itemBuilder: (context, index)=>IngredientTile(ingredients[index]),
+              //   itemCount: app.length,
+              //   shrinkWrap: true,
+              //   physics: const ClampingScrollPhysics(),
+              // ),
+              DietTile(diet)
             ],
           ),
           ElevatedButton(
@@ -59,21 +64,21 @@ class IndexPage extends StatelessWidget {
           Expanded(
             child: ListView(
               children: [
-                ListTile(title: Text('Confirm Ingredient Debug'), onTap: (){
-                  showDialog(context: context, builder: (context)=>
-                     confirmIngredient(ingredients[1], context)
-                  );}, tileColor: Colors.green),
-                ListTile(title: Text('Meal Maker'), onTap: (){
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => const MealMakerPage()));
-                }, tileColor: Colors.green),
+                // ListTile(title: Text('Confirm Ingredient Debug'), onTap: (){
+                //   showDialog(context: context, builder: (context)=>
+                //      confirmIngredient(ingredients[1], context)
+                //   );}, tileColor: Colors.green),
+                // ListTile(title: Text('Meal Maker'), onTap: (){
+                //   Navigator.push(context, MaterialPageRoute(builder: (context) => const MealMakerPage()));
+                // }, tileColor: Colors.green),
                 ListTile(title: Text('cancel dialog'),
                     onTap: (){showDialog(
                         context: context,
                         builder: (context) => deleteConfirmation(onSubmit: (){}, context: context));},
                     tileColor: Colors.green),
-                ListTile(title: Text(''), onTap: (){}, tileColor: Colors.green),
-                ListTile(title: Text(''), onTap: (){}, tileColor: Colors.green),
-                ListTile(title: Text(''), onTap: (){}, tileColor: Colors.green),
+                // ListTile(title: Text(''), onTap: (){}, tileColor: Colors.green),
+                // ListTile(title: Text(''), onTap: (){}, tileColor: Colors.green),
+                // ListTile(title: Text(''), onTap: (){}, tileColor: Colors.green),
 
               ],
             ),
@@ -91,18 +96,41 @@ class DietPopUpEnumHolder{
 
 }
 
-Widget dietTile(Diet diet, BuildContext context) =>
-    ListTile(
-      title: Text(diet.name),
-      onTap: (){
-        Navigator.push(context, MaterialPageRoute(builder: (context) => DietPage(diet: diet)));
-      },
-      trailing: PopupMenuButton(
-        // onSelected: (dietPopUpSelection){},
-        itemBuilder: (BuildContext context) => [
-          PopupMenuItem(value: DietPopUpEnumHolder(diet, PopUpOptions.edit),child: const Text('Edit'),),
-          PopupMenuItem(value: DietPopUpEnumHolder(diet, PopUpOptions.delete), child: const Text('Delete')),
-          PopupMenuItem(value: DietPopUpEnumHolder(diet, PopUpOptions.duplicate),child: const Text('Duplicate'),),
-        ],
-      )
+// Widget dietTile(Diet diet, BuildContext context) =>
+//     ListTile(
+//       title: Text(diet.name),
+//       onTap: (){
+//         Navigator.push(context, MaterialPageRoute(builder: (context) => DietPage(diet: diet)));
+//       },
+//       trailing: PopupMenuButton(
+//         // onSelected: (dietPopUpSelection){},
+//         itemBuilder: (BuildContext context) => [
+//           PopupMenuItem(value: DietPopUpEnumHolder(diet, PopUpOptions.edit),child: const Text('Edit'),),
+//           PopupMenuItem(value: DietPopUpEnumHolder(diet, PopUpOptions.delete), child: const Text('Delete')),
+//           PopupMenuItem(value: DietPopUpEnumHolder(diet, PopUpOptions.duplicate),child: const Text('Duplicate'),),
+//         ],
+//       )
+//     );
+
+class DietTile extends StatelessWidget {
+  final Diet diet;
+  const DietTile(this.diet, {Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+        title: Text(diet.name),
+        onTap: (){
+          Navigator.push(context, MaterialPageRoute(builder: (context) => const DietPage()));
+        },
+        trailing: PopupMenuButton(
+          // onSelected: (dietPopUpSelection){},
+          itemBuilder: (BuildContext context) => [
+            PopupMenuItem(value: DietPopUpEnumHolder(diet, PopUpOptions.edit),child: const Text('Edit'),),
+            PopupMenuItem(value: DietPopUpEnumHolder(diet, PopUpOptions.delete), child: const Text('Delete')),
+            PopupMenuItem(value: DietPopUpEnumHolder(diet, PopUpOptions.duplicate),child: const Text('Duplicate'),),
+          ],
+        )
     );
+  }
+}
