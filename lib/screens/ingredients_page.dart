@@ -5,9 +5,7 @@ import 'package:nutrition_app/screens/custom_ingredient.dart';
 import 'package:nutrition_app/utils/local_widgets.dart';
 import 'package:nutrition_app/utils/utils.dart';
 import 'package:nutrition_app/domain.dart';
-
 import '../temp_dummy_data.dart';
-// import 'package:simple_barcode_scanner/simple_barcode_scanner.dart';
 
 
 class IngredientPage extends StatelessWidget {

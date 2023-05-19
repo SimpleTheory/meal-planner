@@ -1,6 +1,7 @@
 import 'package:drag_and_drop_lists/drag_and_drop_lists.dart';
 import 'package:flutter/material.dart';
 import 'package:nutrition_app/utils/local_widgets.dart';
+import 'package:nutrition_app/utils/utils.dart';
 import '../temp_dummy_data.dart';
 import 'package:nutrition_app/domain.dart';
 
@@ -274,7 +275,10 @@ DragAndDropList entryList(MapEntry<String, List<MealComponent>> entry, BuildCont
 DragAndDropItem buildItem(MealComponent data) =>
     DragAndDropItem(
         child: ListTile(
-            title: Text('${data.name} ${data.grams}g'),
+            title: Text(data.name),
+            subtitle: Text('${data.grams}g', style: const TextStyle(fontStyle: FontStyle.italic),),
+            leading: GetImage(data.reference.photo),
+
             // shape: const BeveledRectangleBorder(
             //     side: BorderSide(
             //         color: Color.fromRGBO(150, 150, 150, 80),
