@@ -4,7 +4,6 @@ import 'package:flutter/services.dart';
 import 'package:nutrition_app/domain.dart';
 import 'package:nutrition_app/domain/dri_notes.dart';
 import 'package:nutrition_app/screens/custom_ingredient.dart';
-import 'package:nutrition_app/screens/diet_details_screen.dart';
 import 'package:nutrition_app/utils/local_widgets.dart';
 import '../temp_dummy_data.dart';
 
