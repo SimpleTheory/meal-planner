@@ -301,7 +301,7 @@ class MealComponentTile extends StatelessWidget {
           padding: const EdgeInsets.fromLTRB(0, 10, 0, 2),
           child: MealStyleNutrientDisplay(meal.nutrients),
         ),
-        const Text('Serving Size: ', style: TextStyle(fontSize: 16),),
+        const Text('Serving Size', style: TextStyle(fontSize: 16),),
         TextFormField(
           initialValue: meal.grams.isInt ? meal.grams.toInt().toString() : roundDecimal(meal.grams.toDouble(), 3).toString(),
           textAlign: TextAlign.center,
