@@ -78,7 +78,8 @@ class CustomIngredientPage extends StatelessWidget {
                 physics: const NeverScrollableScrollPhysics(),
                 // children: emptyNutrient.attributes__.values.map((e) => nutrientFormField(e)).toList(),
               ),
-            )
+            ),
+            Center(child: ElevatedButton(onPressed: (){}, child: const Text('Submit')))
             // ...?type2dataclasses[Nutrients]?.attributes.keys.map((e) => nutrientFormField(e))
           ],
         ).pad(const EdgeInsets.all(12)),
