@@ -34,7 +34,7 @@ class CustomIngredientPage extends StatelessWidget {
                       contentPadding: EdgeInsets.fromLTRB(10, 0, 0, 0)
                     ),
                     inputFormatters: <TextInputFormatter>[
-                      FilteringTextInputFormatter.allow(RegExp(r'[\d.]+'))
+                      FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*'))
                     ],
                     keyboardType: const TextInputType.numberWithOptions(decimal: true),
                 )),
@@ -136,7 +136,8 @@ class NutrientFormField extends StatelessWidget {
                   labelText: nut.unit
               ),
               inputFormatters: <TextInputFormatter>[
-                FilteringTextInputFormatter.allow(RegExp(r'[\d.]+'))
+                FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*'))
+                // \d*\.?\d+
               ],
               keyboardType: const TextInputType.numberWithOptions(decimal: true),
             ),
@@ -178,7 +179,7 @@ class AltMeasureFormField extends StatelessWidget {
               labelText: 'grams',
             ),
             inputFormatters: <TextInputFormatter>[
-              FilteringTextInputFormatter.allow(RegExp(r'[\d.]+'))
+              FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*'))
             ],
             keyboardType: const TextInputType.numberWithOptions(decimal: true),
           ),

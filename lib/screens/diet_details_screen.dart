@@ -313,7 +313,7 @@ class MealComponentTile extends StatelessWidget {
             // hintText: 'grams',
           ),
           inputFormatters: <TextInputFormatter>[
-            FilteringTextInputFormatter.allow(RegExp(r'[\d.]+'))
+            FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*'))
           ],
           keyboardType: const TextInputType.numberWithOptions(decimal: true),
         ),

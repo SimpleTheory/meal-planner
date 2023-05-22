@@ -60,7 +60,7 @@ class DriForm extends StatelessWidget {
                 labelText: 'DRI',
               ),
               inputFormatters: <TextInputFormatter>[
-                FilteringTextInputFormatter.allow(RegExp(r'[\d.]+'))
+                FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*'))
               ],
               keyboardType: const TextInputType.numberWithOptions(decimal: true),
             ),
@@ -72,7 +72,7 @@ class DriForm extends StatelessWidget {
                 labelText: 'UL',
               ),
               inputFormatters: <TextInputFormatter>[
-                FilteringTextInputFormatter.allow(RegExp(r'[\d.]+'))
+                FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*'))
               ],
               keyboardType: const TextInputType.numberWithOptions(decimal: true),
             ),
