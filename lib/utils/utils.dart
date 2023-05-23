@@ -69,9 +69,31 @@ Iterable<T> flatten<T>(Iterable<dynamic> iterable) sync* {
 
 bool isMobile() => Platform.isAndroid || Platform.isIOS;
 
+class ImperialHeight{
+  int feet;
+  int inches;
+
+  ImperialHeight({
+    required this.feet,
+    required this.inches,
+  });
+  factory ImperialHeight.fromInches(int inches) =>
+      ImperialHeight(feet: inches ~/ 12, inches: inches % 12);
+
+}
+
+int cm2in(num cm) => (0.393701 * cm).round();
+int in2cm(num inches) => (2.54 * inches).round();
+int kg2lb(num kg) => (2.20462 * kg).round();
+int lb2kg(num lb) => (0.453592 * lb).round();
+
+fixDecimal(String string)=>string.endsWith('.') ? string.substring(string.length - 1) : string;
+
+bool isAmerican() => Platform.localeName == 'en_US' || Platform.localeName == 'es_US';
+
 extension ColumnPadding on Column{
-  Column pad(EdgeInsetsGeometry padding) =>
-      Column(
+  Column pad(EdgeInsetsGeometry padding) {
+      return Column(
         key: key,
         mainAxisAlignment: mainAxisAlignment,
         mainAxisSize: mainAxisSize,
@@ -80,8 +102,42 @@ extension ColumnPadding on Column{
         textDirection: textDirection,
         verticalDirection: verticalDirection,
         children: children.map((e) => Padding(padding: padding, child: e)).toList(),
-      );
+      );}
 }
+class PaddedColumn extends StatelessWidget {
+  final MainAxisAlignment? mainAxisAlignment;
+  final MainAxisSize? mainAxisSize;
+  final CrossAxisAlignment? crossAxisAlignment;
+  final TextBaseline? textBaseline;
+  final TextDirection? textDirection;
+  final VerticalDirection? verticalDirection;
+  final List<Widget> children;
+  final EdgeInsets edgeInsets;
+  const PaddedColumn({Key? key,
+    this.mainAxisAlignment,
+    this.mainAxisSize,
+    this.crossAxisAlignment,
+    this.textBaseline,
+    this.textDirection,
+    this.verticalDirection,
+    required this.children,
+    required this.edgeInsets
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisAlignment: mainAxisAlignment ?? MainAxisAlignment.start,
+      mainAxisSize: mainAxisSize ?? MainAxisSize.max,
+      crossAxisAlignment: crossAxisAlignment ?? CrossAxisAlignment.center,
+      textBaseline: textBaseline,
+      textDirection: textDirection,
+      verticalDirection: VerticalDirection.down,
+      children: children.map((e) => Padding(padding: edgeInsets, child: e)).toList(),
+    );
+  }
+}
+
 
 List<Padding> padWidgets(List<Widget> widgets, EdgeInsetsGeometry padding)=>
     widgets.map((e) => Padding(padding: padding, child: e)).toList();
@@ -170,3 +226,4 @@ AlertDialog deleteConfirmation({required void Function() onSubmit, required Buil
     ],
   );
 }
+

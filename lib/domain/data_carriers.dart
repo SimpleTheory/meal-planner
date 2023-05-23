@@ -1938,6 +1938,18 @@ class AnthroMetrics {
   int inches;
   Activity activity;
 
+  get cm => in2cm(inches);
+  set cm(cm){
+    final temp = ImperialHeight.fromInches(cm2in(cm));
+    feet = temp.feet;
+    inches = temp.inches;
+  }
+
+  get kg => lb2kg(weight);
+  set kg(kg){
+    weight = kg2lb(kg);
+  }
+
   AnthroMetrics(
       {required this.sex,
       required this.age,
@@ -2046,8 +2058,8 @@ class AnthroMetrics {
 
   factory AnthroMetrics.fromMetric(
       Sex sex, int age, int weight, int height, Activity activity) {
-    weight = (weight * 2.20462).round();
-    height = (height * 0.393701).round();
+    weight = kg2lb(weight);
+    height = cm2in(height);
     int feet = height ~/ 12;
     int inches = height % 12;
     return AnthroMetrics(
