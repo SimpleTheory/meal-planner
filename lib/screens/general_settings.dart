@@ -148,7 +148,7 @@ class GeneralSettingsPage extends StatelessWidget {
                                   keyboardType: TextInputType.number,
                                   inputFormatters: <TextInputFormatter>[
                                     FilteringTextInputFormatter.allow(
-                                        RegExp(r'^1[012]|^\d'))
+                                        RegExp(r'^1[01]|^\d'))
                                   ]),
                             )
                           ],

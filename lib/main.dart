@@ -1,4 +1,3 @@
-import 'package:ari_utils/ari_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive_flutter/adapters.dart';
@@ -6,6 +5,7 @@ import 'package:nutrition_app/blocs/navigation/navigation_bloc.dart';
 import 'package:nutrition_app/blocs/settings/settings_bloc.dart';
 import 'package:nutrition_app/screens/index.dart';
 import 'package:nutrition_app/screens/init.dart';
+import 'blocs/index/index_bloc.dart';
 import 'blocs/init/init_bloc.dart';
 import 'blocs/init/settings/init_settings_bloc.dart';
 import 'domain/nutrtion_app_domain.dart';
@@ -26,7 +26,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider(create: (context) => NavigationBloc()),
+        // BlocProvider(create: (context) => NavigationBloc()),
         BlocProvider(create: (context) => InitBloc()),
         BlocProvider(create: (context) => InitSettingsBloc()),
         // BlocProvider(create: (context) => GlobalBloc())
@@ -36,8 +36,8 @@ class MyApp extends StatelessWidget {
           if (state is SuccessfulLoad) {
             return MultiBlocProvider(
               providers: [
-                BlocProvider(
-                    create: (context) => SettingsBloc(state.app.settings)),
+                BlocProvider(create: (context) => SettingsBloc(state.app.settings)),
+                BlocProvider(create: (context) => IndexBloc(state.app)),
 
               ],
               child: BlocBuilder<SettingsBloc, SettingsState>(
@@ -59,7 +59,7 @@ class MyApp extends StatelessWidget {
                   );
                 },
                 buildWhen: (previousState, currentState)
-                  =>currentState is SettingsStateDarkModeUpdate,
+                  => currentState is SettingsStateDarkModeUpdate,
               ),
             );
           } else {

@@ -221,6 +221,10 @@ class Diet {
     days.add(Day(name: days.length.toString(), meals: []));
   }
 
+  static Future<Diet> create(String name, Settings settings) async {
+    final dris = await DRIS.fromAPI(settings.anthroMetrics);
+    return Diet(name: name, days: <Day>[], dris: dris);
+}
   // For update access by index setter days[index] = newDay;
 
   void removeDay(int day) {

@@ -1152,7 +1152,7 @@ class DRI {
       if (dri != null) {
         dri = dri! * 1000;
       }
-      unit = 'g';
+      unit = 'mg';
     }
   }
 

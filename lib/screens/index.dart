@@ -65,29 +65,29 @@ class IndexPage extends StatelessWidget {
             // children: [
             // ],
           ),
-          const Text('DEBUG NAVIGATIONS'),
-          Expanded(
-            child: ListView(
-              children: [
-                // ListTile(title: Text('Confirm Ingredient Debug'), onTap: (){
-                //   showDialog(context: context, builder: (context)=>
-                //      confirmIngredient(ingredients[1], context)
-                //   );}, tileColor: Colors.green),
-                // ListTile(title: Text('Meal Maker'), onTap: (){
-                //   Navigator.push(context, MaterialPageRoute(builder: (context) => const MealMakerPage()));
-                // }, tileColor: Colors.green),
-                ListTile(title: Text('cancel dialog'),
-                    onTap: (){showDialog(
-                        context: context,
-                        builder: (context) => deleteConfirmation(onSubmit: (){}, context: context));},
-                    tileColor: Colors.green),
-                // ListTile(title: Text(''), onTap: (){}, tileColor: Colors.green),
-                // ListTile(title: Text(''), onTap: (){}, tileColor: Colors.green),
-                // ListTile(title: Text(''), onTap: (){}, tileColor: Colors.green),
-
-              ],
-            ),
-          )
+          // const Text('DEBUG NAVIGATIONS'),
+          // Expanded(
+          //   child: ListView(
+          //     children: [
+          //       // ListTile(title: Text('Confirm Ingredient Debug'), onTap: (){
+          //       //   showDialog(context: context, builder: (context)=>
+          //       //      confirmIngredient(ingredients[1], context)
+          //       //   );}, tileColor: Colors.green),
+          //       // ListTile(title: Text('Meal Maker'), onTap: (){
+          //       //   Navigator.push(context, MaterialPageRoute(builder: (context) => const MealMakerPage()));
+          //       // }, tileColor: Colors.green),
+          //       ListTile(title: Text('cancel dialog'),
+          //           onTap: (){showDialog(
+          //               context: context,
+          //               builder: (context) => deleteConfirmation(onSubmit: (){}, context: context));},
+          //           tileColor: Colors.green),
+          //       // ListTile(title: Text(''), onTap: (){}, tileColor: Colors.green),
+          //       // ListTile(title: Text(''), onTap: (){}, tileColor: Colors.green),
+          //       // ListTile(title: Text(''), onTap: (){}, tileColor: Colors.green),
+          //
+          //     ],
+          //   ),
+          // )
         ],
       ),
     );
@@ -131,11 +131,29 @@ class DietTile extends StatelessWidget {
         trailing: PopupMenuButton(
           // onSelected: (dietPopUpSelection){},
           itemBuilder: (BuildContext context) => [
-            PopupMenuItem(value: DietPopUpEnumHolder(diet, PopUpOptions.edit),child: const Text('Edit'),),
+            PopupMenuItem(value: DietPopUpEnumHolder(diet, PopUpOptions.edit),child: const Text('Rename'),),
             PopupMenuItem(value: DietPopUpEnumHolder(diet, PopUpOptions.delete), child: const Text('Delete')),
             PopupMenuItem(value: DietPopUpEnumHolder(diet, PopUpOptions.duplicate),child: const Text('Duplicate'),),
           ],
         )
     );
   }
+}
+
+AlertDialog nameADiet(BuildContext context) {
+  TextEditingController controller = TextEditingController();
+  return AlertDialog(
+    title: const Text('Diet Namer'),
+    actions: [
+      Row(
+        children: [
+          TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('cancel')),
+          const Spacer(),
+          TextButton(onPressed: (){}, child: const Text('submit'))
+        ],
+      ),
+    ],
+  );
 }
