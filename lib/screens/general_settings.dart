@@ -8,7 +8,25 @@ import 'package:nutrition_app/domain.dart';
 import '../blocs/init/init_bloc.dart';
 
 class GeneralSettingsPage extends StatelessWidget {
-  const GeneralSettingsPage({Key? key}) : super(key: key);
+  late final TextEditingController cmCon;
+  late final TextEditingController inchesCon;
+  late final TextEditingController feetCon;
+  late final TextEditingController weightCon;
+
+  GeneralSettingsPage(Settings settings, {Key? key}) : super(key: key) {
+    cmCon = TextEditingController(text: settings.anthroMetrics.cm.toString());
+    inchesCon =
+        TextEditingController(text: settings.anthroMetrics.inches.toString());
+    feetCon =
+        TextEditingController(text: settings.anthroMetrics.feet.toString());
+    if (settings.measure == Measure.imperial) {
+      weightCon =
+          TextEditingController(text: settings.anthroMetrics.weight.toString());
+    } else {
+      weightCon =
+          TextEditingController(text: settings.anthroMetrics.kg.toString());
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -16,294 +34,329 @@ class GeneralSettingsPage extends StatelessWidget {
     return Scaffold(
         appBar: AppBar(title: const Text('General Settings')),
         resizeToAvoidBottomInset: false,
-        body: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: SingleChildScrollView(
-            child: PaddedColumn(
-              edgeInsets: const EdgeInsets.all(8.0),
-              children: [
-                Row(
-                  children: [
-                    InkWell(
-                      onTap: () {
-                        context
-                            .read<SettingsBloc>()
-                            .add(MeasureUpdate(Measure.imperial));
-                      },
-                      child: Container(
-                          padding: const EdgeInsets.all(12),
-                          child: const Text('Imperial')),
-                    ),
-                    InkWell(
-                      onTap: () {
-                        context
-                            .read<SettingsBloc>()
-                            .add(MeasureUpdate(Measure.metric));
-                      },
-                      child: Container(
-                          padding: const EdgeInsets.all(12),
-                          child: const Text('Metric')),
-                    )
-                  ],
-                ),
-                BlocBuilder<SettingsBloc, SettingsState>(
-                  builder: (context, state) {
-                    if (state.settings.measure == Measure.metric) {
-                      return Row(
-                        children: [
-                          const Text('Height: '),
-                          Flexible(
-                            child: TextFormField(
-                                decoration: const InputDecoration(
-                                  labelText: 'centimeters',
-                                ),
+        body: BlocListener<SettingsBloc, SettingsState>(
+          listener: (context, state) {
+            if (state is SettingsMeasureChange){
+              if (state.measure == Measure.metric){
+                weightCon.text = state.settings.anthroMetrics.kg.toString();
+                cmCon.text = state.settings.anthroMetrics.cm.toString();
+              }
+              else{
+                weightCon.text = state.settings.anthroMetrics.weight.toString();
+                feetCon.text = state.settings.anthroMetrics.feet.toString();
+                inchesCon.text = state.settings.anthroMetrics.inches.toString();
+
+              }
+            }
+          },
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: SingleChildScrollView(
+              child: PaddedColumn(
+                edgeInsets: const EdgeInsets.all(8.0),
+                children: [
+                  Row(
+                    children: [
+                      InkWell(
+                        onTap: () {
+                          context
+                              .read<SettingsBloc>()
+                              .add(MeasureUpdate(Measure.imperial));
+                        },
+                        child: Container(
+                            padding: const EdgeInsets.all(12),
+                            child: const Text('Imperial')),
+                      ),
+                      InkWell(
+                        onTap: () {
+                          context
+                              .read<SettingsBloc>()
+                              .add(MeasureUpdate(Measure.metric));
+                        },
+                        child: Container(
+                            padding: const EdgeInsets.all(12),
+                            child: const Text('Metric')),
+                      )
+                    ],
+                  ),
+                  BlocBuilder<SettingsBloc, SettingsState>(
+                    builder: (context, state) {
+                      if (state.settings.measure == Measure.metric) {
+                        return Row(
+                          children: [
+                            const Padding(
+                              padding: EdgeInsets.fromLTRB(0, 0, 6, 0),
+                              child: Text('Height: '),
+                            ),
+                            Flexible(
+                              child: TextFormField(
+                                  decoration: const InputDecoration(
+                                    labelText: 'centimeters',
+                                  ),
+                                  controller: cmCon,
+                                  onChanged: (val) {
+                                    context
+                                        .read<SettingsBloc>()
+                                        .add(CmUpdate(val));
+                                  },
+                                  // initialValue:
+                                  // state.settings.anthroMetrics.cm.toString(),
+                                  keyboardType: TextInputType.number,
+                                  inputFormatters: <TextInputFormatter>[
+                                    FilteringTextInputFormatter.digitsOnly
+                                  ]),
+                            )
+                          ],
+                        );
+                      } else {
+                        return Row(
+                          children: [
+                            const Text('Feet: '),
+                            Flexible(
+                              child: TextFormField(
+                                  controller: feetCon,
+                                  onChanged: (val) {
+                                    context
+                                        .read<SettingsBloc>()
+                                        .add(FeetUpdate(val));
+                                  },
+                                  // initialValue: state.settings.anthroMetrics.feet
+                                  //     .toString(),
+                                  decoration: const InputDecoration(
+                                    labelText: 'feet',
+                                  ),
+                                  keyboardType: TextInputType.number,
+                                  inputFormatters: <TextInputFormatter>[
+                                    FilteringTextInputFormatter.digitsOnly
+                                  ]),
+                            ),
+                            const Text('Inches: '),
+                            Flexible(
+                              child: TextFormField(
+                                  controller: inchesCon,
+                                  // initialValue: state
+                                  //     .settings.anthroMetrics.inches
+                                  //     .toString(),
+                                  onChanged: (val) {
+                                    context
+                                        .read<SettingsBloc>()
+                                        .add(InchesUpdate(val));
+                                  },
+                                  decoration: const InputDecoration(
+                                    labelText: 'in',
+                                  ),
+                                  keyboardType: TextInputType.number,
+                                  inputFormatters: <TextInputFormatter>[
+                                    FilteringTextInputFormatter.allow(
+                                        RegExp(r'^1[012]|^\d'))
+                                  ]),
+                            )
+                          ],
+                        );
+                      }
+                    },
+                  ),
+                  Row(
+                    children: [
+                      const Padding(
+                        padding: EdgeInsets.fromLTRB(0, 0, 6, 0),
+                        child: Text('Weight: '),
+                      ),
+                      Flexible(
+                        child: BlocBuilder<SettingsBloc, SettingsState>(
+                          builder: (context, state) {
+                            return TextFormField(
+                                controller: weightCon,
+                                // initialValue: state.settings.measure ==
+                                //     Measure.imperial
+                                //     ? state.settings.anthroMetrics.weight
+                                //     .toString()
+                                //     : state.settings.anthroMetrics.kg.toString(),
                                 onChanged: (val) {
-                                  context
-                                      .read<SettingsBloc>()
-                                      .add(CmUpdate(val));
+                                  if (state.settings.measure ==
+                                      Measure.metric) {
+                                    context
+                                        .read<SettingsBloc>()
+                                        .add(KgUpdate(val));
+                                  } else {
+                                    context
+                                        .read<SettingsBloc>()
+                                        .add(WeightUpdate(val));
+                                  }
                                 },
-                                initialValue:
-                                state.settings.anthroMetrics.cm.toString(),
+                                decoration: InputDecoration(
+                                  labelText:
+                                      state.settings.measure == Measure.metric
+                                          ? 'kilograms'
+                                          : 'pounds',
+                                ),
                                 keyboardType: TextInputType.number,
                                 inputFormatters: <TextInputFormatter>[
                                   FilteringTextInputFormatter.digitsOnly
-                                ]),
-                          )
-                        ],
-                      );
-                    } else {
-                      return Row(
-                        children: [
-                          const Text('Feet: '),
-                          Flexible(
-                            child: TextFormField(
-                                onChanged: (val) {
-                                  context
-                                      .read<SettingsBloc>()
-                                      .add(FeetUpdate(val));
-                                },
-                                initialValue: state.settings.anthroMetrics.feet
-                                    .toString(),
-                                decoration: const InputDecoration(
-                                  labelText: 'feet',
-                                ),
-                                keyboardType: TextInputType.number,
-                                inputFormatters: <TextInputFormatter>[
-                                  FilteringTextInputFormatter.digitsOnly
-                                ]),
-                          ),
-                          const Text('Inches: '),
-                          Flexible(
-                            child: TextFormField(
-                                initialValue: state
-                                    .settings.anthroMetrics.inches
-                                    .toString(),
-                                onChanged: (val) {
-                                  context
-                                      .read<SettingsBloc>()
-                                      .add(InchesUpdate(val));
-                                },
-                                decoration: const InputDecoration(
-                                  labelText: 'in',
-                                ),
-                                keyboardType: TextInputType.number,
-                                inputFormatters: <TextInputFormatter>[
-                                  FilteringTextInputFormatter.allow(
-                                      RegExp(r'^1[012]|^\d')
-                                  )
-                                ]),
-                          )
-                        ],
-                      );
-                    }
-                  },
-                ),
-                Row(
-                  children: [
-                    const Padding(
-                      padding: EdgeInsets.fromLTRB(0, 0, 6, 0),
-                      child: Text('Weight: '),
-                    ),
-                    Flexible(
-                      child: BlocBuilder<SettingsBloc, SettingsState>(
+                                ]);
+                          },
+                        ),
+                      )
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      const Padding(
+                        padding: EdgeInsets.fromLTRB(0, 0, 6, 0),
+                        child: Text('Age: '),
+                      ),
+                      Flexible(child: BlocBuilder<SettingsBloc, SettingsState>(
                         builder: (context, state) {
                           return TextFormField(
-                              initialValue: state.settings.measure ==
-                                  Measure.imperial
-                                  ? state.settings.anthroMetrics.weight
-                                  .toString()
-                                  : state.settings.anthroMetrics.kg.toString(),
                               onChanged: (val) {
-                                if (state.settings.measure == Measure.metric) {
-                                  context
-                                      .read<SettingsBloc>()
-                                      .add(KgUpdate(val));
-                                } else {
-                                  context
-                                      .read<SettingsBloc>()
-                                      .add(WeightUpdate(val));
-                                }
+                                context
+                                    .read<SettingsBloc>()
+                                    .add(AgeUpdate(val));
                               },
-                              decoration: InputDecoration(
-                                labelText:
-                                state.settings.measure == Measure.metric
-                                    ? 'kilograms'
-                                    : 'pounds',
+                              initialValue:
+                                  state.settings.anthroMetrics.age.toString(),
+                              decoration: const InputDecoration(
+                                labelText: 'years',
                               ),
                               keyboardType: TextInputType.number,
                               inputFormatters: <TextInputFormatter>[
                                 FilteringTextInputFormatter.digitsOnly
                               ]);
                         },
-                      ),
-                    )
-                  ],
-                ),
-                Row(
-                  children: [
-                    const Padding(
-                      padding: EdgeInsets.fromLTRB(0, 0, 6, 0),
-                      child: Text('Age: '),
-                    ),
-                    Flexible(child: BlocBuilder<SettingsBloc, SettingsState>(
-                      builder: (context, state) {
-                        return TextFormField(
-                            onChanged: (val) {
-                              context.read<SettingsBloc>().add(AgeUpdate(val));
-                            },
-                            initialValue:
-                            state.settings.anthroMetrics.age.toString(),
-                            decoration: const InputDecoration(
-                              labelText: 'years',
-                            ),
-                            keyboardType: TextInputType.number,
-                            inputFormatters: <TextInputFormatter>[
-                              FilteringTextInputFormatter.digitsOnly
-                            ]);
-                      },
-                    )),
-                  ],
-                ),
-                BlocBuilder<SettingsBloc, SettingsState>(
-                  builder: (context, state) {
-                    return Row(
-                      children: [
-                        const Text('Sex: '),
-                        InkWell(
-                          onTap: () {
-                            context.read<SettingsBloc>().add(SexUpdate(Sex.M));
-                          },
-                          child: Container(
-                            padding: const EdgeInsets.all(12),
-                            color: state.settings.anthroMetrics.sex == Sex.M
-                                ? Colors.green
-                                : null,
-                            child: const Text('Male'),
-                          ),
-                        ),
-                        InkWell(
-                          onTap: () {
-                            context.read<SettingsBloc>().add(SexUpdate(Sex.F));
-                          },
-                          child: Container(
-                              color: state.settings.anthroMetrics.sex == Sex.F
-                                  ? Colors.green
-                                  : null,
-                              padding: const EdgeInsets.all(12),
-                              child: const Text('Female')),
-                        ),
-                      ],
-                    );
-                  },
-                ),
-                Row(
-                  children: [
-                    const Text('API Key: '),
-                    Flexible(child: BlocBuilder<SettingsBloc, SettingsState>(
-                      builder: (context, state) {
-                        return TextFormField(
-                          initialValue: state.settings.apikey
-                              .toString(),
-                          onChanged: (val) {
-                            context.read<SettingsBloc>().add(ApiKeyUpdate(val));
-                          },
-                        );
-                      },
-                    ))
-                  ],
-                ),
-                Row(
-                  children: [
-                    const Text('API ID: '),
-                    Flexible(child: BlocBuilder<SettingsBloc, SettingsState>(
-                      builder: (context, state) {
-                        return TextFormField(
-                          initialValue: state.settings.appId.toString(),
-                          onChanged: (val) {
-                            context.read<SettingsBloc>().add(AppIdUpdate(val));
-                          },
-                        );
-                      },
-                    ))
-                  ],
-                ),
-                Row(
-                  children: [
-                    const Text('Dark mode: '),
-
-                    /// Default = settings dark mode (which will be sys pref) onChange updates settings,
-                    BlocConsumer<SettingsBloc, SettingsState>(
-                      listener: (context, state) {
-                        if (state is SettingsStateDarkModeUpdate) {
-                          context.read<InitBloc>().add(ReloadApp());
-                        }
-                      },
-                      builder: (context, state) {
-                        return Switch(
-                            value: state.settings.darkMode,
-                            onChanged: (bool val) {
+                      )),
+                    ],
+                  ),
+                  BlocBuilder<SettingsBloc, SettingsState>(
+                    builder: (context, state) {
+                      return Row(
+                        children: [
+                          const Text('Sex: '),
+                          InkWell(
+                            onTap: () {
                               context
                                   .read<SettingsBloc>()
-                                  .add(DarkModeUpdate(val));
-                            });
-                      },
-                    )
-                  ],
-                ),
-                Row(
-                  children: [
-                    const Text('Estimated Activity Level: '),
-                    BlocBuilder<SettingsBloc, SettingsState>(
-                      builder: (context, state) {
-                        return DropdownButton<Activity>(
-                            value: state.settings.anthroMetrics.activity,
-                            onChanged: (Activity? act) {
-                              if (act != null) {
+                                  .add(SexUpdate(Sex.M));
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.all(12),
+                              color: state.settings.anthroMetrics.sex == Sex.M
+                                  ? Colors.green
+                                  : null,
+                              child: const Text('Male'),
+                            ),
+                          ),
+                          InkWell(
+                            onTap: () {
+                              context
+                                  .read<SettingsBloc>()
+                                  .add(SexUpdate(Sex.F));
+                            },
+                            child: Container(
+                                color: state.settings.anthroMetrics.sex == Sex.F
+                                    ? Colors.green
+                                    : null,
+                                padding: const EdgeInsets.all(12),
+                                child: const Text('Female')),
+                          ),
+                        ],
+                      );
+                    },
+                  ),
+                  Row(
+                    children: [
+                      const Text('API Key: '),
+                      Flexible(child: BlocBuilder<SettingsBloc, SettingsState>(
+                        builder: (context, state) {
+                          return TextFormField(
+                            initialValue: state.settings.apikey.toString(),
+                            onChanged: (val) {
+                              context
+                                  .read<SettingsBloc>()
+                                  .add(ApiKeyUpdate(val));
+                            },
+                          );
+                        },
+                      ))
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      const Text('API ID: '),
+                      Flexible(child: BlocBuilder<SettingsBloc, SettingsState>(
+                        builder: (context, state) {
+                          return TextFormField(
+                            initialValue: state.settings.appId.toString(),
+                            onChanged: (val) {
+                              context
+                                  .read<SettingsBloc>()
+                                  .add(AppIdUpdate(val));
+                            },
+                          );
+                        },
+                      ))
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      const Text('Dark mode: '),
+
+                      /// Default = settings dark mode (which will be sys pref) onChange updates settings,
+                      BlocConsumer<SettingsBloc, SettingsState>(
+                        listener: (context, state) {
+                          if (state is SettingsStateDarkModeUpdate) {
+                            // context.read<InitBloc>().add(ReloadApp());
+                          }
+                        },
+                        builder: (context, state) {
+                          return Switch(
+                              value: state.settings.darkMode,
+                              onChanged: (bool val) {
                                 context
                                     .read<SettingsBloc>()
-                                    .add(ActivityUpdate(act));
-                              }
-                            },
-                            items: Activity.values
-                                .map<DropdownMenuItem<Activity>>(
-                                    (Activity act) =>
-                                    DropdownMenuItem<Activity>(
-                                        value: act,
-                                        child: Text(Activity.toStr(act))))
-                                .toList());
+                                    .add(DarkModeUpdate(val));
+                              });
+                        },
+                      )
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      const Padding(
+                        padding: EdgeInsets.fromLTRB(0, 0, 6, 0),
+                        child: Text('Estimated Activity Level: '),
+                      ),
+                      BlocBuilder<SettingsBloc, SettingsState>(
+                        builder: (context, state) {
+                          return DropdownButton<Activity>(
+                              value: state.settings.anthroMetrics.activity,
+                              onChanged: (Activity? act) {
+                                if (act != null) {
+                                  context
+                                      .read<SettingsBloc>()
+                                      .add(ActivityUpdate(act));
+                                }
+                              },
+                              items: Activity.values
+                                  .map<DropdownMenuItem<Activity>>(
+                                      (Activity act) =>
+                                          DropdownMenuItem<Activity>(
+                                              value: act,
+                                              child: Text(Activity.toStr(act))))
+                                  .toList());
+                        },
+                      )
+                    ],
+                  ),
+                  ElevatedButton(
+                      onPressed: () {
+                        // TODO Local Back Up System
+                        // final today = DateTime.now();
+                        // final fileName = 'meal_planner_${today.year}_${today.month}_${today.day}.json';
                       },
-                    )
-                  ],
-                ),
-                ElevatedButton(
-                    onPressed: () {
-                      // TODO Local Back Up System
-                      // final today = DateTime.now();
-                      // final fileName = 'meal_planner_${today.year}_${today.month}_${today.day}.json';
-                    },
-                    child: const Text('Save Local Back Up')),
-                // TODO Way to factory reset app
-              ],
+                      child: const Text('Save Local Back Up')),
+                  // TODO Way to factory reset app
+                ],
+              ),
             ),
           ),
         ));

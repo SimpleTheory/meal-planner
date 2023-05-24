@@ -1,3 +1,4 @@
+import 'package:ari_utils/ari_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive_flutter/adapters.dart';
@@ -35,23 +36,30 @@ class MyApp extends StatelessWidget {
           if (state is SuccessfulLoad) {
             return MultiBlocProvider(
               providers: [
-                BlocProvider(create: (context) => SettingsBloc(state.app.settings)),
+                BlocProvider(
+                    create: (context) => SettingsBloc(state.app.settings)),
 
               ],
-              child: MaterialApp(
-                title: 'Nutrition App',
-                themeMode: state.app.settings.darkMode
-                    ? ThemeMode.dark
-                    : ThemeMode
-                    .light,
-                theme: ThemeData(
-                  primarySwatch: Colors.green,
-                ),
-                darkTheme: ThemeData(
-                    brightness: Brightness.dark,
-                    primarySwatch: Colors.green),
-                home: const IndexPage(),
-                debugShowCheckedModeBanner: false,
+              child: BlocBuilder<SettingsBloc, SettingsState>(
+                builder: (context, settingsState) {
+                  return MaterialApp(
+                    title: 'Nutrition App',
+                    themeMode: settingsState.settings.darkMode
+                        ? ThemeMode.dark
+                        : ThemeMode
+                        .light,
+                    theme: ThemeData(
+                      primarySwatch: Colors.green,
+                    ),
+                    darkTheme: ThemeData(
+                        brightness: Brightness.dark,
+                        primarySwatch: Colors.green),
+                    home: const IndexPage(),
+                    debugShowCheckedModeBanner: false,
+                  );
+                },
+                buildWhen: (previousState, currentState)
+                  =>currentState is SettingsStateDarkModeUpdate,
               ),
             );
           } else {

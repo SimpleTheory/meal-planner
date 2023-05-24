@@ -1938,7 +1938,7 @@ class AnthroMetrics {
   int inches;
   Activity activity;
 
-  int get cm => in2cm(inches);
+  int get cm => in2cm(inches + (feet*12));
   set cm(int cm) {
     final temp = ImperialHeight.fromInches(cm2in(cm));
     feet = temp.feet;

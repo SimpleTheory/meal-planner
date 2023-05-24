@@ -25,5 +25,9 @@ class SettingsState {
 class SettingsStateDarkModeUpdate extends SettingsState {
   SettingsStateDarkModeUpdate(super.settings);
 }
+class SettingsMeasureChange extends SettingsState {
+  Measure get measure => settings.measure;
+  SettingsMeasureChange(super.settings);
+}
 
 
