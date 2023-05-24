@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'dart:io';
 
 import 'package:nutrition_app/domain.dart';
+import 'package:nutrition_app/screens/general_settings.dart';
 
 import '../blocs/init/init_bloc.dart';
 
@@ -198,12 +199,12 @@ class InitPage extends StatelessWidget {
 
 
 
-AlertDialog waiverDialog(context)=> AlertDialog(
+AlertDialog waiverDialog(BuildContext context)=> AlertDialog(
     content: Column(
     children: [
       const Text(waiver),
       ElevatedButton(onPressed: (){
-
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=> const GeneralSettingsPageInit()));
         // TODO Go to settings with null Settings
         // Make New App
       }, child: const Text('Continue'))

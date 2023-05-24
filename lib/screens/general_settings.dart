@@ -189,7 +189,7 @@ class GeneralSettingsPageInit extends StatelessWidget {
                           'https://developer.nutritionix.com/signup'));
                     },
                     child: const Text(
-                        'Nutrionix Sign Up (Because this app is a wrapper for their api)')),
+                        'Nutrionix Sign Up')),
                 Row(
                   children: [
                     InkWell(
