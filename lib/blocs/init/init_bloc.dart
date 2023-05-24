@@ -28,5 +28,9 @@ class InitBloc extends Bloc<InitEvent, InitState> {
         return;
       }
     });
+    on<CreatedNewSettings>((event, emit){
+      final newApp = App.newApp(event.settings);
+      emit(SuccessfulLoad(newApp));
+    });
   }
 }
