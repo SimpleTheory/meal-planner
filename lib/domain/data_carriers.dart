@@ -1938,15 +1938,15 @@ class AnthroMetrics {
   int inches;
   Activity activity;
 
-  get cm => in2cm(inches);
-  set cm(cm) {
+  int get cm => in2cm(inches);
+  set cm(int cm) {
     final temp = ImperialHeight.fromInches(cm2in(cm));
     feet = temp.feet;
     inches = temp.inches;
   }
 
-  get kg => lb2kg(weight);
-  set kg(kg) {
+  int get kg => lb2kg(weight);
+  set kg(int kg) {
     weight = kg2lb(kg);
   }
 

@@ -27,27 +27,32 @@ class MyApp extends StatelessWidget {
       providers: [
         BlocProvider(create: (context) => NavigationBloc()),
         BlocProvider(create: (context) => InitBloc()),
-        BlocProvider(create: (context) => SettingsBloc()),
         BlocProvider(create: (context) => InitSettingsBloc()),
         // BlocProvider(create: (context) => GlobalBloc())
       ],
       child: BlocBuilder<InitBloc, InitState>(
         builder: (context, state) {
           if (state is SuccessfulLoad) {
-            return MaterialApp(
-              title: 'Nutrition App',
-              themeMode: state.app.settings.darkMode
-                  ? ThemeMode.dark
-                  : ThemeMode
-                  .light,
-              theme: ThemeData(
-                primarySwatch: Colors.green,
+            return MultiBlocProvider(
+              providers: [
+                BlocProvider(create: (context) => SettingsBloc(state.app.settings)),
+
+              ],
+              child: MaterialApp(
+                title: 'Nutrition App',
+                themeMode: state.app.settings.darkMode
+                    ? ThemeMode.dark
+                    : ThemeMode
+                    .light,
+                theme: ThemeData(
+                  primarySwatch: Colors.green,
+                ),
+                darkTheme: ThemeData(
+                    brightness: Brightness.dark,
+                    primarySwatch: Colors.green),
+                home: const IndexPage(),
+                debugShowCheckedModeBanner: false,
               ),
-              darkTheme: ThemeData(
-                  brightness: Brightness.dark,
-                  primarySwatch: Colors.green),
-              home: const IndexPage(),
-              debugShowCheckedModeBanner: false,
             );
           } else {
             return BlocBuilder<InitSettingsBloc, InitSettingsState>(

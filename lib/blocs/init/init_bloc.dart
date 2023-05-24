@@ -32,5 +32,10 @@ class InitBloc extends Bloc<InitEvent, InitState> {
       final newApp = App.newApp(event.settings);
       emit(SuccessfulLoad(newApp));
     });
+    /// Should only be called when previous state was SuccessfulLoad
+    /// (b/c null check on app)
+    on<ReloadApp>((event, emit){
+      emit(SuccessfulLoad(event.app ?? state.app!));
+    });
   }
 }

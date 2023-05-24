@@ -5,6 +5,7 @@ import 'package:nutrition_app/blocs/settings/settings_bloc.dart';
 import 'package:nutrition_app/utils/utils.dart';
 import 'package:nutrition_app/domain.dart';
 
+import '../blocs/init/init_bloc.dart';
 
 class GeneralSettingsPage extends StatelessWidget {
   const GeneralSettingsPage({Key? key}) : super(key: key);
@@ -24,13 +25,21 @@ class GeneralSettingsPage extends StatelessWidget {
                 Row(
                   children: [
                     InkWell(
-                      onTap: () {},
+                      onTap: () {
+                        context
+                            .read<SettingsBloc>()
+                            .add(MeasureUpdate(Measure.imperial));
+                      },
                       child: Container(
                           padding: const EdgeInsets.all(12),
                           child: const Text('Imperial')),
                     ),
                     InkWell(
-                      onTap: () {},
+                      onTap: () {
+                        context
+                            .read<SettingsBloc>()
+                            .add(MeasureUpdate(Measure.metric));
+                      },
                       child: Container(
                           padding: const EdgeInsets.all(12),
                           child: const Text('Metric')),
@@ -39,7 +48,7 @@ class GeneralSettingsPage extends StatelessWidget {
                 ),
                 BlocBuilder<SettingsBloc, SettingsState>(
                   builder: (context, state) {
-                    if (true) {
+                    if (state.settings.measure == Measure.metric) {
                       return Row(
                         children: [
                           const Text('Height: '),
@@ -48,6 +57,11 @@ class GeneralSettingsPage extends StatelessWidget {
                                 decoration: const InputDecoration(
                                   labelText: 'centimeters',
                                 ),
+                                onChanged: (val) {
+                                  context
+                                      .read<SettingsBloc>()
+                                      .add(CmUpdate(val));
+                                },
                                 keyboardType: TextInputType.number,
                                 inputFormatters: <TextInputFormatter>[
                                   FilteringTextInputFormatter.digitsOnly
@@ -64,6 +78,11 @@ class GeneralSettingsPage extends StatelessWidget {
                               const Text('Feet: '),
                               Flexible(
                                 child: TextFormField(
+                                    onChanged: (val) {
+                                      context
+                                          .read<SettingsBloc>()
+                                          .add(FeetUpdate(val));
+                                    },
                                     decoration: const InputDecoration(
                                       labelText: 'feet',
                                     ),
@@ -75,6 +94,11 @@ class GeneralSettingsPage extends StatelessWidget {
                               const Text('Inches: '),
                               Flexible(
                                 child: TextFormField(
+                                    onChanged: (val) {
+                                      context
+                                          .read<SettingsBloc>()
+                                          .add(InchesUpdate(val));
+                                    },
                                     decoration: const InputDecoration(
                                       labelText: 'in',
                                     ),
@@ -100,8 +124,22 @@ class GeneralSettingsPage extends StatelessWidget {
                       child: BlocBuilder<SettingsBloc, SettingsState>(
                         builder: (context, state) {
                           return TextFormField(
-                              decoration: const InputDecoration(
-                                labelText: true ? 'kilograms' : 'pounds',
+                              onChanged: (val) {
+                                if (state.settings.measure == Measure.metric) {
+                                  context
+                                      .read<SettingsBloc>()
+                                      .add(KgUpdate(val));
+                                } else {
+                                  context
+                                      .read<SettingsBloc>()
+                                      .add(WeightUpdate(val));
+                                }
+                              },
+                              decoration: InputDecoration(
+                                labelText:
+                                    state.settings.measure == Measure.metric
+                                        ? 'kilograms'
+                                        : 'pounds',
                               ),
                               keyboardType: TextInputType.number,
                               inputFormatters: <TextInputFormatter>[
@@ -120,8 +158,10 @@ class GeneralSettingsPage extends StatelessWidget {
                     ),
                     Flexible(
                         child: TextFormField(
-                            onChanged: (val) {},
-                            decoration: InputDecoration(
+                            onChanged: (val) {
+                              context.read<SettingsBloc>().add(AgeUpdate(val));
+                            },
+                            decoration: const InputDecoration(
                               labelText: 'years',
                             ),
                             keyboardType: TextInputType.number,
@@ -136,16 +176,25 @@ class GeneralSettingsPage extends StatelessWidget {
                       children: [
                         const Text('Sex: '),
                         InkWell(
-                          onTap: () {},
+                          onTap: () {
+                            context.read<SettingsBloc>().add(SexUpdate(Sex.M));
+                          },
                           child: Container(
                             padding: const EdgeInsets.all(12),
+                            color: state.settings.anthroMetrics.sex == Sex.M
+                                ? Colors.green
+                                : null,
                             child: const Text('Male'),
-                            color: Colors.green,
                           ),
                         ),
                         InkWell(
-                          onTap: () {},
+                          onTap: () {
+                            context.read<SettingsBloc>().add(SexUpdate(Sex.F));
+                          },
                           child: Container(
+                              color: state.settings.anthroMetrics.sex == Sex.F
+                                  ? Colors.green
+                                  : null,
                               padding: const EdgeInsets.all(12),
                               child: const Text('Female')),
                         ),
@@ -154,43 +203,81 @@ class GeneralSettingsPage extends StatelessWidget {
                   },
                 ),
                 Row(
-                  children: [Text('API Key: '), Flexible(child: TextFormField())],
-                ),
-                Row(
-                  children: [Text('API ID: '), Flexible(child: TextFormField())],
+                  children: [
+                    const Text('API Key: '),
+                    Flexible(child: TextFormField(
+                      onChanged: (val) {
+                        context.read<SettingsBloc>().add(ApiKeyUpdate(val));
+                      },
+                    ))
+                  ],
                 ),
                 Row(
                   children: [
-                    Text('Dark mode: '),
+                    const Text('API ID: '),
+                    Flexible(child: TextFormField(
+                      onChanged: (val) {
+                        context.read<SettingsBloc>().add(AppIdUpdate(val));
+                      },
+                    ))
+                  ],
+                ),
+                Row(
+                  children: [
+                    const Text('Dark mode: '),
 
                     /// Default = settings dark mode (which will be sys pref) onChange updates settings,
-                    Switch(value: true, onChanged: (val) {})
+                    BlocConsumer<SettingsBloc, SettingsState>(
+                      listener: (context, state) {
+                        if (state is SettingsStateDarkModeUpdate) {
+                          context.read<InitBloc>().add(ReloadApp());
+                        }
+                      },
+                      builder: (context, state) {
+                        return Switch(
+                            value: state.settings.darkMode,
+                            onChanged: (bool val) {
+                              context
+                                  .read<SettingsBloc>()
+                                  .add(DarkModeUpdate(val));
+                            });
+                      },
+                    )
                   ],
                 ),
                 Row(
                   children: [
                     const Text('Estimated Activity Level: '),
-                    DropdownButton<String>(
-                        value: 'Sedentary',
-                        onChanged: (String? activityLevel) {},
-                        items: <String>[
-                          'Sedentary',
-                          'Low Active',
-                          'Active',
-                          'Very Active'
-                        ]
-                            .map<DropdownMenuItem<String>>((String value) =>
-                                DropdownMenuItem<String>(
-                                    value: value, child: Text(value)))
-                            .toList())
+                    BlocBuilder<SettingsBloc, SettingsState>(
+                      builder: (context, state) {
+                        return DropdownButton<Activity>(
+                            value: state.settings.anthroMetrics.activity,
+                            onChanged: (Activity? act) {
+                              if (act != null) {
+                                context
+                                    .read<SettingsBloc>()
+                                    .add(ActivityUpdate(act));
+                              }
+                            },
+                            items: Activity.values
+                                .map<DropdownMenuItem<Activity>>(
+                                    (Activity act) =>
+                                        DropdownMenuItem<Activity>(
+                                            value: act,
+                                            child: Text(Activity.toStr(act))))
+                                .toList());
+                      },
+                    )
                   ],
                 ),
                 ElevatedButton(
                     onPressed: () {
+                      // TODO Local Back Up System
                       // final today = DateTime.now();
                       // final fileName = 'meal_planner_${today.year}_${today.month}_${today.day}.json';
                     },
-                    child: const Text('Save Local Back Up'))
+                    child: const Text('Save Local Back Up')),
+                // TODO Way to factory reset app
               ],
             ),
           ),
