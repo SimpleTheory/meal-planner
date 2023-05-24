@@ -62,6 +62,8 @@ class GeneralSettingsPage extends StatelessWidget {
                                       .read<SettingsBloc>()
                                       .add(CmUpdate(val));
                                 },
+                                initialValue:
+                                state.settings.anthroMetrics.cm.toString(),
                                 keyboardType: TextInputType.number,
                                 inputFormatters: <TextInputFormatter>[
                                   FilteringTextInputFormatter.digitsOnly
@@ -70,45 +72,47 @@ class GeneralSettingsPage extends StatelessWidget {
                         ],
                       );
                     } else {
-                      return Column(
-                        mainAxisSize: MainAxisSize.min,
+                      return Row(
                         children: [
-                          Row(
-                            children: [
-                              const Text('Feet: '),
-                              Flexible(
-                                child: TextFormField(
-                                    onChanged: (val) {
-                                      context
-                                          .read<SettingsBloc>()
-                                          .add(FeetUpdate(val));
-                                    },
-                                    decoration: const InputDecoration(
-                                      labelText: 'feet',
-                                    ),
-                                    keyboardType: TextInputType.number,
-                                    inputFormatters: <TextInputFormatter>[
-                                      FilteringTextInputFormatter.digitsOnly
-                                    ]),
-                              ),
-                              const Text('Inches: '),
-                              Flexible(
-                                child: TextFormField(
-                                    onChanged: (val) {
-                                      context
-                                          .read<SettingsBloc>()
-                                          .add(InchesUpdate(val));
-                                    },
-                                    decoration: const InputDecoration(
-                                      labelText: 'in',
-                                    ),
-                                    keyboardType: TextInputType.number,
-                                    inputFormatters: <TextInputFormatter>[
-                                      FilteringTextInputFormatter.digitsOnly
-                                    ]),
-                              )
-                            ],
+                          const Text('Feet: '),
+                          Flexible(
+                            child: TextFormField(
+                                onChanged: (val) {
+                                  context
+                                      .read<SettingsBloc>()
+                                      .add(FeetUpdate(val));
+                                },
+                                initialValue: state.settings.anthroMetrics.feet
+                                    .toString(),
+                                decoration: const InputDecoration(
+                                  labelText: 'feet',
+                                ),
+                                keyboardType: TextInputType.number,
+                                inputFormatters: <TextInputFormatter>[
+                                  FilteringTextInputFormatter.digitsOnly
+                                ]),
                           ),
+                          const Text('Inches: '),
+                          Flexible(
+                            child: TextFormField(
+                                initialValue: state
+                                    .settings.anthroMetrics.inches
+                                    .toString(),
+                                onChanged: (val) {
+                                  context
+                                      .read<SettingsBloc>()
+                                      .add(InchesUpdate(val));
+                                },
+                                decoration: const InputDecoration(
+                                  labelText: 'in',
+                                ),
+                                keyboardType: TextInputType.number,
+                                inputFormatters: <TextInputFormatter>[
+                                  FilteringTextInputFormatter.allow(
+                                      RegExp(r'^1[012]|^\d')
+                                  )
+                                ]),
+                          )
                         ],
                       );
                     }
@@ -124,6 +128,11 @@ class GeneralSettingsPage extends StatelessWidget {
                       child: BlocBuilder<SettingsBloc, SettingsState>(
                         builder: (context, state) {
                           return TextFormField(
+                              initialValue: state.settings.measure ==
+                                  Measure.imperial
+                                  ? state.settings.anthroMetrics.weight
+                                  .toString()
+                                  : state.settings.anthroMetrics.kg.toString(),
                               onChanged: (val) {
                                 if (state.settings.measure == Measure.metric) {
                                   context
@@ -137,9 +146,9 @@ class GeneralSettingsPage extends StatelessWidget {
                               },
                               decoration: InputDecoration(
                                 labelText:
-                                    state.settings.measure == Measure.metric
-                                        ? 'kilograms'
-                                        : 'pounds',
+                                state.settings.measure == Measure.metric
+                                    ? 'kilograms'
+                                    : 'pounds',
                               ),
                               keyboardType: TextInputType.number,
                               inputFormatters: <TextInputFormatter>[
@@ -156,18 +165,23 @@ class GeneralSettingsPage extends StatelessWidget {
                       padding: EdgeInsets.fromLTRB(0, 0, 6, 0),
                       child: Text('Age: '),
                     ),
-                    Flexible(
-                        child: TextFormField(
+                    Flexible(child: BlocBuilder<SettingsBloc, SettingsState>(
+                      builder: (context, state) {
+                        return TextFormField(
                             onChanged: (val) {
                               context.read<SettingsBloc>().add(AgeUpdate(val));
                             },
+                            initialValue:
+                            state.settings.anthroMetrics.age.toString(),
                             decoration: const InputDecoration(
                               labelText: 'years',
                             ),
                             keyboardType: TextInputType.number,
                             inputFormatters: <TextInputFormatter>[
-                          FilteringTextInputFormatter.digitsOnly
-                        ])),
+                              FilteringTextInputFormatter.digitsOnly
+                            ]);
+                      },
+                    )),
                   ],
                 ),
                 BlocBuilder<SettingsBloc, SettingsState>(
@@ -205,9 +219,15 @@ class GeneralSettingsPage extends StatelessWidget {
                 Row(
                   children: [
                     const Text('API Key: '),
-                    Flexible(child: TextFormField(
-                      onChanged: (val) {
-                        context.read<SettingsBloc>().add(ApiKeyUpdate(val));
+                    Flexible(child: BlocBuilder<SettingsBloc, SettingsState>(
+                      builder: (context, state) {
+                        return TextFormField(
+                          initialValue: state.settings.apikey
+                              .toString(),
+                          onChanged: (val) {
+                            context.read<SettingsBloc>().add(ApiKeyUpdate(val));
+                          },
+                        );
                       },
                     ))
                   ],
@@ -215,9 +235,14 @@ class GeneralSettingsPage extends StatelessWidget {
                 Row(
                   children: [
                     const Text('API ID: '),
-                    Flexible(child: TextFormField(
-                      onChanged: (val) {
-                        context.read<SettingsBloc>().add(AppIdUpdate(val));
+                    Flexible(child: BlocBuilder<SettingsBloc, SettingsState>(
+                      builder: (context, state) {
+                        return TextFormField(
+                          initialValue: state.settings.appId.toString(),
+                          onChanged: (val) {
+                            context.read<SettingsBloc>().add(AppIdUpdate(val));
+                          },
+                        );
                       },
                     ))
                   ],
@@ -262,9 +287,9 @@ class GeneralSettingsPage extends StatelessWidget {
                             items: Activity.values
                                 .map<DropdownMenuItem<Activity>>(
                                     (Activity act) =>
-                                        DropdownMenuItem<Activity>(
-                                            value: act,
-                                            child: Text(Activity.toStr(act))))
+                                    DropdownMenuItem<Activity>(
+                                        value: act,
+                                        child: Text(Activity.toStr(act))))
                                 .toList());
                       },
                     )
