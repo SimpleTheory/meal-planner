@@ -74,18 +74,21 @@ class InitSettingsBloc extends Bloc<InitSettingsEvent, InitSettingsState> {
      }
      else{
        final settings = Settings(
-           anthroMetrics: state.measure == Measure.imperial ? AnthroMetrics(
+           anthroMetrics: state.measure == Measure.imperial ?
+           AnthroMetrics(
                sex: state.sex,
                age: int.parse(state.age),
                weight: int.parse(state.weight),
                feet: int.parse(state.feet),
                inches: int.parse(state.inches),
-               activity: state.activity
-           ) :
+               activity: state.activity,
+           )
+               :
            AnthroMetrics.fromMetric(state.sex, int.parse(state.age), int.parse(state.kg), int.parse(state.cm), state.activity),
            apikey: state.apiKey,
            appId: state.appId,
-         darkMode: state.darkMode
+         darkMode: state.darkMode,
+         measure: state.measure
        );
        print('word');
        emit(InitSettingsSuccessfulLoad(settings));

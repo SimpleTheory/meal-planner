@@ -17,7 +17,8 @@ final AnthroMetrics anthroMetrics = AnthroMetrics(
 final Settings settings = Settings(
     anthroMetrics: anthroMetrics,
     apikey: apiKey.readAsStringSync(),
-    appId: appId.readAsStringSync()
+    appId: appId.readAsStringSync(),
+    measure: Measure.imperial
 );
 void main()async{
   group('Nutritionix API Calls', () {

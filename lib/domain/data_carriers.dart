@@ -509,45 +509,45 @@ class Nutrients {
   // <editor-fold desc="Dataclass Section">
 
   // <editor-fold desc="From Values Constructor">
-  factory Nutrients.fromValues(
-          {num calcium = 0,
-          num carbohydrate = 0,
-          num cholesterol = 0,
-          num calories = 0,
-          num saturatedFat = 0,
-          num totalFat = 0,
-          num transFat = 0,
-          num iron = 0,
-          num fiber = 0,
-          num potassium = 0,
-          num sodium = 0,
-          num protein = 0,
-          num sugars = 0,
-          num choline = 0,
-          num copper = 0,
-          num ala = 0,
-          num linoleicAcid = 0,
-          num epa = 0,
-          num dpa = 0,
-          num dha = 0,
-          num folate = 0,
-          num magnesium = 0,
-          num manganese = 0,
-          num niacin = 0,
-          num phosphorus = 0,
-          num pantothenicAcid = 0,
-          num riboflavin = 0,
-          num selenium = 0,
-          num thiamin = 0,
-          num vitaminE = 0,
-          num vitaminA = 0,
-          num vitaminB12 = 0,
-          num vitaminB6 = 0,
-          num vitaminC = 0,
-          num vitaminD = 0,
-          num vitaminK = 0,
-          num zinc = 0,
-          }) =>
+  factory Nutrients.fromValues({
+    num calcium = 0,
+    num carbohydrate = 0,
+    num cholesterol = 0,
+    num calories = 0,
+    num saturatedFat = 0,
+    num totalFat = 0,
+    num transFat = 0,
+    num iron = 0,
+    num fiber = 0,
+    num potassium = 0,
+    num sodium = 0,
+    num protein = 0,
+    num sugars = 0,
+    num choline = 0,
+    num copper = 0,
+    num ala = 0,
+    num linoleicAcid = 0,
+    num epa = 0,
+    num dpa = 0,
+    num dha = 0,
+    num folate = 0,
+    num magnesium = 0,
+    num manganese = 0,
+    num niacin = 0,
+    num phosphorus = 0,
+    num pantothenicAcid = 0,
+    num riboflavin = 0,
+    num selenium = 0,
+    num thiamin = 0,
+    num vitaminE = 0,
+    num vitaminA = 0,
+    num vitaminB12 = 0,
+    num vitaminB6 = 0,
+    num vitaminC = 0,
+    num vitaminD = 0,
+    num vitaminK = 0,
+    num zinc = 0,
+  }) =>
       Nutrients(
           calcium: Nutrient.Calcium(calcium),
           carbohydrate: Nutrient.Carbohydrate(carbohydrate),
@@ -1468,7 +1468,7 @@ class DRIS {
     "fiber": emoji.get('toilet').code,
     "potassium": emoji.get('banana').code,
     "sodium": emoji.get('salt').code,
-    "protein": '🥩',
+    "protein": emoji.get('meat').code,
     "sugars": emoji.get('candy').code,
     "choline": 'choline',
     "copper": 'Cu',
@@ -1494,7 +1494,7 @@ class DRIS {
     "vitaminD": 'D',
     "vitaminK": 'K',
     "zinc": 'Zn',
-    "transFat": '🍤',
+    "transFat": '\u{1F364}',
     "unsaturatedFat": olive,
     "saturatedFat": butter
   };
@@ -1939,14 +1939,14 @@ class AnthroMetrics {
   Activity activity;
 
   get cm => in2cm(inches);
-  set cm(cm){
+  set cm(cm) {
     final temp = ImperialHeight.fromInches(cm2in(cm));
     feet = temp.feet;
     inches = temp.inches;
   }
 
   get kg => lb2kg(weight);
-  set kg(kg){
+  set kg(kg) {
     weight = kg2lb(kg);
   }
 
@@ -2101,6 +2101,7 @@ class Settings {
   // <Dataclass>
 
   Settings({
+    required this.measure,
     required this.anthroMetrics,
     this.apikey = '',
     this.appId = '',
@@ -2108,12 +2109,14 @@ class Settings {
   });
 
   factory Settings.staticConstructor({
+    required measure,
     required anthroMetrics,
     apikey = '',
     appId = '',
     darkMode = true,
   }) =>
       Settings(
+          measure: measure,
           anthroMetrics: anthroMetrics,
           apikey: apikey,
           appId: appId,
@@ -2123,6 +2126,7 @@ class Settings {
         "apikey": apikey,
         "appId": appId,
         "darkMode": darkMode,
+        "measure": measure,
         "anthroMetrics": anthroMetrics
       };
 
@@ -2134,6 +2138,7 @@ class Settings {
           equals(apikey, other.apikey) &&
           equals(appId, other.appId) &&
           equals(darkMode, other.darkMode) &&
+          equals(measure, other.measure) &&
           equals(anthroMetrics, other.anthroMetrics));
 
   @override
@@ -2141,21 +2146,24 @@ class Settings {
       apikey.hashCode ^
       appId.hashCode ^
       darkMode.hashCode ^
+      measure.hashCode ^
       anthroMetrics.hashCode;
 
   @override
   String toString() =>
-      'Settings(apikey: $apikey, appId: $appId, darkMode: $darkMode, anthroMetrics: $anthroMetrics)';
+      'Settings(apikey: $apikey, appId: $appId, darkMode: $darkMode, measure: $measure, anthroMetrics: $anthroMetrics)';
 
   Settings copyWithSettings(
           {String? apikey,
           String? appId,
           bool? darkMode,
+          Measure? measure,
           AnthroMetrics? anthroMetrics}) =>
       Settings(
           apikey: apikey ?? this.apikey,
           appId: appId ?? this.appId,
           darkMode: darkMode ?? this.darkMode,
+          measure: measure ?? this.measure,
           anthroMetrics: anthroMetrics ?? this.anthroMetrics);
 
   String toJson() => jsonEncode(toMap());
@@ -2168,6 +2176,7 @@ class Settings {
     String apikey = map['apikey'];
     String appId = map['appId'];
     bool darkMode = map['darkMode'];
+    Measure measure = dejsonify(map['measure']);
     AnthroMetrics anthroMetrics = dejsonify(map['anthroMetrics']);
 
     // No casting
@@ -2176,6 +2185,7 @@ class Settings {
         apikey: apikey,
         appId: appId,
         darkMode: darkMode,
+        measure: measure,
         anthroMetrics: anthroMetrics);
   }
   // </Dataclass>

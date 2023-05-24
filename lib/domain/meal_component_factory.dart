@@ -79,16 +79,20 @@ class Ingredient extends MealComponentFactory {
     /// assert serving_qty == 1
     /// serving_unit
     // Ingredient(name: name, baseNutrient: baseNutrient, altMeasures2grams: altMeasures2grams, source: source, sourceMetadata: )
-    final String? baseUnit = responseBody['serving_weight_grams'] == null ? null : responseBody['nf_metric_uom'];
+    final String? baseUnit = responseBody['serving_weight_grams'] == null
+        ? null
+        : responseBody['nf_metric_uom'];
     final baseNutrient = BaseNutrients(
         // TODO ADD CASE WHERE SERVING WEIGHT GRAMS IS NULL DEFAULT TO SERVING UNIT
         // BREAK CASE GF SOY SAUCE
-        grams: responseBody['serving_weight_grams'] ?? responseBody['nf_metric_qty'],
+        grams: responseBody['serving_weight_grams'] ??
+            responseBody['nf_metric_qty'],
         nutrients: Nutrients.fromResponseBody(responseBody));
     Map<String, num> altMeasures2grams;
     if (responseBody['alt_measures'] != null) {
       altMeasures2grams = {
-        responseBody['serving_unit']: responseBody['serving_weight_grams'] ?? responseBody['nf_metric_qty'],
+        responseBody['serving_unit']: responseBody['serving_weight_grams'] ??
+            responseBody['nf_metric_qty'],
         ...{
           for (Map alt in responseBody['alt_measures'])
             alt['measure']: alt['serving_weight']
@@ -96,11 +100,13 @@ class Ingredient extends MealComponentFactory {
       };
     } else {
       altMeasures2grams = {
-        responseBody['serving_unit']: responseBody['serving_weight_grams'] ?? responseBody['nf_metric_qty'],
+        responseBody['serving_unit']: responseBody['serving_weight_grams'] ??
+            responseBody['nf_metric_qty'],
       };
     }
     String name = responseBody['food_name'];
-    String? photo = responseBody['photo']['highres'] ?? responseBody['photo']['thumb'];
+    String? photo =
+        responseBody['photo']['highres'] ?? responseBody['photo']['thumb'];
     return Ingredient(
         name: name,
         baseNutrient: baseNutrient,
@@ -108,8 +114,7 @@ class Ingredient extends MealComponentFactory {
         altMeasures2grams: altMeasures2grams,
         source: source,
         sourceMetadata: sourceMetadata,
-        baseUnit: baseUnit
-    );
+        baseUnit: baseUnit);
   }
 
   @override
@@ -127,12 +132,8 @@ class Ingredient extends MealComponentFactory {
       this.photo,
       this.sourceMetadata,
       String? baseUnit})
-      : super(
-          baseNutrient,
-          altMeasures2grams,
-          name,
-          baseUnit: baseUnit ?? 'grams'
-        );
+      : super(baseNutrient, altMeasures2grams, name,
+            baseUnit: baseUnit ?? 'grams');
 
   factory Ingredient.staticConstructor(
           {required name,
@@ -170,8 +171,7 @@ class Ingredient extends MealComponentFactory {
           equals(photo, other.photo) &&
           equals(source, other.source) &&
           equals(sourceMetadata, other.sourceMetadata) &&
-          equals(unit, other.unit)
-      );
+          equals(unit, other.unit));
 
   @override
   int get hashCode =>
@@ -181,8 +181,7 @@ class Ingredient extends MealComponentFactory {
       photo.hashCode ^
       source.hashCode ^
       sourceMetadata.hashCode ^
-      unit.hashCode
-  ;
+      unit.hashCode;
 
   @override
   String toString() =>
@@ -195,7 +194,7 @@ class Ingredient extends MealComponentFactory {
           Uri? photo,
           IngredientSource? source,
           dynamic sourceMetadata,
-            String? baseUnit}) =>
+          String? baseUnit}) =>
       Ingredient(
           name: name ?? this.name,
           baseNutrient: baseNutrient ?? this.baseNutrient,
@@ -203,8 +202,7 @@ class Ingredient extends MealComponentFactory {
           photo: photo ?? this.photo,
           source: source ?? this.source,
           sourceMetadata: sourceMetadata ?? this.sourceMetadata,
-          baseUnit: baseUnit ?? unit
-      );
+          baseUnit: baseUnit ?? unit);
 
   String toJson() => jsonEncode(toMap());
 
@@ -234,8 +232,7 @@ class Ingredient extends MealComponentFactory {
         photo: photo,
         source: source,
         sourceMetadata: sourceMetadata,
-        baseUnit: unit
-    );
+        baseUnit: unit);
   }
 // </Dataclass>
 
