@@ -6,6 +6,7 @@ import 'package:nutrition_app/blocs/settings/settings_bloc.dart';
 import 'package:nutrition_app/screens/index.dart';
 import 'package:nutrition_app/screens/init.dart';
 import 'blocs/init/init_bloc.dart';
+import 'blocs/init/settings/init_settings_bloc.dart';
 import 'domain/nutrtion_app_domain.dart';
 import 'utils.dart';
 
@@ -27,6 +28,7 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (context) => NavigationBloc()),
         BlocProvider(create: (context) => InitBloc()),
         BlocProvider(create: (context) => SettingsBloc()),
+        BlocProvider(create: (context) => InitSettingsBloc()),
         // BlocProvider(create: (context) => GlobalBloc())
       ],
       child: BlocBuilder<InitBloc, InitState>(
@@ -34,7 +36,9 @@ class MyApp extends StatelessWidget {
           if (state is SuccessfulLoad) {
             return MaterialApp(
               title: 'Nutrition App',
-              themeMode: state.app.settings.darkMode ? ThemeMode.dark : ThemeMode
+              themeMode: state.app.settings.darkMode
+                  ? ThemeMode.dark
+                  : ThemeMode
                   .light,
               theme: ThemeData(
                 primarySwatch: Colors.green,
@@ -46,60 +50,28 @@ class MyApp extends StatelessWidget {
               debugShowCheckedModeBanner: false,
             );
           } else {
-            return const InitPage();
+            return BlocBuilder<InitSettingsBloc, InitSettingsState>(
+              builder: (context, state) {
+                return MaterialApp(
+                  title: 'Nutrition App',
+                  themeMode: state.darkMode
+                      ? ThemeMode.dark
+                      : ThemeMode
+                      .light,
+                  theme: ThemeData(
+                    primarySwatch: Colors.green,
+                  ),
+                  darkTheme: ThemeData(
+                      brightness: Brightness.dark,
+                      primarySwatch: Colors.green),
+                  home: const InitPage(),
+                  debugShowCheckedModeBanner: false,
+                );
+              },
+            );
           }
         },
       ),
     );
   }
 }
-
-// class MyApp extends StatefulWidget {
-//   App? app;
-//   MyApp({this.app, Key? key}) : super(key: key);
-//
-//   @override
-//   State<MyApp> createState() => _MyAppState();
-// }
-//
-// class _MyAppState extends State<MyApp> {
-//   @override
-//   Widget build(BuildContext context) {
-//     if (widget.app != null) {
-//       return MultiBlocProvider(
-//         providers: [
-//           BlocProvider(create: (context) => NavigationBloc()),
-//           BlocProvider(create: (context) => InitBloc()),
-//           BlocProvider(create: (context) => GlobalBloc(widget.app!))
-//         ],
-//         child: BlocBuilder<GlobalBloc, GlobalState>(
-//           builder: (context, state) {
-//             return MaterialApp(
-//               title: 'Nutrition App',
-//               themeMode: state.darkMode ? ThemeMode.dark : ThemeMode.light,
-//               theme: ThemeData(
-//                 primarySwatch: Colors.green,
-//               ),
-//               darkTheme: ThemeData(
-//                   brightness: Brightness.dark, primarySwatch: Colors.green),
-//               home: const IndexPage(),
-//               debugShowCheckedModeBanner: false,
-//             );
-//           },
-//         ),
-//       );
-//     } else {
-//       return BlocProvider(create: (BuildContext context) => InitBloc(),
-//       child: BlocListener<InitBloc, InitState>(
-//           listener: (context, state){
-//             if (state is SuccessfulLoad){
-//               setState(() {
-//                 widget.app = state.app;
-//               });
-//             }
-//           },
-//           child: const InitPage()));
-//     }
-//   }
-// }
-

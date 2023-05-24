@@ -16,12 +16,16 @@ class InitPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Column(
-        children: [
-          ElevatedButton(onPressed: (){context.read<InitBloc>().add(LoadFileInitEvent());}, child: const Text('Restore From Back-Up')),
-          ElevatedButton(onPressed: (){showDialog(context: context, builder: waiverDialog);}, child: const Text('New'))
-        ],
+    return Scaffold(
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            ElevatedButton(onPressed: (){context.read<InitBloc>().add(LoadFileInitEvent());}, child: const Text('Restore From Back-Up')),
+            ElevatedButton(onPressed: (){showDialog(context: context, builder:(context)=> waiverDialog(context));}, child: const Text('New'))
+          ],
+        ),
       ),
     );
   }

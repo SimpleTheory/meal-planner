@@ -2093,6 +2093,7 @@ class Settings {
   String apikey = '';
   String appId = '';
   bool darkMode = true;
+  Measure measure;
   AnthroMetrics anthroMetrics;
 
   // <editor-fold desc="Dataclass Section">

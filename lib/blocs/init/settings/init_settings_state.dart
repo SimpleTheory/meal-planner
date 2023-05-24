@@ -51,26 +51,26 @@ class InitSettingsState {
     bool? errorApiKey ,
     bool? errorAppId ,
   }) {
-        measure = measure  ??  this.measure;
-        cm = cm  ??  this.cm;
-        inches = inches  ??  this.inches;
-        feet = feet  ??  this.feet;
-        age = age  ??  this.age;
-        weight = weight  ??  this.weight;
-        kg = kg  ??  this.kg;
-        activity = activity  ??  this.activity;
-        sex = sex  ??  this.sex;
-        apiKey = apiKey  ??  this.apiKey;
-        appId = appId  ??  this.appId;
-        darkMode = darkMode  ??  this.darkMode;
-        errorCm = errorCm  ??  this.errorCm;
-        errorInches = errorInches  ??  this.errorInches;
-        errorFeet = errorFeet  ??  this.errorFeet;
-        errorAge = errorAge  ??  this.errorAge;
-        errorWeight = errorWeight  ??  this.errorWeight;
-        errorKg = errorKg  ??  this.errorKg;
-        errorApiKey = errorApiKey  ??  this.errorApiKey;
-        errorAppId = errorAppId  ??  this.errorAppId;
+        this.measure = measure  ??  this.measure;
+        this.cm = cm  ??  this.cm;
+        this.inches = inches  ??  this.inches;
+        this.feet = feet  ??  this.feet;
+        this.age = age  ??  this.age;
+        this.weight = weight  ??  this.weight;
+        this.kg = kg  ??  this.kg;
+        this.activity = activity  ??  this.activity;
+        this.sex = sex  ??  this.sex;
+        this.apiKey = apiKey  ??  this.apiKey;
+        this.appId = appId  ??  this.appId;
+        this.darkMode = darkMode  ??  this.darkMode;
+        this.errorCm = errorCm  ??  this.errorCm;
+        this.errorInches = errorInches  ??  this.errorInches;
+        this.errorFeet = errorFeet  ??  this.errorFeet;
+        this.errorAge = errorAge  ??  this.errorAge;
+        this.errorWeight = errorWeight  ??  this.errorWeight;
+        this.errorKg = errorKg  ??  this.errorKg;
+        this.errorApiKey = errorApiKey  ??  this.errorApiKey;
+        this.errorAppId = errorAppId  ??  this.errorAppId;
   }
 
   InitSettingsState copyWith({
@@ -119,7 +119,7 @@ class InitSettingsState {
   }
 // </editor-fold>
 
-bool get hasError => Logical.all([errorApiKey, errorAge, errorAppId, errorCm, errorFeet, errorInches, errorKg, errorWeight]);
+bool get hasError => Logical.any([errorApiKey, errorAge, errorAppId, errorCm, errorFeet, errorInches, errorKg, errorWeight]);
 }
 
 

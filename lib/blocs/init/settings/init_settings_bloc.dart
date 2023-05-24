@@ -12,10 +12,10 @@ class InitSettingsBloc extends Bloc<InitSettingsEvent, InitSettingsState> {
   InitSettingsBloc() : super(InitSettingsState.initial()) {
     on<MeasureUpdate>((event, emit) {
      if (event.measure == Measure.imperial){
-       emit(state.copyWith(measure_: event.measure, kg_: '', cm_: '', weight_: ''));
+       emit(state.copyWith(measure_: event.measure, cm_: ''));
      }
      else{
-       emit(state.copyWith(measure_: event.measure, inches_: '', feet_: '', weight_: ''));
+       emit(state.copyWith(measure_: event.measure, inches_: '', feet_: ''));
      }
     });
     on<CmUpdate>((event, emit) {
@@ -58,10 +58,17 @@ class InitSettingsBloc extends Bloc<InitSettingsEvent, InitSettingsState> {
        errorAppId_: state.appId.isEmpty,
        errorCm_: state.cm.isEmpty && state.measure == Measure.metric,
        errorFeet_: state.feet.isEmpty && state.measure == Measure.imperial,
-       errorInches_: state.inches.isEmpty || state.measure == Measure.imperial,
+       errorInches_: state.inches.isEmpty && state.measure == Measure.imperial,
        errorKg_: state.kg.isEmpty && state.measure == Measure.metric,
        errorWeight_: state.weight.isEmpty && state.measure == Measure.imperial,
      );
+     print(newState.hasError);
+     print(state.measure);
+     print(state.errorInches);
+     print(state.inches);
+     print('kg');
+
+     print(newState.sex);
      if (newState.hasError){
        emit(newState);
      }
@@ -80,6 +87,7 @@ class InitSettingsBloc extends Bloc<InitSettingsEvent, InitSettingsState> {
            appId: state.appId,
          darkMode: state.darkMode
        );
+       print('word');
        emit(InitSettingsSuccessfulLoad(settings));
      }
     });
