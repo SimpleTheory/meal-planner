@@ -22,3 +22,13 @@ class DeleteDiet extends IndexEvent {
   final Diet diet;
   DeleteDiet(this.diet);
 }
+
+class ReorderDiet extends IndexEvent{
+  final int oldIndex;
+  final int newIndex;
+
+  ReorderDiet({
+    required this.oldIndex,
+    required this.newIndex,
+  });
+}

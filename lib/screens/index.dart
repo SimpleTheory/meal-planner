@@ -58,12 +58,16 @@ class IndexPage extends StatelessWidget {
               }),
               BlocBuilder<IndexBloc, IndexState>(
                 builder: (context, state) {
-                  return ListView.builder(
+                  return ReorderableListView.builder(
                     itemBuilder: (context, index) =>
                         DietTile(state.app.diets.values.toList()[index]),
                     itemCount: state.app.diets.length,
                     shrinkWrap: true,
                     physics: const ClampingScrollPhysics(),
+                    onReorder: (int oldIndex, int newIndex) {
+                      context.read<IndexBloc>().add(
+                          ReorderDiet(oldIndex: oldIndex, newIndex: newIndex));
+                    },
                   );
                 },
               ),
@@ -96,7 +100,7 @@ class IndexPage extends StatelessWidget {
           ElevatedButton(onPressed: (){
             saveApp(context.read<InitBloc>().state.app!);
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('The app has been saved!'))
+              const SnackBar(content: Text('The app has been saved!'), backgroundColor: Colors.green,)
             );
           }, child: const Text('Save'))
           // const Text('DEBUG NAVIGATIONS'),
@@ -154,7 +158,7 @@ class DietPopUpEnumHolder {
 class DietTile extends StatelessWidget {
   final Diet diet;
 
-  const DietTile(this.diet, {Key? key}) : super(key: key);
+  DietTile(this.diet, {Key? key}) : super(key: key ?? ValueKey<Diet>(diet));
 
   @override
   Widget build(BuildContext context) {

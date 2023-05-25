@@ -69,6 +69,36 @@ Iterable<T> flatten<T>(Iterable<dynamic> iterable) sync* {
 
 bool isMobile() => Platform.isAndroid || Platform.isIOS;
 
+/// In Dart Maps are ordered so you can re-order them.
+/// Accepts negative indices (pythonic)
+Map<K, V> reorderMap<K, V>(Map<K, V> map, int oldIndex, int newIndex, {bool safe=false}){
+  if (oldIndex == newIndex){return map;}
+  if (oldIndex > map.length){
+    throw RangeError('Old Index $oldIndex is out of range (Map length = ${map.length})');
+  }
+
+  while (oldIndex < 0){
+    oldIndex += map.length;
+  }
+  while (newIndex < 0){
+    oldIndex += map.length;
+  }
+  List<MapEntry<K, V>> entries = map.entries.toList();
+  MapEntry<K, V> item = entries[oldIndex];
+  entries.removeAt(oldIndex);
+  // print('len ${entries.length} new $newIndex old $oldIndex');
+  if (newIndex > entries.length){
+    if (safe){
+      throw RangeError('New Index $newIndex is out of range (Map length = ${map.length})');
+    }
+    entries.add(item);
+  }
+  else {
+    entries.insert(newIndex, item);
+  }
+  return Map<K, V>.fromEntries(entries);
+}
+
 class ImperialHeight{
   int feet;
   int inches;
