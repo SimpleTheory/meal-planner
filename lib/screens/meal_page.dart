@@ -34,7 +34,7 @@ class MealPage extends StatelessWidget {
               padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
               child: ListView(
                 children: [
-                  PlusSignTile((){
+                  PlusSignTile((context){
                     Navigator.push(context, MaterialPageRoute(builder: (context) => const MealMakerPage()));
                   }),
                   ListView.builder(

@@ -31,7 +31,7 @@ class DietPage extends StatelessWidget {
               ),
             ),
           ),
-          PlusSignTile(() {}),
+          PlusSignTile((context) {}),
           ...diet.days.map((e) => DayTile(e))
 
         ],
@@ -54,7 +54,7 @@ class DietPage extends StatelessWidget {
 //       dayStyleNutrientDisplay(day.nutrients, diet.dris),
 //       Padding(
 //         padding: const EdgeInsets.all(8.0),
-//         child: plusSignTile(() {}),
+//         child: PlusSignTile((context) {}),
 //       ),
 //       ...day.meals.map<Widget>((e) => mealComponentTile(e, context))
 //     ],
@@ -81,7 +81,7 @@ class DayTile extends StatelessWidget {
         DayStyleNutrientDisplay(day.nutrients, diet.dris),
         Padding(
           padding: const EdgeInsets.all(8.0),
-          child: PlusSignTile(() {}),
+          child: PlusSignTile((context) {}),
         ),
         ListView.builder(
             itemBuilder: (BuildContext context, int index)=> MealComponentTile(day.meals[index]),

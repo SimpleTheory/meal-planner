@@ -62,7 +62,7 @@ class CustomIngredientPage extends StatelessWidget {
                 child: Column(
                   children: [
                     const Text('Alternate measures:'),
-                    PlusSignTile(() {}, padding: const EdgeInsets.fromLTRB(0, 16, 0, 0)),
+                    PlusSignTile((context) {}, padding: const EdgeInsets.fromLTRB(0, 16, 0, 0)),
                     const AltMeasureFormField(),
                   ],
                 ),

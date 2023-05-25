@@ -5,7 +5,8 @@ abstract class InitState {
   App? get app => null;
 }
 
-class InitInitial extends InitState {}
+class InitInitial extends InitState {
+}
 
 class SuccessfulLoad extends InitState{
   @override

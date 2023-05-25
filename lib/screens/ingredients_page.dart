@@ -34,7 +34,7 @@ class IngredientPage extends StatelessWidget {
               padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
               child: ListView(
                 children: [
-                  PlusSignTile(() {openAddNewIngredientPopUp(context);}),
+                  PlusSignTile((context) {openAddNewIngredientPopUp(context);}),
                   ListView.builder(
                       itemBuilder: (context, index)=>IngredientTile(ingredients[index]),
                       itemCount: ingredients.length,

@@ -23,7 +23,7 @@ import '../screens/dri_configs.dart';
 //       );
 
 class PlusSignTile extends StatelessWidget {
-  final void Function()? onTap;
+  final void Function(BuildContext context) onTap;
   final EdgeInsets? padding;
   const PlusSignTile(this.onTap, {this.padding, Key? key}) : super(key: key);
 
@@ -32,7 +32,9 @@ class PlusSignTile extends StatelessWidget {
     return Padding(
       padding: padding ?? const EdgeInsets.fromLTRB(10, 10, 10, 10),
       child: ListTile(
-        onTap: onTap,
+        onTap: () {
+          onTap(context);
+        },
         title: const Center(child: Icon(Icons.add),),
         tileColor: const Color.fromRGBO(240, 240, 240, 30),
         shape: const BeveledRectangleBorder(
@@ -286,4 +288,38 @@ class DietDrawer extends StatelessWidget {
       ),
     );
   }
+}
+
+/// Alert Dialogue to prompt user for a string
+AlertDialog nameAThing(BuildContext context,
+    {required String title, String? labelText, required Function(BuildContext context, String inputValue) onSubmit}) {
+  TextEditingController controller = TextEditingController();
+  return AlertDialog(
+    title: Text(title),
+    content: TextFormField(
+      decoration: InputDecoration(labelText: labelText),
+      controller: controller,
+      autofocus: true,
+    ),
+    actions: [
+      Row(
+        children: [
+          TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('cancel')),
+          const Spacer(),
+          TextButton(onPressed: (){
+            if (!toBool(controller.text)){
+              Navigator.pop(context);
+              return;
+            }
+            else{
+              onSubmit(context, controller.text);
+              Navigator.pop(context);
+            }
+          }, child: const Text('submit'))
+        ],
+      ),
+    ],
+  );
 }

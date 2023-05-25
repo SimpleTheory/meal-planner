@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive_flutter/adapters.dart';
-import 'package:nutrition_app/blocs/navigation/navigation_bloc.dart';
 import 'package:nutrition_app/blocs/settings/settings_bloc.dart';
 import 'package:nutrition_app/screens/index.dart';
 import 'package:nutrition_app/screens/init.dart';
@@ -27,7 +26,13 @@ class MyApp extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         // BlocProvider(create: (context) => NavigationBloc()),
-        BlocProvider(create: (context) => InitBloc()),
+        BlocProvider(create: (context) {
+          final result = InitBloc();
+          if (app != null){
+            result.add(ReloadApp(app: app));
+          }
+          return result;
+        }),
         BlocProvider(create: (context) => InitSettingsBloc()),
         // BlocProvider(create: (context) => GlobalBloc())
       ],
@@ -62,7 +67,8 @@ class MyApp extends StatelessWidget {
                   => currentState is SettingsStateDarkModeUpdate,
               ),
             );
-          } else {
+          }
+          else {
             return BlocBuilder<InitSettingsBloc, InitSettingsState>(
               builder: (context, state) {
                 return MaterialApp(

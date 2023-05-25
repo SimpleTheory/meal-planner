@@ -35,7 +35,9 @@ class App {
   // Delete: meal, ingredient, diet
   void deleteMeal(Meal meal) {}
   void deleteBaseIngredient(Ingredient ingredient) {}
-  void deleteDiet(Diet diet) {}
+  void deleteDiet(Diet diet) {
+    diets.remove(diet.name);
+  }
 
   factory App.newApp(Settings settings) =>
       App(settings: settings, diets: {}, meals: {}, baseIngredients: {});
@@ -212,6 +214,9 @@ class Diet {
   // TODO persistent shopping list with categories
 
   Nutrients get averageNutrition {
+    if (days.isEmpty){
+      return Nutrients.zero();
+    }
     final dayNut = days.map((e) => e.nutrients);
     Nutrients sum = Nutrients.sum(dayNut);
     return sum / dayNut.length;
@@ -358,7 +363,7 @@ class Day {
   String name;
   List<MealComponent> meals;
 
-  Nutrients get nutrients => Nutrients.sum(meals.map((e) => e.nutrients));
+  Nutrients get nutrients => meals.isEmpty ? Nutrients.zero() : Nutrients.sum(meals.map((e) => e.nutrients));
 
   void addDayMeal(Meal meal) {
     meals.add(meal.toMealComponent('servings', 1, meal));

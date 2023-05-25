@@ -3,6 +3,8 @@ part of 'init_bloc.dart';
 @immutable
 abstract class InitEvent {}
 
+class AppInit extends InitEvent {}
+
 class LoadFileInitEvent extends InitEvent {}
 
 class CreatedNewSettings extends InitEvent {

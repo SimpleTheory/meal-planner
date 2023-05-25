@@ -3,6 +3,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nutrition_app/domain.dart';
+import 'package:nutrition_app/utils.dart';
 import 'package:path/path.dart';
 
 part 'init_event.dart';
@@ -30,6 +31,7 @@ class InitBloc extends Bloc<InitEvent, InitState> {
     });
     on<CreatedNewSettings>((event, emit){
       final newApp = App.newApp(event.settings);
+      saveApp(newApp);
       emit(SuccessfulLoad(newApp));
     });
     /// Should only be called when previous state was SuccessfulLoad

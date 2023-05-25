@@ -55,7 +55,7 @@ class MealMakerPage extends StatelessWidget {
               shrinkWrap: true,
               children: [
                 MealStyleNutrientDisplay(current_meal!.baseNutrient.nutrients),
-                PlusSignTile(() {}),
+                PlusSignTile((context) {}),
                 // ListView.builder(
                 //   itemBuilder: (context, index)=>MealComponentTile(current_meal!.ingredients[index]),
                 //   itemCount: ingredients.length,
@@ -69,7 +69,7 @@ class MealMakerPage extends StatelessWidget {
               const Text('Subrecipe: ', style: TextStyle(fontSize: 20)), Switch(value: false, onChanged: (bool isSubRecipe){})
             ],),
             const Text('Alternate measures:', style: TextStyle(fontSize: 20),),
-            PlusSignTile(() {}),
+            PlusSignTile((context) {}),
             const AltMeasureFormField(),
             Container(
               decoration: const BoxDecoration(border: Border(top: BorderSide(color: Colors.grey))),

@@ -211,7 +211,7 @@ final emoji = EmojiParser();
 final olive = emoji.get('olive').code;
 final butter = emoji.get('butter').code;
 
-AlertDialog deleteConfirmation({required void Function() onSubmit, required BuildContext context,String? obj}){
+AlertDialog deleteConfirmation({required void Function(BuildContext context) onSubmit, required BuildContext context, String? obj}){
   obj ??= 'this';
   return AlertDialog(
     content: Text('Are you sure you would like to delete $obj?'),
@@ -220,10 +220,17 @@ AlertDialog deleteConfirmation({required void Function() onSubmit, required Buil
         children: [
           TextButton(onPressed: () => Navigator.pop(context), child: const Text('cancel')),
           const Spacer(),
-          TextButton(onPressed: onSubmit, child: const Text('submit'))
+          TextButton(onPressed: () {
+            onSubmit(context);
+            Navigator.pop(context);
+          }, child: const Text('submit'))
         ],
       ),
     ],
   );
+}
+
+void dialog(BuildContext context, AlertDialog alertDialog){
+  showDialog(context: context, builder: (context)=>alertDialog);
 }
 
