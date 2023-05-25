@@ -260,7 +260,7 @@ class MealComponentTile extends StatelessWidget {
       trailing: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            if (meal.reference is Meal) IconButton(
+            if (meal.reference is Meal) if (toBool((meal.reference as Meal).notes)) IconButton(
               onPressed: ()
               {showDialog(context: context, builder: (context)=>mealNotesPopUp(meal.reference as Meal, context));},
               icon: const Icon(Icons.info_outline),),
@@ -330,7 +330,7 @@ class MealComponentTile extends StatelessWidget {
 
 
 AlertDialog mealNotesPopUp(Meal meal, BuildContext context) => AlertDialog(
-  title: Text('${meal.name} Notes:'),
+  title: Text('${meal.name}'),
   content: Text(meal.notes),
   actions: [TextButton(onPressed: () {
     Navigator.pop(context);

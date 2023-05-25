@@ -236,6 +236,48 @@ class _GetImageState extends State<GetImage> {
   }
   }
 
+@immutable
+class KeyHolder<T1, T2, T3, T4, T5, T6>{
+  final T1 value1;
+  final T2 value2;
+  final T3? value3;
+  final T4? value4;
+  final T5? value5;
+  final T6? value6;
+
+  const KeyHolder({
+    required this.value1,
+    required this.value2,
+    this.value3,
+    this.value4,
+    this.value5,
+    this.value6,
+  });
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+          other is KeyHolder &&
+              runtimeType == other.runtimeType &&
+              value1 == other.value1 &&
+              value2 == other.value2 &&
+              value3 == other.value3 &&
+              value4 == other.value4 &&
+              value5 == other.value5 &&
+              value6 == other.value6;
+
+  @override
+  int get hashCode =>
+      value1.hashCode ^
+      value2.hashCode ^
+      value3.hashCode ^
+      value4.hashCode ^
+      value5.hashCode ^
+      value6.hashCode;
+
+  ValueKey<KeyHolder<T1,T2,T3,T4,T5,T6>> key() => ValueKey(this);
+}
+
 
 final emoji = EmojiParser();
 final olive = emoji.get('olive').code;

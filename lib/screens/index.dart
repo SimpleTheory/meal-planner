@@ -1,4 +1,3 @@
-import 'package:ari_utils/ari_utils.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -9,12 +8,8 @@ import 'package:nutrition_app/screens/ingredients_page.dart';
 import 'package:nutrition_app/screens/meal_page.dart';
 import 'package:nutrition_app/domain.dart';
 import 'package:nutrition_app/utils.dart';
-import 'package:nutrition_app/utils/local_widgets.dart';
-import 'package:nutrition_app/utils/utils.dart';
 import 'package:nutrition_app/blocs/init/init_bloc.dart';
-
 import '../blocs/index/index_bloc.dart';
-import '../temp_dummy_data.dart';
 
 class IndexPage extends StatelessWidget {
   const IndexPage({Key? key}) : super(key: key);
@@ -158,7 +153,7 @@ class DietPopUpEnumHolder {
 class DietTile extends StatelessWidget {
   final Diet diet;
 
-  DietTile(this.diet, {Key? key}) : super(key: key ?? ValueKey<Diet>(diet));
+  DietTile(this.diet, {Key? key}) : super(key: key ?? KeyHolder(value1: 'Index Diet Tiles: ', value2: diet).key());
 
   @override
   Widget build(BuildContext context) {

@@ -1,5 +1,3 @@
-See possibility of UPC scan
+Make Diet Details Bloc
+
 Implement Image Picker
-Finish ShoppingListPage
-Review UI (and make corrections thereof)
-Strategize Blocs
