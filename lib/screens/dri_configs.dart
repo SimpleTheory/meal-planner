@@ -1,4 +1,5 @@
 import 'package:ari_utils/ari_utils.dart';
+import 'package:dataclasses/dataclasses.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -31,9 +32,27 @@ class DRIConfigPage extends StatelessWidget {
         //   ),
         // ),
         body: BlocListener<DriConfigBloc, DriConfigState>(
+          listenWhen: (previous, current){
+            return current is DRIErrorState && previous is! DRIErrorState;
+          },
           listener: (context, state) {
-            if (state is DRISuccessfulUpdate){
-              // refreshDiet(context);
+            if (state is DRIErrorState) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Column(
+                children: [
+                  const Text('DRIs can\'t be greater than ULs!'),
+                  const Text('Current Errors:'),
+                  ...state.driErrors
+                      .where((p0) => p0.value)
+                      .keys
+                      .map((e) => Text('    ${e.name}')),
+                ],
+              ),
+                  duration: const Duration(milliseconds: 1500),
+                  backgroundColor: Colors.orange,
+                )
+              );
             }
           },
           child: ListView.builder(
@@ -94,14 +113,13 @@ class DriForm extends StatelessWidget {
               decoration: InputDecoration(
                   labelText: 'DRI',
                   errorText: toBool(state.driErrors[dri])
-                      ? 'The DRI (${dri.dri}) must be lower than the UL (${dri
-                      .upperLimit})!'
+                      ? 'The DRI (${dri.dri}) must be lower than the UL (${dri.upperLimit})!'
                       : null),
               inputFormatters: <TextInputFormatter>[
                 FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*'))
               ],
               keyboardType:
-              const TextInputType.numberWithOptions(decimal: true),
+                  const TextInputType.numberWithOptions(decimal: true),
             );
           },
         ),
@@ -118,8 +136,7 @@ class DriForm extends StatelessWidget {
               },
               decoration: InputDecoration(
                 errorText: toBool(state.driErrors[dri])
-                    ? 'UL (${dri.upperLimit}) Must Be Higher than the DRI (${dri
-                    .dri})!'
+                    ? 'UL (${dri.upperLimit}) Must Be Higher than the DRI (${dri.dri})!'
                     : null,
                 labelText: 'UL',
               ),
@@ -127,7 +144,7 @@ class DriForm extends StatelessWidget {
                 FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*'))
               ],
               keyboardType:
-              const TextInputType.numberWithOptions(decimal: true),
+                  const TextInputType.numberWithOptions(decimal: true),
             );
           },
         ),
@@ -186,8 +203,7 @@ class DriForm extends StatelessWidget {
 //   );
 // }
 
-AlertDialog driInformation(String driName, BuildContext context) =>
-    AlertDialog(
+AlertDialog driInformation(String driName, BuildContext context) => AlertDialog(
       title: Text('${replaceTextForForm(driName)}:'),
       content: Text(driNotes[driName]!),
       actions: [
