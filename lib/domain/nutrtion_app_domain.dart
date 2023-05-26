@@ -223,7 +223,7 @@ class Diet {
   }
 
   void createDay() {
-    days.add(Day(name: days.length.toString(), meals: []));
+    days.add(Day(name: (days.length+1).toString(), meals: []));
   }
 
   static Future<Diet> create(String name, Settings settings) async {

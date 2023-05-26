@@ -32,37 +32,42 @@ class DRIConfigPage extends StatelessWidget {
         //   ),
         // ),
         body: BlocListener<DriConfigBloc, DriConfigState>(
-          listenWhen: (previous, current){
+          listenWhen: (previous, current) {
             return current is DRIErrorState && previous is! DRIErrorState;
           },
           listener: (context, state) {
             if (state is DRIErrorState) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Column(
-                children: [
-                  const Text('DRIs can\'t be greater than ULs!'),
-                  const Text('Current Errors:'),
-                  ...state.driErrors
-                      .where((p0) => p0.value)
-                      .keys
-                      .map((e) => Text('    ${e.name}')),
-                ],
-              ),
-                  duration: const Duration(milliseconds: 1500),
-                  backgroundColor: Colors.orange,
-                )
-              );
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                content: Column(
+                  children: [
+                    const Text('DRIs can\'t be greater than ULs!'),
+                    const Text('Current Errors:'),
+                    ...state.driErrors
+                        .where((p0) => p0.value)
+                        .keys
+                        .map((e) => Text('    ${e.name}')),
+                  ],
+                ),
+                duration: const Duration(milliseconds: 1500),
+                backgroundColor: Colors.orange,
+              ));
             }
           },
-          child: ListView.builder(
-            itemBuilder: (BuildContext context, int index) =>
-                DriForm(dris[index]),
-            itemCount: diet.dris.attributes__.length,
-            // children: [
-            //   driConfigIntro,
-            //   ...diet.dris.attributes__.values.map((e) => driForm(e as DRI, context))
-            // ],
+          child: ListView(
+            children: [
+              DriIntro(diet.name),
+              ListView.builder(
+                itemBuilder: (BuildContext context, int index) =>
+                    DriForm(dris[index]),
+                itemCount: diet.dris.attributes__.length,
+                physics: const ClampingScrollPhysics(),
+                shrinkWrap: true,
+                // children: [
+                //   driConfigIntro,
+                //   ...diet.dris.attributes__.values.map((e) => driForm(e as DRI, context))
+                // ],
+              ),
+            ],
           ),
         ),
       ),
@@ -215,24 +220,105 @@ AlertDialog driInformation(String driName, BuildContext context) => AlertDialog(
       ],
     );
 
-Text driConfigIntro = Text('''
-Welcome to the DRI configuration page. A quick refresher on the terminology:
+class DriIntro extends StatelessWidget {
+  final String dietName;
+  const DriIntro(this.dietName, {Key? key}) : super(key: key);
 
-  DRI: Daily Recommended Intake (Always the number on the left)
-  UL: Upper Tolerable Limit (Always the number on the right)
-  
-  
-These DRIs are calculated from the NSDA website based on the anthropomorphic data in the settings. Be careful regarding what you change and what you eat. 
-This App is not responsible for your health please consult a qualified dietitian before making any changes, and please double check your anthropomorphic data before making any diets (as his is what the NSDA website uses to determine your DRIs).
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Center(
+            child: Text(
+              'Welcome to the DRI Configuration Page',
+              style: TextStyle(
+                fontSize: 24.0,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+          const SizedBox(height: 16.0),
+          const Text(
+            'A quick refresher on the terminology:',
+            style: TextStyle(
+              fontSize: 18.0,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 16.0),
+          const Text(
+            'DRI: Daily Recommended Intake (Always the number on the left)',
+            style: TextStyle(fontSize: 16.0, fontStyle: FontStyle.italic),
+          ),
+          const SizedBox(height: 8.0),
+          const Text(
+            'UL: Upper Tolerable Limit (Always the number on the right)',
+            style: TextStyle(fontSize: 16.0, fontStyle: FontStyle.italic),
+          ),
+          const SizedBox(height: 16.0),
+          const Text(
+            'These DRIs are calculated from the NSDA website based on the anthropomorphic data in the settings. Be careful regarding what you change and what you eat.',
+            style: TextStyle(fontSize: 16.0),
+          ),
+          const SizedBox(height: 8.0),
+          const Text(
+            'This App is not responsible for your health. Please consult a qualified dietitian before making any changes, and please double-check your anthropomorphic data before making any diets (as this is what the NSDA website uses to determine your DRIs).',
+            style: TextStyle(fontSize: 16.0),
+          ),
+          const SizedBox(height: 16.0),
+          Text(
+            'The DRIs are diet-specific, so what you change here will only affect $dietName.',
+            style: const TextStyle(fontSize: 16.0),
+          ),
+          const SizedBox(height: 16.0),
+          const Text(
+            'The checkbox indicates you are tracking that nutrient; any nutrient with a tick will be shown in the comprehensive Nutrients, whereas those that are unchecked will be omitted.',
+            style: TextStyle(fontSize: 16.0),
+          ),
+          const SizedBox(height: 16.0),
+          const Text(
+            'If a field is empty, that means that nutrient doesn\'t have that field (i.e., an empty DRI means there is no daily recommended intake for that nutrient by default).',
+            style: TextStyle(fontSize: 16.0),
+          ),
+          const SizedBox(height: 8.0),
+          const Text(
+            'You can also leave things blank to remove their DRI or UL.',
+            style: TextStyle(fontSize: 16.0),
+          ),
+          const SizedBox(height: 16.0),
+          const Text(
+            'You can click the ? icon to see more information about any specific nutrient that has it.',
+            style: TextStyle(fontSize: 16.0),
+          ),
+        ],
+      ),
+    );
+  }
+}
 
-The DRIs are diet specific so what you change here will only affect (diet.name).
 
-The checkbox indicates you tracking that nutrient; any nutrient with a tick will be shown in the comprehensive Nutrients, whereas those that are unchecked will be omitted.
-
-If a field is empty that means that nutrient doesnt have that field, (IE an empty DRI means there is no daily recommended intake for that nutrient by default)  
-You can also leave things blank to remove their DRI or UL.
-
-You can click the ? icon to see more information about any specific nutrient that has it.
-
-'''
-    .trim());
+// Text driConfigIntro = Text('''
+// Welcome to the DRI configuration page. A quick refresher on the terminology:
+//
+//   DRI: Daily Recommended Intake (Always the number on the left)
+//   UL: Upper Tolerable Limit (Always the number on the right)
+//
+//
+// These DRIs are calculated from the NSDA website based on the anthropomorphic data in the settings. Be careful regarding what you change and what you eat.
+// This App is not responsible for your health please consult a qualified dietitian before making any changes, and please double check your anthropomorphic data before making any diets (as his is what the NSDA website uses to determine your DRIs).
+//
+// The DRIs are diet specific so what you change here will only affect (diet.name).
+//
+// The checkbox indicates you tracking that nutrient; any nutrient with a tick will be shown in the comprehensive Nutrients, whereas those that are unchecked will be omitted.
+//
+// If a field is empty that means that nutrient doesnt have that field, (IE an empty DRI means there is no daily recommended intake for that nutrient by default)
+// You can also leave things blank to remove their DRI or UL.
+//
+// You can click the ? icon to see more information about any specific nutrient that has it.
+//
+// '''
+//     .trim());
