@@ -1,40 +1,67 @@
 import 'package:ari_utils/ari_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:nutrition_app/blocs/diet/diet_bloc.dart';
 import 'package:nutrition_app/domain.dart';
 import 'package:nutrition_app/temp_dummy_data.dart';
 import 'package:nutrition_app/utils/local_widgets.dart';
 import 'package:nutrition_app/utils/utils.dart';
 
 class DietPage extends StatelessWidget {
-  const DietPage({Key? key}) : super(key: key);
+  final Diet diet;
+
+  const DietPage(this.diet, {Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text(diet.name)),
-      drawer: DietDrawer(diet),
-      body: ListView(
-        children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(4, 16, 4, 3),
-            child: Container(
-              decoration: BoxDecoration(border: Border.all()),
-              child: Column(
-                children: [
-                  const Padding(
-                    padding: EdgeInsets.all(8.0),
-                    child: Center(child: Text('Average Day Breakdown:', style: TextStyle(fontSize: 27),)),
-                  ),
-                  DayStyleNutrientDisplay(diet.averageNutrition, diet.dris),
-                ],
+    return BlocProvider(
+      create: (context) => DietBloc(diet),
+      child: Scaffold(
+        appBar: AppBar(title: Text(diet.name)),
+        drawer: DietDrawer(diet),
+        body: ListView(
+          children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(4, 16, 4, 3),
+              child: Container(
+                decoration: BoxDecoration(border: Border.all()),
+                child: Column(
+                  children: [
+                    const Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: Center(
+                          child: Text(
+                            'Average Day Breakdown:',
+                            style: TextStyle(fontSize: 27),
+                          )),
+                    ),
+                    BlocBuilder<DietBloc, DietState>(
+                      builder: (context, state) {
+                        return DayStyleNutrientDisplay(
+                            state.diet.averageNutrition, state.diet.dris);
+                      },
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
-          PlusSignTile((context) {}),
-          ...diet.days.map((e) => DayTile(e))
-
-        ],
+            PlusSignTile((context) {
+              context.read<DietBloc>().add(AddDay());
+            }),
+            BlocBuilder<DietBloc, DietState>(
+              builder: (context, state) {
+                return ListView.builder(
+                  itemCount: state.diet.days.length,
+                  itemBuilder: (context, index) => DayTile(state.diet.days[index]),
+                  physics: const ClampingScrollPhysics(),
+                  shrinkWrap: true,
+                );
+              },
+            )
+            // ...diet.days.map((e) => DayTile(e))
+          ],
+        ),
       ),
     );
   }
@@ -62,15 +89,20 @@ class DietPage extends StatelessWidget {
 //   );
 // }
 
+// TODO Day Bloc
+// TODO Some Kind of Meal Component Controller (maybe within day bloc)
+
 class DayTile extends StatelessWidget {
   final Day day;
+
   const DayTile(this.day, {Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return ExpansionTile(
       title: Center(child: Text('Day ${day.name}')),
-      subtitle: Center(child: NutrientText(nutrients: day.nutrients, initText: '')),
+      subtitle:
+      Center(child: NutrientText(nutrients: day.nutrients, initText: '')),
       // trailing: PopupMenuButton(
       //   itemBuilder: (BuildContext context) => [
       //   PopupMenuItem(value: DayPopUpEnumHolder(day, PopUpOptions.edit),child: const Text('Edit'),),
@@ -84,29 +116,29 @@ class DayTile extends StatelessWidget {
           child: PlusSignTile((context) {}),
         ),
         ListView.builder(
-            itemBuilder: (BuildContext context, int index)=> MealComponentTile(day.meals[index]),
-            itemCount: day.meals.length,
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-
+          itemBuilder: (BuildContext context, int index) =>
+              MealComponentTile(day.meals[index]),
+          itemCount: day.meals.length,
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
         )
         // ...day.meals.map<Widget>((e) => MealComponentTile(e))
       ],
-
     );
   }
 }
 
-
-class MealComponentPopUpEnumHolder{
+class MealComponentPopUpEnumHolder {
   MealComponent mealComponent;
   PopUpOptions popUpOption;
+
   MealComponentPopUpEnumHolder(this.mealComponent, this.popUpOption);
 }
 
-class DayPopUpEnumHolder{
+class DayPopUpEnumHolder {
   Day day;
   PopUpOptions popUpOption;
+
   DayPopUpEnumHolder(this.day, this.popUpOption);
 }
 
@@ -252,26 +284,41 @@ class DayPopUpEnumHolder{
 
 class MealComponentTile extends StatelessWidget {
   final MealComponent meal;
+
   const MealComponentTile(this.meal, {Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return ExpansionTile(
-      trailing: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            if (meal.reference is Meal) if (toBool((meal.reference as Meal).notes)) IconButton(
-              onPressed: ()
-              {showDialog(context: context, builder: (context)=>mealNotesPopUp(meal.reference as Meal, context));},
-              icon: const Icon(Icons.info_outline),),
-            PopupMenuButton(
-              itemBuilder: (BuildContext context) => [
-                PopupMenuItem(value: MealComponentPopUpEnumHolder(meal, PopUpOptions.edit),child: const Text('Edit'),),
-                PopupMenuItem(value: MealComponentPopUpEnumHolder(meal, PopUpOptions.delete), child: const Text('Delete')),
-                PopupMenuItem(value: MealComponentPopUpEnumHolder(meal, PopUpOptions.duplicate),child: const Text('Duplicate'),),
-              ],
-            )
-          ]),
+      trailing: Row(mainAxisSize: MainAxisSize.min, children: [
+        if (meal.reference is Meal)
+          if (toBool((meal.reference as Meal).notes))
+            IconButton(
+              onPressed: () {
+                showDialog(
+                    context: context,
+                    builder: (context) =>
+                        mealNotesPopUp(meal.reference as Meal, context));
+              },
+              icon: const Icon(Icons.info_outline),
+            ),
+        PopupMenuButton(
+          itemBuilder: (BuildContext context) =>
+          [
+            PopupMenuItem(
+              value: MealComponentPopUpEnumHolder(meal, PopUpOptions.edit),
+              child: const Text('Edit'),
+            ),
+            PopupMenuItem(
+                value: MealComponentPopUpEnumHolder(meal, PopUpOptions.delete),
+                child: const Text('Delete')),
+            PopupMenuItem(
+              value: MealComponentPopUpEnumHolder(meal, PopUpOptions.duplicate),
+              child: const Text('Duplicate'),
+            ),
+          ],
+        )
+      ]),
       // subtitle: nutrientText(nutrients: meal.nutrients, grams: meal.grams.round()),
       // subtitle: RichText(
       //   text: TextSpan(
@@ -301,9 +348,14 @@ class MealComponentTile extends StatelessWidget {
           padding: const EdgeInsets.fromLTRB(0, 10, 0, 2),
           child: MealStyleNutrientDisplay(meal.nutrients),
         ),
-        const Text('Serving Size', style: TextStyle(fontSize: 16),),
+        const Text(
+          'Serving Size',
+          style: TextStyle(fontSize: 16),
+        ),
         TextFormField(
-          initialValue: meal.grams.isInt ? meal.grams.toInt().toString() : roundDecimal(meal.grams.toDouble(), 3).toString(),
+          initialValue: meal.grams.isInt
+              ? meal.grams.toInt().toString()
+              : roundDecimal(meal.grams.toDouble(), 3).toString(),
           textAlign: TextAlign.center,
           decoration: const InputDecoration(
             contentPadding: EdgeInsets.fromLTRB(10, 0, 0, 0),
@@ -319,20 +371,25 @@ class MealComponentTile extends StatelessWidget {
         ),
         DropdownButton<String>(
             value: 'grams',
-            items: meal.reference.altMeasures2grams.keys.map<DropdownMenuItem<String>>
-              ((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
-            onChanged: (String? newAltMeasure){})
-
+            items: meal.reference.altMeasures2grams.keys
+                .map<DropdownMenuItem<String>>(
+                    (e) => DropdownMenuItem(value: e, child: Text(e)))
+                .toList(),
+            onChanged: (String? newAltMeasure) {})
       ],
     );
   }
 }
 
-
-AlertDialog mealNotesPopUp(Meal meal, BuildContext context) => AlertDialog(
-  title: Text('${meal.name}'),
-  content: Text(meal.notes),
-  actions: [TextButton(onPressed: () {
-    Navigator.pop(context);
-  }, child: const Text('Return'))],
-);
+AlertDialog mealNotesPopUp(Meal meal, BuildContext context) =>
+    AlertDialog(
+      title: Text(meal.name),
+      content: Text(meal.notes),
+      actions: [
+        TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            child: const Text('Return'))
+      ],
+    );

@@ -161,7 +161,7 @@ class DietTile extends StatelessWidget {
         title: Text(diet.name),
         onTap: () {
           Navigator.push(context,
-              MaterialPageRoute(builder: (context) => const DietPage()));
+              MaterialPageRoute(builder: (context) => DietPage(diet)));
         },
         trailing: PopupMenuButton(
           onSelected: (DietPopUpEnumHolder dietPopUpSelection) {

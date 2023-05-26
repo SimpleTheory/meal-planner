@@ -277,11 +277,11 @@ class DietDrawer extends StatelessWidget {
       child: ListView(
         children: [
           DrawerHeader(margin: const EdgeInsets.all(0),child: Center(child: Text(diet.name, style: const TextStyle(fontSize: 40),)),),
-          ListTile(title: const Text('Days'), onTap: (){Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const DietPage()));},),
+          ListTile(title: const Text('Days'), onTap: (){Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => DietPage(diet)));},),
           ListTile(title: const Text('Shopping List'), onTap: (){Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)
           { // TODO RUN A SHOPPING LIST UPDATE BEFORE NAVIGATION WITH BLOC
             return const ShoppingListPage();}));},),
-          ListTile(title: const Text('DRI Configuration'), onTap: (){Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => DRIConfigPage()));},),
+          ListTile(title: const Text('DRI Configuration'), onTap: (){Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => DRIConfigPage(diet)));},),
           ListTile(title: const Text('Return to Home Page'), onTap: (){Navigator.pop(context); Navigator.pop(context);},),
         ],
         // DrawerHeader(child: Text(),)

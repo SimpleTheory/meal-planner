@@ -1065,7 +1065,12 @@ class DRI {
     if (val is Nutrient) {
       val = val.value;
     }
-
+    else if (val is num){
+      val = val.toDouble();
+    }
+    else if (val is int){
+      val = val.toDouble();
+    }
     evaluate() {
       if (upperLimit == null && dri == null) {
         return roundDecimal(val, 2).toString();
@@ -1468,7 +1473,7 @@ class DRIS {
     "fiber": emoji.get('toilet').code,
     "potassium": emoji.get('banana').code,
     "sodium": emoji.get('salt').code,
-    "protein": emoji.get('meat').code,
+    "protein": '\u{1f969}',
     "sugars": emoji.get('candy').code,
     "choline": 'choline',
     "copper": 'Cu',

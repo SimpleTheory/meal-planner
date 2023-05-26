@@ -117,7 +117,11 @@ int in2cm(num inches) => (2.54 * inches).round();
 int kg2lb(num kg) => (2.20462 * kg).round();
 int lb2kg(num lb) => (0.453592 * lb).round();
 
-fixDecimal(String string)=>string.endsWith('.') ? string.substring(string.length - 1) : string;
+num? fixDecimal(String string) {
+  string = string.endsWith('.') ? string.substring(string.length - 1) : string;
+  if (string.isEmpty){return null;}
+  return num.parse(string);
+}
 
 bool isAmerican() => Platform.localeName == 'en_US' || Platform.localeName == 'es_US';
 
