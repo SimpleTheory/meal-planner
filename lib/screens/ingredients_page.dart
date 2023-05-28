@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:nutrition_app/blocs/custom_ing/custom_ing_bloc.dart';
 import 'package:nutrition_app/screens/barcode_scan.dart';
 import 'package:nutrition_app/screens/custom_ingredient.dart';
 import 'package:nutrition_app/utils/local_widgets.dart';
@@ -256,7 +257,9 @@ void openAddNewIngredientPopUp(BuildContext context) {
                                       context,
                                       MaterialPageRoute(
                                           builder: (context) =>
-                                              const CustomIngredientPage()));
+                                              BlocProvider(
+                                                create: (context) => CustomIngBloc(),
+                                                child: const CustomIngredientPage())));
                                 },
                                 child: const Text('Create Custom Ingredient')),
                           ],

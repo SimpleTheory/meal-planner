@@ -10,6 +10,7 @@ import 'package:nutrition_app/utils/local_widgets.dart';
 import 'package:nutrition_app/utils/utils.dart';
 
 // TODO: Modify CustomIngredientPage to also be Ingredient Details Page
+// TODO: Add error text
 
 class CustomIngredientPage extends StatelessWidget {
   const CustomIngredientPage({Key? key}) : super(key: key);
@@ -31,43 +32,51 @@ class CustomIngredientPage extends StatelessWidget {
                 final cibloc = context.read<CustomIngBloc>();
                 showDialog(
                     context: context,
-                    builder: (_) => AlertDialog(
-                          content: BlocListener<CustomIngBloc, CustomIngState>(
-                            listener: (context, state) {
-                              if (state is NewImageCI) {
-                                Navigator.pop(context);
-                              }
-                            },
-                            child: PaddedColumn(
-                              edgeInsets: const EdgeInsets.all(8),
-                              children: [
-                                ElevatedButton(
-                                    onPressed: () async {
-                                      final img = await ImagePicker().pickImage(
-                                          source: ImageSource.camera);
-                                      if (img == null) {
-                                        return;
-                                      }
-                                      cibloc.add(NewImageCI(Uri.file(img.path,
-                                          windows: Platform.isWindows)));
-                                    },
-                                    child: const Text('Camera')),
-                                ElevatedButton(
-                                    onPressed: () async {
-                                      final img = await ImagePicker().pickImage(
-                                          source: ImageSource.gallery);
-                                      if (img == null) {
-                                        return;
-                                      }
-                                      cibloc.add(NewImageCI(Uri.file(img.path,
-                                          windows: Platform.isWindows)));
-                                    },
-                                    child: const Text('Gallery')),
-                              ],
+                    builder: (_) => BlocProvider.value(
+                          value: cibloc,
+                          child: AlertDialog(
+                            content:
+                                BlocListener<CustomIngBloc, CustomIngState>(
+                              listener: (context, state) {
+                                if (state is NewImageCI) {
+                                  Navigator.pop(context);
+                                  Navigator.pop(context);
+                                }
+                              },
+                              child: PaddedColumn(
+                                edgeInsets: const EdgeInsets.all(8),
+                                children: [
+                                  ElevatedButton(
+                                      onPressed: () async {
+                                        final img = await ImagePicker()
+                                            .pickImage(
+                                                source: ImageSource.camera);
+                                        if (img == null) {
+                                          return;
+                                        }
+                                        cibloc.add(NewImageCI(Uri.file(img.path,
+                                            windows: Platform.isWindows)));
+                                      },
+                                      child: const Text('Camera')),
+                                  ElevatedButton(
+                                      onPressed: () async {
+                                        final img = await ImagePicker()
+                                            .pickImage(
+                                                source: ImageSource.gallery);
+                                        if (img == null) {
+                                          return;
+                                        }
+                                        cibloc.add(NewImageCI(Uri.file(img.path,
+                                            windows: Platform.isWindows)));
+                                      },
+                                      child: const Text('Gallery')),
+                                ],
+                              ),
                             ),
                           ),
                         ));
-              }, child: BlocBuilder<CustomIngBloc, CustomIngState>(
+              },
+                child: BlocBuilder<CustomIngBloc, CustomIngState>(
                 builder: (context, state) {
                   return GetImage(
                     state.image,
@@ -87,9 +96,13 @@ class CustomIngredientPage extends StatelessWidget {
                         context.read<CustomIngBloc>().add(ChangeGramsCI(val));
                       },
                       decoration: InputDecoration(
-                          errorText: invalidateNum(state.baseGrams) && state is CustomIngErrors ? 'Required Field' : null,
+                          errorText: invalidateNum(state.baseGrams) &&
+                                  state is CustomIngErrors
+                              ? 'Required Field'
+                              : null,
                           labelText: 'grams',
-                          contentPadding: const EdgeInsets.fromLTRB(10, 0, 0, 0)),
+                          contentPadding:
+                              const EdgeInsets.fromLTRB(10, 0, 0, 0)),
                       inputFormatters: <TextInputFormatter>[
                         FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*'))
                       ],
@@ -125,7 +138,7 @@ class CustomIngredientPage extends StatelessWidget {
                 child: Column(
                   children: [
                     const Text('Alternate measures:'),
-                    PlusSignTile((context) {},
+                    PlusSignTile((context) {context.read<CustomIngBloc>().add(AddAltMeasureCI());},
                         padding: const EdgeInsets.fromLTRB(0, 16, 0, 0)),
                     BlocBuilder<CustomIngBloc, CustomIngState>(
                       builder: (context, state) {
@@ -155,7 +168,7 @@ class CustomIngredientPage extends StatelessWidget {
             ),
             Center(
                 child: ElevatedButton(
-                    onPressed: () {}, child: const Text('Submit')))
+                    onPressed: () {context.read<CustomIngBloc>().add(OnSubmitCI());}, child: const Text('Submit')))
             // ...?type2dataclasses[Nutrients]?.attributes.keys.map((e) => nutrientFormField(e))
           ],
         ),
