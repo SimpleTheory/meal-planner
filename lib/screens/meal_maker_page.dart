@@ -70,7 +70,8 @@ class MealMakerPage extends StatelessWidget {
             ],),
             const Text('Alternate measures:', style: TextStyle(fontSize: 20),),
             PlusSignTile((context) {}),
-            const AltMeasureFormField(),
+            Text('Alt measure place holder'),
+            // const AltMeasureFormField(),
             Container(
               decoration: const BoxDecoration(border: Border(top: BorderSide(color: Colors.grey))),
               child: Column(

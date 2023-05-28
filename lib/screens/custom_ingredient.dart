@@ -1,5 +1,10 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:nutrition_app/blocs/custom_ing/custom_ing_bloc.dart';
 import 'package:nutrition_app/domain.dart';
 import 'package:nutrition_app/utils/local_widgets.dart';
 import 'package:nutrition_app/utils/utils.dart';
@@ -12,43 +17,104 @@ class CustomIngredientPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Ingredient: NAME')),
+      appBar: AppBar(title: BlocBuilder<CustomIngBloc, CustomIngState>(
+        builder: (context, state) {
+          return Text('Ingredient: ${state.name}');
+        },
+      )),
       body: SingleChildScrollView(
-        child: Column(
+        child: PaddedColumn(
+          edgeInsets: const EdgeInsets.all(12),
           children: [
             Center(
-              child: GestureDetector(
-                  onTap: (){},
-                  child: Image.asset('cache/images/null.png', width: 200, height: 200,)
-              ),
+              child: GestureDetector(onTap: () {
+                final cibloc = context.read<CustomIngBloc>();
+                showDialog(
+                    context: context,
+                    builder: (_) => AlertDialog(
+                          content: BlocListener<CustomIngBloc, CustomIngState>(
+                            listener: (context, state) {
+                              if (state is NewImageCI) {
+                                Navigator.pop(context);
+                              }
+                            },
+                            child: PaddedColumn(
+                              edgeInsets: const EdgeInsets.all(8),
+                              children: [
+                                ElevatedButton(
+                                    onPressed: () async {
+                                      final img = await ImagePicker().pickImage(
+                                          source: ImageSource.camera);
+                                      if (img == null) {
+                                        return;
+                                      }
+                                      cibloc.add(NewImageCI(Uri.file(img.path,
+                                          windows: Platform.isWindows)));
+                                    },
+                                    child: const Text('Camera')),
+                                ElevatedButton(
+                                    onPressed: () async {
+                                      final img = await ImagePicker().pickImage(
+                                          source: ImageSource.gallery);
+                                      if (img == null) {
+                                        return;
+                                      }
+                                      cibloc.add(NewImageCI(Uri.file(img.path,
+                                          windows: Platform.isWindows)));
+                                    },
+                                    child: const Text('Gallery')),
+                              ],
+                            ),
+                          ),
+                        ));
+              }, child: BlocBuilder<CustomIngBloc, CustomIngState>(
+                builder: (context, state) {
+                  return GetImage(
+                    state.image,
+                    width: 200,
+                    height: 200,
+                  );
+                },
+              )),
             ),
             Row(
               children: [
                 const Text('Serving Size in grams: '),
-                Flexible(child: TextFormField(
-                    decoration: const InputDecoration(
-                      labelText: 'grams',
-                      contentPadding: EdgeInsets.fromLTRB(10, 0, 0, 0)
-                    ),
-                    inputFormatters: <TextInputFormatter>[
-                      FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*'))
-                    ],
-                    keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                Flexible(child: BlocBuilder<CustomIngBloc, CustomIngState>(
+                  builder: (context, state) {
+                    return TextFormField(
+                      onChanged: (val) {
+                        context.read<CustomIngBloc>().add(ChangeGramsCI(val));
+                      },
+                      decoration: InputDecoration(
+                          errorText: invalidateNum(state.baseGrams) && state is CustomIngErrors ? 'Required Field' : null,
+                          labelText: 'grams',
+                          contentPadding: const EdgeInsets.fromLTRB(10, 0, 0, 0)),
+                      inputFormatters: <TextInputFormatter>[
+                        FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*'))
+                      ],
+                      keyboardType:
+                          const TextInputType.numberWithOptions(decimal: true),
+                    );
+                  },
                 )),
               ],
             ),
             Row(
               children: [
                 const Text('Ingredient Name: '),
-                Flexible(child: TextFormField(
-                    decoration: const InputDecoration(
+                Flexible(
+                    child: TextFormField(
+                  decoration: const InputDecoration(
                       labelText: 'name',
-                      contentPadding: EdgeInsets.fromLTRB(10, 0, 0, 0)
-                    ),
-                    inputFormatters: <TextInputFormatter>[
-                      FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z]+'))
-                    ],
-                    keyboardType: TextInputType.text,
+                      contentPadding: EdgeInsets.fromLTRB(10, 0, 0, 0)),
+                  // inputFormatters: <TextInputFormatter>[
+                  //   FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z]+'))
+                  // ],
+                  keyboardType: TextInputType.text,
+                  onChanged: (val) {
+                    context.read<CustomIngBloc>().add(ChangeNameCI(val));
+                  },
                 )),
               ],
             ),
@@ -59,8 +125,18 @@ class CustomIngredientPage extends StatelessWidget {
                 child: Column(
                   children: [
                     const Text('Alternate measures:'),
-                    PlusSignTile((context) {}, padding: const EdgeInsets.fromLTRB(0, 16, 0, 0)),
-                    const AltMeasureFormField(),
+                    PlusSignTile((context) {},
+                        padding: const EdgeInsets.fromLTRB(0, 16, 0, 0)),
+                    BlocBuilder<CustomIngBloc, CustomIngState>(
+                      builder: (context, state) {
+                        return ListView.builder(
+                          physics: const ClampingScrollPhysics(),
+                          shrinkWrap: true,
+                          itemBuilder: (_, index) => AltMeasureFormField(index),
+                          itemCount: state.altMeasures.length,
+                        );
+                      },
+                    ),
                   ],
                 ),
               ),
@@ -69,17 +145,20 @@ class CustomIngredientPage extends StatelessWidget {
               decoration: BoxDecoration(border: Border.all()),
               child: ListView.builder(
                 // children: type2dataclasses[Nutrients]!.attributes.keys.map((e) => nutrientFormField(e)).toList(),
-                itemBuilder: (BuildContext context, int index)=>NutrientFormField(nutList[index]),
+                itemBuilder: (BuildContext context, int index) =>
+                    NutrientFormField(nutList[index]),
                 itemCount: nutList.length,
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
                 // children: emptyNutrient.attributes__.values.map((e) => nutrientFormField(e)).toList(),
               ),
             ),
-            Center(child: ElevatedButton(onPressed: (){}, child: const Text('Submit')))
+            Center(
+                child: ElevatedButton(
+                    onPressed: () {}, child: const Text('Submit')))
             // ...?type2dataclasses[Nutrients]?.attributes.keys.map((e) => nutrientFormField(e))
           ],
-        ).pad(const EdgeInsets.all(12)),
+        ),
       ),
     );
   }
@@ -113,6 +192,7 @@ class CustomIngredientPage extends StatelessWidget {
 
 class NutrientFormField extends StatelessWidget {
   final Nutrient nut;
+
   const NutrientFormField(this.nut, {Key? key}) : super(key: key);
 
   @override
@@ -130,13 +210,20 @@ class NutrientFormField extends StatelessWidget {
               decoration: InputDecoration(
                   contentPadding: const EdgeInsets.fromLTRB(10, 0, 0, 0),
                   // hintText: '0',
-                  labelText: nut.unit
-              ),
+                  labelText: nut.unit),
               inputFormatters: <TextInputFormatter>[
                 FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*'))
                 // \d*\.?\d+
               ],
-              keyboardType: const TextInputType.numberWithOptions(decimal: true),
+              keyboardType:
+                  const TextInputType.numberWithOptions(decimal: true),
+              initialValue:
+                  context.read<CustomIngBloc>().state.nutrientFields[nut.name],
+              onChanged: (val) {
+                context
+                    .read<CustomIngBloc>()
+                    .add(ChangeNutrientValueCI(nut, val));
+              },
             ),
           ),
         ),
@@ -146,7 +233,9 @@ class NutrientFormField extends StatelessWidget {
 }
 
 class AltMeasureFormField extends StatelessWidget {
-  const AltMeasureFormField({Key? key}) : super(key: key);
+  final int index;
+
+  const AltMeasureFormField(this.index, {Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -154,32 +243,45 @@ class AltMeasureFormField extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         const Text('Name: '),
-        Flexible(child: Padding(
+        Flexible(
+            child: Padding(
           padding: const EdgeInsets.fromLTRB(10, 3, 10, 3),
           child: TextFormField(
-            decoration: const InputDecoration(
-                labelText: 'name',
-                contentPadding: EdgeInsets.fromLTRB(10, 0, 0, 0)
-            ),
-            inputFormatters: <TextInputFormatter>[
-              FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z \-]+'))
-            ],
-          ),
+              decoration: const InputDecoration(
+                  labelText: 'name',
+                  contentPadding: EdgeInsets.fromLTRB(10, 0, 0, 0)),
+              inputFormatters: <TextInputFormatter>[
+                FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z \-]+'))
+              ],
+              initialValue:
+                  context.read<CustomIngBloc>().state.altMeasures[index].key,
+              onChanged: (val) {
+                context
+                    .read<CustomIngBloc>()
+                    .add(ChangeAltMeasureNameCI(index, val));
+              }),
         )),
         const Text('Grams: '),
-        Flexible(child: Padding(
+        Flexible(
+            child: Padding(
           padding: const EdgeInsets.fromLTRB(10, 3, 10, 3),
           child: TextFormField(
-            decoration: const InputDecoration(
-
-              contentPadding: EdgeInsets.fromLTRB(10, 0, 0, 0),
-              labelText: 'grams',
-            ),
-            inputFormatters: <TextInputFormatter>[
-              FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*'))
-            ],
-            keyboardType: const TextInputType.numberWithOptions(decimal: true),
-          ),
+              decoration: const InputDecoration(
+                contentPadding: EdgeInsets.fromLTRB(10, 0, 0, 0),
+                labelText: 'grams',
+              ),
+              inputFormatters: <TextInputFormatter>[
+                FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*'))
+              ],
+              keyboardType:
+                  const TextInputType.numberWithOptions(decimal: true),
+              initialValue:
+                  context.read<CustomIngBloc>().state.altMeasures[index].value,
+              onChanged: (val) {
+                context
+                    .read<CustomIngBloc>()
+                    .add(ChangeAltMeasureValueCI(index, val));
+              }),
         )),
       ],
     );
@@ -220,14 +322,3 @@ class AltMeasureFormField extends StatelessWidget {
 //         )),
 //       ],
 //     );
-
-String replaceTextForForm(String input){
-  final lowercase = input.toLowerCase();
-  if (lowercase == 'ala' || lowercase == 'epa' || lowercase == 'dha' || lowercase == 'dpa'){
-    return input.toUpperCase();
-  }
-  final uppercaseRegex = RegExp(r'([A-Z])', caseSensitive: true);
-  input = input.replaceAllMapped(uppercaseRegex, (Match m) => ' ${m[1]}').trim();
-  input = input.substring(0, 1).toUpperCase() + input.substring(1);
-  return input;
-}

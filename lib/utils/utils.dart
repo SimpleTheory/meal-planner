@@ -1,6 +1,8 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_emoji/flutter_emoji.dart';
+import 'package:path/path.dart';
+import 'package:path_provider/path_provider.dart';
 
 /// List: List to combine elements of
 /// Keyizer: Function to get key from an element of the list.
@@ -310,3 +312,10 @@ void dialog(BuildContext context, AlertDialog alertDialog){
   showDialog(context: context, builder: (context)=>alertDialog);
 }
 
+Future<Uri> saveImage(String imagePath) async {
+  final dir = await getApplicationDocumentsDirectory();
+  final name = basename(imagePath);
+  final img = File(join(dir.path, name));
+  final result = await File(imagePath).copy(img.path);
+  return Uri.file(result.path, windows: Platform.isWindows);
+}

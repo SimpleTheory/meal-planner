@@ -1,22 +1,35 @@
 part of 'custom_ing_bloc.dart';
 
+bool invalidateNum(String s) => s.isEmpty || s == '.';
+
 class CustomIngState {
   String baseGrams;
   String name;
-  Map<String, String> altMeasures;
+  List<MapEntry<String, String>> altMeasures;
   Map<String, String> nutrientFields;
+  Uri? image;
+  Ingredient? refIngredient;
 
   factory CustomIngState.initial() => CustomIngState(
       baseGrams: '',
       name: '',
-      altMeasures: {'': ''},
+      altMeasures: [const MapEntry('', '')],
       nutrientFields: {for (Nutrient nut in nutList) nut.name: '0'});
+
+  factory CustomIngState.fromIngredient(Ingredient ref) =>
+    CustomIngState(
+        baseGrams: ref.baseNutrient.grams.toString(),
+        name: ref.name,
+        altMeasures: ref.altMeasures2grams.map((key, value) => MapEntry(key, value.toString())).entries.toList(),
+        nutrientFields: (ref.baseNutrient.nutrients.attributes__ as Map<String, Nutrient>).map((key, value) => MapEntry(key, value.value.toString())),
+        image: ref.photo
+    );
 
   bool isInvalid() {
     if (baseGrams.isEmpty || name.isEmpty || baseGrams == '.') {
       return true;
     }
-    for (MapEntry<String, String> alt_measure in altMeasures.entries) {
+    for (MapEntry<String, String> alt_measure in altMeasures) {
       if (alt_measure.key == '') {
         continue;
       }
@@ -34,10 +47,11 @@ class CustomIngState {
     return false;
   }
 
-  Ingredient toIngredient() {
+
+  Future<Ingredient> toIngredient() async {
     // Todo: Save image more as file and use that as Image
     final transformedAlts =
-        altMeasures.map((key, value) => MapEntry(key, fixDecimal(value)!));
+        Map<String, num>.fromEntries(altMeasures.map<MapEntry<String, num>>((e) => MapEntry<String, num>(e.key, fixDecimal(e.value)!)));
     transformedAlts.remove('');
     Ingredient result = Ingredient(
         name: name,
@@ -84,7 +98,7 @@ class CustomIngState {
         ),
         altMeasures2grams: transformedAlts,
         source: IngredientSource.custom,
-        photo:
+        photo: image?.path == null ? null : await saveImage(image!.path)
     );
     return result;
   }
@@ -94,19 +108,37 @@ class CustomIngState {
     required this.name,
     required this.altMeasures,
     required this.nutrientFields,
+    this.image,
+    this.refIngredient
   });
 
   CustomIngState copyWith({
     String? baseGrams_,
     String? name_,
-    Map<String, String>? altMeasures_,
+    List<MapEntry<String, String>>? altMeasures_,
     Map<String, String>? nutrientFields_,
+    Uri? img,
+    Ingredient? ref
   }) {
     return CustomIngState(
         baseGrams: baseGrams_ ?? baseGrams,
         name: name_ ?? name,
         altMeasures: altMeasures_ ?? altMeasures,
-        nutrientFields: nutrientFields_ ?? nutrientFields);
+        nutrientFields: nutrientFields_ ?? nutrientFields,
+        refIngredient: ref ?? refIngredient,
+        image: img ?? image
+    );
+  }
+
+  factory CustomIngState.fromState(CustomIngState state) {
+    return CustomIngState(
+        baseGrams: state.baseGrams,
+        name: state.name,
+        altMeasures: state.altMeasures,
+        nutrientFields: state.nutrientFields,
+        refIngredient: state.refIngredient,
+        image: state.image
+    );
   }
 }
 
@@ -116,7 +148,10 @@ class CustomIngErrors extends CustomIngState {
         baseGrams: state.baseGrams,
         name: state.name,
         altMeasures: state.altMeasures,
-        nutrientFields: state.nutrientFields);
+        nutrientFields: state.nutrientFields,
+        refIngredient: state.refIngredient,
+        image: state.image
+    );
   }
 
   CustomIngErrors({
@@ -124,6 +159,56 @@ class CustomIngErrors extends CustomIngState {
     required super.name,
     required super.altMeasures,
     required super.nutrientFields,
+    super.image,
+    super.refIngredient
+  });
+}
+
+class CustomIngAddedPhoto extends CustomIngState {
+  factory CustomIngAddedPhoto.fromState(CustomIngState state) {
+    return CustomIngAddedPhoto(
+        baseGrams: state.baseGrams,
+        name: state.name,
+        altMeasures: state.altMeasures,
+        nutrientFields: state.nutrientFields,
+        refIngredient: state.refIngredient,
+        image: state.image
+    );
+  }
+
+  CustomIngAddedPhoto({
+    required super.baseGrams,
+    required super.name,
+    required super.altMeasures,
+    required super.nutrientFields,
+    super.image,
+    super.refIngredient
+  });
+}
+
+class CustomIngSuccess extends CustomIngState {
+  Ingredient ingredient;
+
+  factory CustomIngSuccess.fromState(CustomIngState state, Ingredient ingredient) {
+    return CustomIngSuccess(
+        baseGrams: state.baseGrams,
+        name: state.name,
+        altMeasures: state.altMeasures,
+        nutrientFields: state.nutrientFields,
+        refIngredient: state.refIngredient,
+        image: state.image,
+        ingredient: ingredient
+    );
+  }
+
+  CustomIngSuccess({
+    required super.baseGrams,
+    required super.name,
+    required super.altMeasures,
+    required super.nutrientFields,
+    super.image,
+    super.refIngredient,
+    required this.ingredient
   });
 }
 

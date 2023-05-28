@@ -325,3 +325,18 @@ AlertDialog nameAThing(BuildContext context,
     ],
   );
 }
+
+String replaceTextForForm(String input) {
+  final lowercase = input.toLowerCase();
+  if (lowercase == 'ala' ||
+      lowercase == 'epa' ||
+      lowercase == 'dha' ||
+      lowercase == 'dpa') {
+    return input.toUpperCase();
+  }
+  final uppercaseRegex = RegExp(r'([A-Z])', caseSensitive: true);
+  input =
+      input.replaceAllMapped(uppercaseRegex, (Match m) => ' ${m[1]}').trim();
+  input = input.substring(0, 1).toUpperCase() + input.substring(1);
+  return input;
+}
