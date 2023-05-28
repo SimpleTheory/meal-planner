@@ -82,18 +82,18 @@ Exception getApiException(DioError err, {Settings? settings, source}){
     }
   }
   // 404
-  if (err.response?.data['message'] == 'resource not found'){
+  if (err.response?.statusCode == 404){
     String src = ' ';
     if(source is String) {src = ' Text: ';}
     if(source is int){src=' UPC: ';}
     // 404
-    return FoodNotFound('Food not found with:$src$source');
+    return FoodNotFound('Food not found with: $source ($src)');
   }
   // 401
   if (err.response?.data['message'] == 'invalid app id/key' && settings != null){
     // 401
     return InvalidKey('There is an invalid key in the settings for the API ID or key.'
-        ' Please check the values ${settings.appId} and ${settings.apikey} to see if they are correct.');
+        ' Please check App ID (${settings.appId}) and API Key (${settings.apikey}) to see if they are correct.');
   }
 
   return err;

@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:nutrition_app/blocs/ingredients_page/ingredients_page_bloc.dart';
 import 'package:nutrition_app/blocs/settings/settings_bloc.dart';
 import 'package:nutrition_app/screens/diet_details_screen.dart';
 import 'package:nutrition_app/screens/general_settings.dart';
@@ -35,93 +36,104 @@ class IndexPage extends StatelessWidget {
               ))
         ],
       ),
-      body: Column(
-        children: [
-          ExpansionTile(
-            title: const Text('Diets'),
-            children: [
-              PlusSignTile((context) {
-                showDialog(
-                    context: context,
-                    builder: (context) => nameAThing(
-                          context,
-                          title: 'New Diet Name',
-                          onSubmit: (BuildContext context, String inputValue) {
-                            context.read<IndexBloc>().add(AddDiet(inputValue));
-                          },
-                        ));
-              }),
-              BlocBuilder<IndexBloc, IndexState>(
-                builder: (context, state) {
-                  return ReorderableListView.builder(
-                    itemBuilder: (context, index) =>
-                        DietTile(state.app.diets.values.toList()[index]),
-                    itemCount: state.app.diets.length,
-                    shrinkWrap: true,
-                    physics: const ClampingScrollPhysics(),
-                    onReorder: (int oldIndex, int newIndex) {
-                      context.read<IndexBloc>().add(
-                          ReorderDiet(oldIndex: oldIndex, newIndex: newIndex));
-                    },
-                  );
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            ExpansionTile(
+              title: const Text('Diets'),
+              children: [
+                PlusSignTile((context) {
+                  showDialog(
+                      context: context,
+                      builder: (context) => nameAThing(
+                            context,
+                            title: 'New Diet Name',
+                            onSubmit:
+                                (BuildContext context, String inputValue) {
+                              context
+                                  .read<IndexBloc>()
+                                  .add(AddDiet(inputValue));
+                            },
+                          ));
+                }),
+                BlocBuilder<IndexBloc, IndexState>(
+                  builder: (context, state) {
+                    return ReorderableListView.builder(
+                      itemBuilder: (context, index) =>
+                          DietTile(state.app.diets.values.toList()[index]),
+                      itemCount: state.app.diets.length,
+                      shrinkWrap: true,
+                      physics: const ClampingScrollPhysics(),
+                      onReorder: (int oldIndex, int newIndex) {
+                        context.read<IndexBloc>().add(ReorderDiet(
+                            oldIndex: oldIndex, newIndex: newIndex));
+                      },
+                    );
+                  },
+                ),
+                // DietTile(diet)
+              ],
+            ),
+            ElevatedButton(
+              // title: Text('Meals'),
+              onPressed: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => const MealPage()));
+              },
+              child: const Text('Meals'),
+              // children: [
+              // ],
+            ),
+            ElevatedButton(
+              // title: Text('Meals'),
+              onPressed: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        settings: const RouteSettings(name: "/IngredientsPage"),
+                        builder: (_) => BlocProvider(
+                              create: (context) => IngredientsPageBloc(context.read<InitBloc>().state.app!),
+                              child: const IngredientPage()
+                            )));
+              },
+              child: const Text('Ingredients'),
+              // children: [
+              // ],
+            ),
+            ElevatedButton(
+                onPressed: () {
+                  saveApp(context.read<InitBloc>().state.app!);
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                    content: Text('The app has been saved!'),
+                    backgroundColor: Colors.green,
+                  ));
                 },
-              ),
-              // DietTile(diet)
-            ],
-          ),
-          ElevatedButton(
-            // title: Text('Meals'),
-            onPressed: () {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => const MealPage()));
-            },
-            child: const Text('Meals'),
-            // children: [
-            // ],
-          ),
-          ElevatedButton(
-            // title: Text('Meals'),
-            onPressed: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      settings: const RouteSettings(name: "/IngredientsPage"),
-                      builder: (context) => const IngredientPage()));
-            },
-            child: const Text('Ingredients'),
-            // children: [
-            // ],
-          ),
-          ElevatedButton(onPressed: (){
-            saveApp(context.read<InitBloc>().state.app!);
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('The app has been saved!'), backgroundColor: Colors.green,)
-            );
-          }, child: const Text('Save'))
-          // const Text('DEBUG NAVIGATIONS'),
-          // Expanded(
-          //   child: ListView(
-          //     children: [
-          //       // ListTile(title: Text('Confirm Ingredient Debug'), onTap: (){
-          //       //   showDialog(context: context, builder: (context)=>
-          //       //      confirmIngredient(ingredients[1], context)
-          //       //   );}, tileColor: Colors.green),
-          //       // ListTile(title: Text('Meal Maker'), onTap: (){
-          //       //   Navigator.push(context, MaterialPageRoute(builder: (context) => const MealMakerPage()));
-          //       // }, tileColor: Colors.green),
-          //       ListTile(title: Text('cancel dialog'),
-          //           onTap: (){showDialog(
-          //               context: context,
-          //               builder: (context) => deleteConfirmation(onSubmit: (){}, context: context));},
-          //           tileColor: Colors.green),
-          //       // ListTile(title: Text(''), onTap: (){}, tileColor: Colors.green),
-          //       // ListTile(title: Text(''), onTap: (){}, tileColor: Colors.green),
-          //       // ListTile(title: Text(''), onTap: (){}, tileColor: Colors.green),
-          //
-          //     ],
-          //   ),
-          // )
-        ],
+                child: const Text('Save'))
+            // const Text('DEBUG NAVIGATIONS'),
+            // Expanded(
+            //   child: ListView(
+            //     children: [
+            //       // ListTile(title: Text('Confirm Ingredient Debug'), onTap: (){
+            //       //   showDialog(context: context, builder: (context)=>
+            //       //      confirmIngredient(ingredients[1], context)
+            //       //   );}, tileColor: Colors.green),
+            //       // ListTile(title: Text('Meal Maker'), onTap: (){
+            //       //   Navigator.push(context, MaterialPageRoute(builder: (context) => const MealMakerPage()));
+            //       // }, tileColor: Colors.green),
+            //       ListTile(title: Text('cancel dialog'),
+            //           onTap: (){showDialog(
+            //               context: context,
+            //               builder: (context) => deleteConfirmation(onSubmit: (){}, context: context));},
+            //           tileColor: Colors.green),
+            //       // ListTile(title: Text(''), onTap: (){}, tileColor: Colors.green),
+            //       // ListTile(title: Text(''), onTap: (){}, tileColor: Colors.green),
+            //       // ListTile(title: Text(''), onTap: (){}, tileColor: Colors.green),
+            //
+            //     ],
+            //   ),
+            // )
+          ],
+        ),
       ),
     );
   }
@@ -153,26 +165,32 @@ class DietPopUpEnumHolder {
 class DietTile extends StatelessWidget {
   final Diet diet;
 
-  DietTile(this.diet, {Key? key}) : super(key: key ?? KeyHolder(value1: 'Index Diet Tiles: ', value2: diet).key());
+  DietTile(this.diet, {Key? key})
+      : super(
+            key: key ??
+                KeyHolder(value1: 'Index Diet Tiles: ', value2: diet).key());
 
   @override
   Widget build(BuildContext context) {
     return ListTile(
         title: Text(diet.name),
         onTap: () {
-          Navigator.push(context,
-              MaterialPageRoute(builder: (context) => DietPage(diet)));
+          Navigator.push(
+              context, MaterialPageRoute(builder: (context) => DietPage(diet)));
         },
         trailing: PopupMenuButton(
           onSelected: (DietPopUpEnumHolder dietPopUpSelection) {
             switch (dietPopUpSelection.popUpOptions) {
               case PopUpOptions.edit:
-                showDialog(context: context, builder: (context) => nameAThing(context, title: 'Rename Diet (from ${diet.name})',
-                    onSubmit: (context, val) {
-                  context
-                      .read<IndexBloc>()
-                      .add(RenameDiet(diet: diet, newName: val));
-                }));
+                showDialog(
+                    context: context,
+                    builder: (context) => nameAThing(context,
+                            title: 'Rename Diet (from ${diet.name})',
+                            onSubmit: (context, val) {
+                          context
+                              .read<IndexBloc>()
+                              .add(RenameDiet(diet: diet, newName: val));
+                        }));
                 break;
               case PopUpOptions.delete:
                 showDialog(

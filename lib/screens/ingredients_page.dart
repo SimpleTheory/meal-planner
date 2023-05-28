@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nutrition_app/screens/barcode_scan.dart';
 import 'package:nutrition_app/screens/custom_ingredient.dart';
 import 'package:nutrition_app/utils/local_widgets.dart';
 import 'package:nutrition_app/utils/utils.dart';
 import 'package:nutrition_app/domain.dart';
-import '../temp_dummy_data.dart';
-
+import '../blocs/ingredients_page/ingredients_page_bloc.dart';
 
 class IngredientPage extends StatelessWidget {
   const IngredientPage({Key? key}) : super(key: key);
@@ -20,26 +20,35 @@ class IngredientPage extends StatelessWidget {
           Padding(
               padding: const EdgeInsets.fromLTRB(5, 8, 5, 2.5),
               child: TextField(
+                  onChanged: (val) {
+                    context
+                        .read<IngredientsPageBloc>()
+                        .add(UpdateSearchIng(val));
+                  },
                   decoration: InputDecoration(
                       border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(30.0)
-                      ),
+                          borderRadius: BorderRadius.circular(30.0)),
                       contentPadding: const EdgeInsets.all(20),
-                      suffixIcon: const Icon(Icons.search)
-                  )
-              )
-          ),
+                      suffixIcon: const Icon(Icons.search)))),
           Flexible(
             child: Padding(
               padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
               child: ListView(
                 children: [
-                  PlusSignTile((context) {openAddNewIngredientPopUp(context);}),
-                  ListView.builder(
-                      itemBuilder: (context, index)=>IngredientTile(ingredients[index]),
-                      itemCount: ingredients.length,
-                      shrinkWrap: true,
-                      physics: const ClampingScrollPhysics(),
+                  PlusSignTile((context) {
+                    openAddNewIngredientPopUp(context);
+                  }),
+                  BlocBuilder<IngredientsPageBloc, IngredientsPageState>(
+                    builder: (context, state) {
+                      // Maybe add something for if its empty
+                      return ListView.builder(
+                        itemBuilder: (context, index) =>
+                            IngredientTile(state.searchResults[index]),
+                        itemCount: state.searchResults.length,
+                        shrinkWrap: true,
+                        physics: const ClampingScrollPhysics(),
+                      );
+                    },
                   )
                   // ...ingredients.map((e) => ingredientTile(e)),
                 ],
@@ -52,13 +61,14 @@ class IngredientPage extends StatelessWidget {
   }
 }
 
-
-class IngredientPopUpEnumHolder{
-  const IngredientPopUpEnumHolder(Ingredient ingredient, PopUpOptions option);
+class IngredientPopUpEnumHolder {
+  const IngredientPopUpEnumHolder(
+      MealComponentFactory ingredient, PopUpOptions option);
 }
 
 class IngredientTile extends StatelessWidget {
-  final Ingredient ingredient;
+  final MealComponentFactory ingredient;
+
   const IngredientTile(this.ingredient, {Key? key}) : super(key: key);
 
   @override
@@ -67,12 +77,24 @@ class IngredientTile extends StatelessWidget {
       title: Text(ingredient.name),
       trailing: PopupMenuButton(
         itemBuilder: (BuildContext context) => [
-          PopupMenuItem(value: IngredientPopUpEnumHolder(ingredient, PopUpOptions.edit),child: const Text('Edit'),),
-          PopupMenuItem(value: IngredientPopUpEnumHolder(ingredient, PopUpOptions.delete), child: const Text('Delete')),
-          PopupMenuItem(value: IngredientPopUpEnumHolder(ingredient, PopUpOptions.duplicate),child: const Text('Duplicate'),),
+          PopupMenuItem(
+            value: IngredientPopUpEnumHolder(ingredient, PopUpOptions.edit),
+            child: const Text('Edit'),
+          ),
+          PopupMenuItem(
+              value: IngredientPopUpEnumHolder(ingredient, PopUpOptions.delete),
+              child: const Text('Delete')),
+          PopupMenuItem(
+            value:
+                IngredientPopUpEnumHolder(ingredient, PopUpOptions.duplicate),
+            child: const Text('Duplicate'),
+          ),
         ],
       ),
-      subtitle: NutrientText(nutrients: ingredient.baseNutrient.nutrients, grams: ingredient.baseNutrient.grams,),
+      subtitle: NutrientText(
+        nutrients: ingredient.baseNutrient.nutrients,
+        grams: ingredient.baseNutrient.grams,
+      ),
       // subtitle: Text(
       //     'Serving (${ingredient.baseNutrient.grams}g):  '
       //         "${ingredient.baseNutrient.nutrients.calories.value.round()}\u{1F525}  "
@@ -103,11 +125,10 @@ class IngredientTile extends StatelessWidget {
       //   )
       // ),
       leading: GetImage(ingredient.photo),
-      onTap: (){},
+      onTap: () {},
     );
   }
 }
-
 
 // ListTile ingredientTile(Ingredient ingredient){
 //   // TODO CREATE WAY TO RENDER CUSTOM EMOJIS WITH BRANDON FONT
@@ -155,60 +176,97 @@ class IngredientTile extends StatelessWidget {
 //   );
 // }
 
-void openAddNewIngredientPopUp(BuildContext context){
+void openAddNewIngredientPopUp(BuildContext context) {
   final myController = TextEditingController();
-    showDialog(context: context,
-        builder: (context)=>AlertDialog(
-          title: const Text('Add New Ingredient'),
-          content: SingleChildScrollView(
-            child: Column(
-              children: [
-                const Text('Input UPC or name of desired ingredient:'),
-                TextField(
-                    decoration: const InputDecoration(
-                      labelText: 'UPC or Name',
-                    ),
-                    // autofocus: true,
-                    inputFormatters: <TextInputFormatter>[
-                      FilteringTextInputFormatter.allow(RegExp('[A-Za-z0-9 ]+'))
+  showDialog(
+      context: context,
+      builder: (_) => BlocProvider.value(
+            value: context.read<IngredientsPageBloc>(),
+            child: ScaffoldMessenger(
+              child: Builder(
+                builder: (context) => Scaffold(
+                  body: AlertDialog(
+                    title: const Text('Add New Ingredient'),
+                    content: BlocListener<IngredientsPageBloc, IngredientsPageState>(
+                        listener: (context, state) {
+                          if (state is IngPageApiError) {
+                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                              content: Text(state.message),
+                              backgroundColor: Colors.red,
+                            ));
+                          }
+                        },
+                        child: SingleChildScrollView(
+                          child: Column(
+                            children: [
+                              const Text('Input UPC or name of desired ingredient:'),
+                              TextField(
+                                decoration: const InputDecoration(
+                                  labelText: 'UPC or Name',
+                                ),
+                                // autofocus: true,
+                                inputFormatters: <TextInputFormatter>[
+                                  FilteringTextInputFormatter.allow(
+                                      RegExp('[A-Za-z0-9 ]+'))
+                                ],
+                                controller: myController,
+                              ),
+                              const Text('Or:'),
+                              ElevatedButton(
+                                  onPressed: () {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                const BarcodeReadingPage()));
+                                  },
+                                  child: const Text('Scan UPC')),
+                              ElevatedButton(
+                                  onPressed: () {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                const CustomIngredientPage()));
+                                  },
+                                  child: const Text('Create Custom Ingredient')),
+                            ],
+                          ).pad(const EdgeInsets.all(2)),
+                        ),
+                      ),
+                    actions: [
+                      TextButton(
+                          onPressed: () {
+                            if (myController.text.isNotEmpty) {
+                              Ingredient.fromApi(
+                                      context
+                                          .read<IngredientsPageBloc>()
+                                          .state
+                                          .app
+                                          .settings,
+                                      myController.text)
+                                  .then(
+                                      (value) => showDialog(
+                                          context: context,
+                                          builder: (context) =>
+                                              confirmIngredient(value, context)),
+                                      onError: (err) {
+                                context.read<IngredientsPageBloc>().add(
+                                    IngPageAPIErrorEvent(err.toString()));
+                              });
+                            } else {
+                              Navigator.pop(context);
+                            }
+                          },
+                          child: const Text('Submit'))
                     ],
-                    controller: myController,
+                  ),
+                  backgroundColor: Colors.transparent,
                 ),
-                const Text('Or:'),
-                ElevatedButton(
-                    onPressed: (){
-                      Navigator.push(context, MaterialPageRoute(builder: (context)=> const BarcodeReadingPage()));
-                    },
-                    child: const Text('Scan UPC')),
-                ElevatedButton(
-                    onPressed: () {Navigator.push(context, MaterialPageRoute(builder: (context) => const CustomIngredientPage()));},
-                    child: const Text('Create Custom Ingredient')),
-              ],
-            ).pad(const EdgeInsets.all(2)),
-          ),
-          actions: [
-            TextButton(
-                onPressed: (){
-                  // print(myController.text);
-                  if (myController.text.isNotEmpty){
-                    try {
-                      final ing = Ingredient.fromApi(settings, myController.text);
-                      // print(ing);
-                      // Navigator.pop(context);
-                      ing.then((value) => showDialog(
-                          context: context,
-                          builder: (context) => confirmIngredient(value, context)));
-                    } on Exception catch (e) {
-                      // TODO
-                      // print(e);
-                    }
-                  }
-                  else{Navigator.pop(context);}
-                  },
-                child: const Text('Submit'))
-          ],
-        )
-    );}
+              ),
+            ),
+          ));
+}
 
 AlertDialog confirmIngredient(Ingredient ingredient, BuildContext context) =>
     AlertDialog(
@@ -217,8 +275,14 @@ AlertDialog confirmIngredient(Ingredient ingredient, BuildContext context) =>
         child: Column(
           children: [
             Center(child: GetImage(ingredient.photo, width: 200, height: 200)),
-            Center(child: Text(ingredient.name, style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),)),
-            NutrientText(nutrients: ingredient.baseNutrient.nutrients, grams: ingredient.baseNutrient.grams),
+            Center(
+                child: Text(
+              ingredient.name,
+              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            )),
+            NutrientText(
+                nutrients: ingredient.baseNutrient.nutrients,
+                grams: ingredient.baseNutrient.grams),
             // Text(
             //     'Serving (${ingredient.baseNutrient.grams}g):  '
             //         "${ingredient.baseNutrient.nutrients.calories.value.round()}\u{1F525}  "
@@ -229,21 +293,35 @@ AlertDialog confirmIngredient(Ingredient ingredient, BuildContext context) =>
             //     // '${Ingredient.baseNutrient.nutrients.saturatedFat.value.round()}\u{1F9C8}',
             //         '${ingredient.baseNutrient.nutrients.saturatedFat.value.round()}$butter'
             // ),
-            Text('Source: ${ingredient.sourceMetadata}', style: const TextStyle(fontSize: 12),),
-            const Text('Is this the ingredient you were looking for?', style: TextStyle(fontSize: 16),)
+            Text(
+              'Source: ${ingredient.sourceMetadata}',
+              style: const TextStyle(fontSize: 12),
+            ),
+            const Text(
+              'Is this the ingredient you were looking for?',
+              style: TextStyle(fontSize: 16),
+            )
           ],
         ).pad(const EdgeInsets.all(12)),
       ),
       actions: [
         Row(
           children: [
-            ElevatedButton(onPressed: (){Navigator.pop(context);}, child: const Text('No')),
+            ElevatedButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: const Text('No')),
             const Spacer(),
             ElevatedButton(
-                onPressed: (){
-              // TODO: Add Bloc Functionality of adding Ingredient to App
-                  Navigator.of(context).popUntil(ModalRoute.withName('/IngredientsPage'));
-            },
+                onPressed: () {
+                  // TODO: Add Bloc Functionality of adding Ingredient to App
+                  context
+                      .read<IngredientsPageBloc>()
+                      .add(OnSubmitSolo(ingredient));
+                  Navigator.of(context)
+                      .popUntil(ModalRoute.withName('/IngredientsPage'));
+                },
                 child: const Text('Yes'))
           ],
         )

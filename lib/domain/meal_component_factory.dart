@@ -51,25 +51,30 @@ class Ingredient extends MealComponentFactory {
 
   /// Use in a try except block
   static Future<Ingredient> fromApi(Settings settings, sourceMetadata) async {
-    IngredientSource source;
-    Response json;
-    if (sourceMetadata is String) {
-      if (RegExp(r'^\d+$').hasMatch(sourceMetadata)) {
-        return fromApi(settings, int.parse(sourceMetadata));
+    try {
+      IngredientSource source;
+      Response json;
+      if (sourceMetadata is String) {
+        if (RegExp(r'^\d+$').hasMatch(sourceMetadata)) {
+          // MAKE SURE THE BARCODE IS 12 CHAR LONG ERROR?
+          return fromApi(settings, int.parse(sourceMetadata));
+        } else {
+          source = IngredientSource.string;
+          json = await apiCallFromString(sourceMetadata, settings);
+        }
+      } else if (sourceMetadata is int) {
+        source = IngredientSource.upc;
+        json = await apiCallFromUpc(sourceMetadata, settings);
       } else {
-        source = IngredientSource.string;
-        json = await apiCallFromString(sourceMetadata, settings);
+        throw Exception('$sourceMetadata type(${sourceMetadata.runtimeType})is '
+            'not String or int and cannot be called from nutritionix API');
       }
-    } else if (sourceMetadata is int) {
-      source = IngredientSource.upc;
-      json = await apiCallFromUpc(sourceMetadata, settings);
-    } else {
-      throw Exception('$sourceMetadata type(${sourceMetadata.runtimeType})is '
-          'not String or int and cannot be called from nutritionix API');
+      Map body = json.data['foods'][0];
+      return Ingredient.fromResponseBody(
+          responseBody: body, source: source, sourceMetadata: sourceMetadata);
+    } catch (_) {
+      rethrow;
     }
-    Map body = json.data['foods'][0];
-    return Ingredient.fromResponseBody(
-        responseBody: body, source: source, sourceMetadata: sourceMetadata);
   }
 
   factory Ingredient.fromResponseBody(

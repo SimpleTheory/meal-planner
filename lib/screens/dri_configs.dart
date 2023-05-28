@@ -1,5 +1,4 @@
 import 'package:ari_utils/ari_utils.dart';
-import 'package:dataclasses/dataclasses.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -8,7 +7,6 @@ import 'package:nutrition_app/domain.dart';
 import 'package:nutrition_app/domain/dri_notes.dart';
 import 'package:nutrition_app/screens/custom_ingredient.dart';
 import 'package:nutrition_app/utils/local_widgets.dart';
-import '../blocs/diet/diet_bloc.dart';
 
 class DRIConfigPage extends StatelessWidget {
   final Diet diet;
@@ -118,7 +116,7 @@ class DriForm extends StatelessWidget {
               decoration: InputDecoration(
                   labelText: 'DRI',
                   errorText: toBool(state.driErrors[dri])
-                      ? 'The DRI (${dri.dri}) must be lower than the UL (${dri.upperLimit})!'
+                      ? 'DRIs < UL!'
                       : null),
               inputFormatters: <TextInputFormatter>[
                 FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*'))
@@ -140,9 +138,9 @@ class DriForm extends StatelessWidget {
                     .add(DRIUpdate(dft: DFT.ul, dri: dri, newVal: val));
               },
               decoration: InputDecoration(
-                errorText: toBool(state.driErrors[dri])
-                    ? 'UL (${dri.upperLimit}) Must Be Higher than the DRI (${dri.dri})!'
-                    : null,
+                // errorText: toBool(state.driErrors[dri])
+                //     ? 'UL (${dri.upperLimit}) Must Be Higher than the DRI (${dri.dri})!'
+                //     : null,
                 labelText: 'UL',
               ),
               inputFormatters: <TextInputFormatter>[
