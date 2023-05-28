@@ -84,8 +84,8 @@ Exception getApiException(DioError err, {Settings? settings, source}){
   // 404
   if (err.response?.statusCode == 404){
     String src = ' ';
-    if(source is String) {src = ' Text: ';}
-    if(source is int){src=' UPC: ';}
+    if(source is String) {src = 'Text';}
+    if(source is int){src='UPC';}
     // 404
     return FoodNotFound('Food not found with: $source ($src)');
   }

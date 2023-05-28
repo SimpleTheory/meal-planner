@@ -33,8 +33,12 @@ class App {
   // Update Meal, Diet: just access key with copyWith
 
   // Delete: meal, ingredient, diet
-  void deleteMeal(Meal meal) {}
-  void deleteBaseIngredient(Ingredient ingredient) {}
+  void deleteMeal(Meal meal) {
+    meals.remove(meal.name);
+  }
+  void deleteBaseIngredient(Ingredient ingredient) {
+    baseIngredients.remove(ingredient.name);
+  }
   void deleteDiet(Diet diet) {
     diets.remove(diet.name);
   }

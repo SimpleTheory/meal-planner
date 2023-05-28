@@ -4,6 +4,8 @@ class IngredientsPageState {
   App app;
   bool includeSubRecipes;
   List<MealComponentFactory> searchResults;
+  String currentText = '';
+  Function(BuildContext context, MealComponentFactory ingredient)? onTileTap;
 
   factory IngredientsPageState.initial(App app, [bool? include]) {
     return IngredientsPageState(
@@ -14,24 +16,28 @@ class IngredientsPageState {
             : app.baseIngredients.values.toList());
   }
   factory IngredientsPageState.fromState(IngredientsPageState state) =>
-    IngredientsPageState(app: state.app, includeSubRecipes: state.includeSubRecipes, searchResults: state.searchResults);
+    IngredientsPageState(app: state.app, includeSubRecipes: state.includeSubRecipes, searchResults: state.searchResults, currentText: state.currentText);
 
 
   IngredientsPageState({
     required this.app,
     required this.includeSubRecipes,
     required this.searchResults,
-  });
+    String? currentText
+  }){if (currentText != null){this.currentText = currentText;}}
 
   IngredientsPageState copyWith({
     App? app_,
     bool? includeSubRecipes_,
     List<MealComponentFactory>? searchResults_,
+    String? currentText_
   }) {
     return IngredientsPageState(
         app: app_ ?? app,
         includeSubRecipes: includeSubRecipes_ ?? includeSubRecipes,
-        searchResults: searchResults_ ?? List.from(searchResults));
+        searchResults: searchResults_ ?? List.from(searchResults),
+        currentText: currentText_ ?? currentText
+    );
   }
 }
 
@@ -62,9 +68,10 @@ class IngPageApiError extends IngredientsPageState{
     required super.app,
     required super.includeSubRecipes,
     required super.searchResults,
+    required super.currentText
   });
   factory IngPageApiError.fromState(IngredientsPageState state, String message) =>
-      IngPageApiError(app: state.app, includeSubRecipes: state.includeSubRecipes, searchResults: state.searchResults, message: message);
+      IngPageApiError(app: state.app, includeSubRecipes: state.includeSubRecipes, searchResults: state.searchResults, message: message, currentText: state.currentText);
 }
 
 // class IngredientsPageInitial extends IngredientsPageState {}

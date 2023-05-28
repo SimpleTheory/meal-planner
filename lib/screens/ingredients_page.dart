@@ -9,12 +9,22 @@ import 'package:nutrition_app/domain.dart';
 import '../blocs/ingredients_page/ingredients_page_bloc.dart';
 
 class IngredientPage extends StatelessWidget {
-  const IngredientPage({Key? key}) : super(key: key);
+  IngredientPage({Key? key}) : super(key: key);
+  final searchController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Ingredients')),
+      appBar: AppBar(
+          title: const Text('Ingredients'),
+          actions: [
+            const Center(child: Text('Include Sub-Recipes')),
+            BlocBuilder<IngredientsPageBloc, IngredientsPageState>(builder: (context, state) =>
+                Switch(
+                  onChanged: (toggle) => context.read<IngredientsPageBloc>().add(IngPageIncludeSubRecipes(toggle)),
+                  value: state.includeSubRecipes,)
+          )],
+      ),
       body: Column(
         children: [
           Padding(
@@ -25,6 +35,7 @@ class IngredientPage extends StatelessWidget {
                         .read<IngredientsPageBloc>()
                         .add(UpdateSearchIng(val));
                   },
+                  controller: searchController,
                   decoration: InputDecoration(
                       border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(30.0)),
@@ -62,8 +73,11 @@ class IngredientPage extends StatelessWidget {
 }
 
 class IngredientPopUpEnumHolder {
-  const IngredientPopUpEnumHolder(
-      MealComponentFactory ingredient, PopUpOptions option);
+  final MealComponentFactory ingredient;
+  final PopUpOptions option;
+
+  const IngredientPopUpEnumHolder(this.ingredient, this.option);
+
 }
 
 class IngredientTile extends StatelessWidget {
@@ -90,6 +104,19 @@ class IngredientTile extends StatelessWidget {
             child: const Text('Duplicate'),
           ),
         ],
+        onSelected: (IngredientPopUpEnumHolder ing){
+          switch (ing.option) {
+            case PopUpOptions.edit:
+              // TODO: Handle this case.
+              break;
+            case PopUpOptions.delete:
+              context.read<IngredientsPageBloc>().add(IngDelete(ingredient));
+              break;
+            case PopUpOptions.duplicate:
+              context.read<IngredientsPageBloc>().add(IngDuplicate(ingredient));
+              break;
+          }
+        },
       ),
       subtitle: NutrientText(
         nutrients: ingredient.baseNutrient.nutrients,
@@ -187,53 +214,55 @@ void openAddNewIngredientPopUp(BuildContext context) {
                 builder: (context) => Scaffold(
                   body: AlertDialog(
                     title: const Text('Add New Ingredient'),
-                    content: BlocListener<IngredientsPageBloc, IngredientsPageState>(
-                        listener: (context, state) {
-                          if (state is IngPageApiError) {
-                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                              content: Text(state.message),
-                              backgroundColor: Colors.red,
-                            ));
-                          }
-                        },
-                        child: SingleChildScrollView(
-                          child: Column(
-                            children: [
-                              const Text('Input UPC or name of desired ingredient:'),
-                              TextField(
-                                decoration: const InputDecoration(
-                                  labelText: 'UPC or Name',
-                                ),
-                                // autofocus: true,
-                                inputFormatters: <TextInputFormatter>[
-                                  FilteringTextInputFormatter.allow(
-                                      RegExp('[A-Za-z0-9 ]+'))
-                                ],
-                                controller: myController,
+                    content:
+                        BlocListener<IngredientsPageBloc, IngredientsPageState>(
+                      listener: (context, state) {
+                        if (state is IngPageApiError) {
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                            content: Text(state.message),
+                            backgroundColor: Colors.red,
+                          ));
+                        }
+                      },
+                      child: SingleChildScrollView(
+                        child: Column(
+                          children: [
+                            const Text(
+                                'Input UPC or name of desired ingredient:'),
+                            TextField(
+                              decoration: const InputDecoration(
+                                labelText: 'UPC or Name',
                               ),
-                              const Text('Or:'),
-                              ElevatedButton(
-                                  onPressed: () {
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                const BarcodeReadingPage()));
-                                  },
-                                  child: const Text('Scan UPC')),
-                              ElevatedButton(
-                                  onPressed: () {
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                const CustomIngredientPage()));
-                                  },
-                                  child: const Text('Create Custom Ingredient')),
-                            ],
-                          ).pad(const EdgeInsets.all(2)),
-                        ),
+                              // autofocus: true,
+                              inputFormatters: <TextInputFormatter>[
+                                FilteringTextInputFormatter.allow(
+                                    RegExp('[A-Za-z0-9 ]+'))
+                              ],
+                              controller: myController,
+                            ),
+                            const Text('Or:'),
+                            ElevatedButton(
+                                onPressed: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              const BarcodeReadingPage()));
+                                },
+                                child: const Text('Scan UPC')),
+                            ElevatedButton(
+                                onPressed: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              const CustomIngredientPage()));
+                                },
+                                child: const Text('Create Custom Ingredient')),
+                          ],
+                        ).pad(const EdgeInsets.all(2)),
                       ),
+                    ),
                     actions: [
                       TextButton(
                           onPressed: () {
@@ -248,11 +277,14 @@ void openAddNewIngredientPopUp(BuildContext context) {
                                   .then(
                                       (value) => showDialog(
                                           context: context,
-                                          builder: (context) =>
-                                              confirmIngredient(value, context)),
-                                      onError: (err) {
-                                context.read<IngredientsPageBloc>().add(
-                                    IngPageAPIErrorEvent(err.toString()));
+                                          builder: (_) => BlocProvider.value(
+                                                value: context.read<IngredientsPageBloc>(),
+                                                child: confirmIngredient(
+                                                    value, context),
+                                              )), onError: (err) {
+                                context
+                                    .read<IngredientsPageBloc>()
+                                    .add(IngPageAPIErrorEvent(err.toString()));
                               });
                             } else {
                               Navigator.pop(context);

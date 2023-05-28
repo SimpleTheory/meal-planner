@@ -93,7 +93,7 @@ class IndexPage extends StatelessWidget {
                         settings: const RouteSettings(name: "/IngredientsPage"),
                         builder: (_) => BlocProvider(
                               create: (context) => IngredientsPageBloc(context.read<InitBloc>().state.app!),
-                              child: const IngredientPage()
+                              child: IngredientPage()
                             )));
               },
               child: const Text('Ingredients'),
