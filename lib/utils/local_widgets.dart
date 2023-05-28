@@ -290,6 +290,8 @@ class DietDrawer extends StatelessWidget {
   }
 }
 
+final List<Nutrient> nutList = List<Nutrient>.from(Nutrients.zero().attributes__.values);
+
 /// Alert Dialogue to prompt user for a string
 AlertDialog nameAThing(BuildContext context,
     {required String title, String? labelText, required Function(BuildContext context, String inputValue) onSubmit}) {

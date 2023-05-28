@@ -4,9 +4,6 @@ import 'package:nutrition_app/domain.dart';
 import 'package:nutrition_app/utils/local_widgets.dart';
 import 'package:nutrition_app/utils/utils.dart';
 
-final emptyNutrient = Nutrients.fromValues();
-final nutList = emptyNutrient.attributes__.values.toList();
-
 // TODO: Modify CustomIngredientPage to also be Ingredient Details Page
 
 class CustomIngredientPage extends StatelessWidget {
@@ -15,7 +12,7 @@ class CustomIngredientPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Ingredients: NAME')),
+      appBar: AppBar(title: Text('Ingredient: NAME')),
       body: SingleChildScrollView(
         child: Column(
           children: [
