@@ -32,26 +32,24 @@ class CustomIngredientPage extends StatelessWidget {
                 final cibloc = context.read<CustomIngBloc>();
                 showDialog(
                     context: context,
-                    builder: (_) =>
-                        BlocProvider.value(
+                    builder: (_) => BlocProvider.value(
                           value: cibloc,
-                          child: AlertDialog(
-                            content:
-                            BlocListener<CustomIngBloc, CustomIngState>(
-                              listener: (context, state) {
-                                if (state is NewImageCI) {
-                                  Navigator.pop(context);
-                                  Navigator.pop(context);
-                                }
-                              },
-                              child: PaddedColumn(
+                          child: BlocListener<CustomIngBloc, CustomIngState>(
+                            listener: (context, state) {
+                              if (state is CustomIngAddedPhoto) {
+                                Navigator.pop(context);
+                              }
+                            },
+                            child: AlertDialog(
+                              content: PaddedColumn(
+                                mainAxisSize: MainAxisSize.min,
                                 edgeInsets: const EdgeInsets.all(8),
                                 children: [
                                   ElevatedButton(
                                       onPressed: () async {
                                         final img = await ImagePicker()
                                             .pickImage(
-                                            source: ImageSource.camera);
+                                                source: ImageSource.camera);
                                         if (img == null) {
                                           return;
                                         }
@@ -63,7 +61,7 @@ class CustomIngredientPage extends StatelessWidget {
                                       onPressed: () async {
                                         final img = await ImagePicker()
                                             .pickImage(
-                                            source: ImageSource.gallery);
+                                                source: ImageSource.gallery);
                                         if (img == null) {
                                           return;
                                         }
@@ -76,16 +74,15 @@ class CustomIngredientPage extends StatelessWidget {
                             ),
                           ),
                         ));
-              },
-                  child: BlocBuilder<CustomIngBloc, CustomIngState>(
-                    builder: (context, state) {
-                      return GetImage(
-                        state.image,
-                        width: 200,
-                        height: 200,
-                      );
-                    },
-                  )),
+              }, child: BlocBuilder<CustomIngBloc, CustomIngState>(
+                builder: (context, state) {
+                  return GetImage(
+                    state.image,
+                    width: 200,
+                    height: 200,
+                  );
+                },
+              )),
             ),
             Row(
               children: [
@@ -98,17 +95,17 @@ class CustomIngredientPage extends StatelessWidget {
                       },
                       decoration: InputDecoration(
                           errorText: invalidateNum(state.baseGrams) &&
-                              state is CustomIngErrors
+                                  state is CustomIngErrors
                               ? 'Required Field'
                               : null,
                           labelText: 'grams',
                           contentPadding:
-                          const EdgeInsets.fromLTRB(10, 0, 0, 0)),
+                              const EdgeInsets.fromLTRB(10, 0, 0, 0)),
                       inputFormatters: <TextInputFormatter>[
                         FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*'))
                       ],
                       keyboardType:
-                      const TextInputType.numberWithOptions(decimal: true),
+                          const TextInputType.numberWithOptions(decimal: true),
                     );
                   },
                 )),
@@ -117,11 +114,18 @@ class CustomIngredientPage extends StatelessWidget {
             Row(
               children: [
                 const Text('Ingredient Name: '),
-                Flexible(
-                    child: TextFormField(
-                      decoration: const InputDecoration(
-                          labelText: 'name',
-                          contentPadding: EdgeInsets.fromLTRB(10, 0, 0, 0)),
+                BlocBuilder<CustomIngBloc, CustomIngState>(
+                  builder: (context, state) {
+                    return Flexible(
+                        child: TextFormField(
+                      decoration: InputDecoration(
+                        labelText: 'name',
+                        contentPadding: const EdgeInsets.fromLTRB(10, 0, 0, 0),
+                        errorText: invalidateNum(state.name) &&
+                                state is CustomIngErrors
+                            ? 'Required Field'
+                            : null,
+                      ),
                       // inputFormatters: <TextInputFormatter>[
                       //   FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z]+'))
                       // ],
@@ -129,7 +133,9 @@ class CustomIngredientPage extends StatelessWidget {
                       onChanged: (val) {
                         context.read<CustomIngBloc>().add(ChangeNameCI(val));
                       },
-                    )),
+                    ));
+                  },
+                ),
               ],
             ),
             Container(
@@ -141,8 +147,7 @@ class CustomIngredientPage extends StatelessWidget {
                     const Text('Alternate measures:'),
                     PlusSignTile((context) {
                       context.read<CustomIngBloc>().add(AddAltMeasureCI());
-                    },
-                        padding: const EdgeInsets.fromLTRB(0, 16, 0, 0)),
+                    }, padding: const EdgeInsets.fromLTRB(0, 16, 0, 0)),
                     BlocBuilder<CustomIngBloc, CustomIngState>(
                       builder: (context, state) {
                         return ListView.builder(
@@ -173,7 +178,8 @@ class CustomIngredientPage extends StatelessWidget {
                 child: ElevatedButton(
                     onPressed: () {
                       context.read<CustomIngBloc>().add(OnSubmitCI());
-                    }, child: const Text('Submit')))
+                    },
+                    child: const Text('Submit')))
             // ...?type2dataclasses[Nutrients]?.attributes.keys.map((e) => nutrientFormField(e))
           ],
         ),
@@ -221,32 +227,35 @@ class NutrientFormField extends StatelessWidget {
           padding: const EdgeInsets.fromLTRB(10, 5, 20, 5),
           child: Text('${replaceTextForForm(nut.name)}:'),
         ),
-        Flexible(
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(20, 5, 50, 5),
-            child: TextFormField(
-              decoration: InputDecoration(
-                  contentPadding: const EdgeInsets.fromLTRB(10, 0, 0, 0),
-                  // hintText: '0',
-                  labelText: nut.unit),
-              inputFormatters: <TextInputFormatter>[
-                FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*'))
-                // \d*\.?\d+
-              ],
-              keyboardType:
-              const TextInputType.numberWithOptions(decimal: true),
-              initialValue:
-              context
-                  .read<CustomIngBloc>()
-                  .state
-                  .nutrientFields[nut.name],
-              onChanged: (val) {
-                context
-                    .read<CustomIngBloc>()
-                    .add(ChangeNutrientValueCI(nut, val));
-              },
-            ),
-          ),
+        BlocBuilder<CustomIngBloc, CustomIngState>(
+          builder: (context, state) {
+            return Flexible(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(20, 5, 50, 5),
+                child: TextFormField(
+                  decoration: InputDecoration(
+                      contentPadding: const EdgeInsets.fromLTRB(10, 0, 0, 0),
+                      errorText: invalidateNum(state.nutrientFields[nut.name]!) &&
+                          state is CustomIngErrors
+                          ? 'Required Field'
+                          : null,
+                      // hintText: '0',
+                      labelText: nut.unit),
+                  inputFormatters: <TextInputFormatter>[
+                    FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*'))
+                    // \d*\.?\d+
+                  ],
+                  keyboardType:
+                      const TextInputType.numberWithOptions(decimal: true),
+                  initialValue: state.nutrientFields[nut.name],
+                  onChanged: (val) {
+                    context.read<CustomIngBloc>().add(ChangeNutrientValueCI(nut, val));
+                  },
+
+                ),
+              ),
+            );
+          },
         ),
       ],
     );
@@ -266,63 +275,60 @@ class AltMeasureFormField extends StatelessWidget {
         const Text('Name: '),
         Flexible(
             child: Padding(
-              padding: const EdgeInsets.fromLTRB(10, 3, 10, 3),
-              child: TextFormField(
-                  decoration: const InputDecoration(
-                      labelText: 'name',
-                      contentPadding: EdgeInsets.fromLTRB(10, 0, 0, 0)),
-                  inputFormatters: <TextInputFormatter>[
-                    FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z \-]+'))
-                  ],
-                  initialValue:
-                  context
-                      .read<CustomIngBloc>()
-                      .state
-                      .altMeasures[index].key,
-                  onChanged: (val) {
-                    context
-                        .read<CustomIngBloc>()
-                        .add(ChangeAltMeasureNameCI(index, val));
-                  }),
-            )),
+          padding: const EdgeInsets.fromLTRB(10, 3, 10, 3),
+          child: TextFormField(
+              decoration: const InputDecoration(
+                  labelText: 'name',
+                  contentPadding: EdgeInsets.fromLTRB(10, 0, 0, 0)),
+              inputFormatters: <TextInputFormatter>[
+                FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z \-]+'))
+              ],
+              initialValue:
+                  context.read<CustomIngBloc>().state.altMeasures[index].key,
+              onChanged: (val) {
+                context
+                    .read<CustomIngBloc>()
+                    .add(ChangeAltMeasureNameCI(index, val));
+              }),
+        )),
         const Text('Grams: '),
         Flexible(
             child: Padding(
-              padding: const EdgeInsets.fromLTRB(10, 3, 10, 3),
-              child: TextFormField(
-                  decoration: InputDecoration(
-                      contentPadding: const EdgeInsets.fromLTRB(10, 0, 0, 0),
-                      labelText: 'grams',
-                      // invalid value and there is name and is error state
-                      errorText: invalidateNum(context
-                          .read<CustomIngBloc>()
-                          .state
-                          .altMeasures[index].value) && context
-                          .read<CustomIngBloc>()
-                          .state is CustomIngErrors &&
+          padding: const EdgeInsets.fromLTRB(10, 3, 10, 3),
+          child: TextFormField(
+              decoration: InputDecoration(
+                  contentPadding: const EdgeInsets.fromLTRB(10, 0, 0, 0),
+                  labelText: 'grams',
+                  errorMaxLines: 4,
+                  // invalid value and there is name and is error state
+                  errorText: invalidateNum(context
+                              .read<CustomIngBloc>()
+                              .state
+                              .altMeasures[index]
+                              .value) &&
+                          context.read<CustomIngBloc>().state
+                              is CustomIngErrors &&
                           context
                               .read<CustomIngBloc>()
                               .state
-                              .altMeasures[index].key.isNotEmpty
-                      ?
-                      'Alt-measure value is required. To ignore this delete the name' : null
-                  ),
-                  inputFormatters: <TextInputFormatter>[
-                    FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*'))
-                  ],
-                  keyboardType:
+                              .altMeasures[index]
+                              .key
+                              .isNotEmpty
+                      ? 'Value required: To ignore this delete "Name"'
+                      : null),
+              inputFormatters: <TextInputFormatter>[
+                FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*'))
+              ],
+              keyboardType:
                   const TextInputType.numberWithOptions(decimal: true),
-                  initialValue:
-                  context
-                      .read<CustomIngBloc>()
-                      .state
-                      .altMeasures[index].value,
-                  onChanged: (val) {
-                    context
-                        .read<CustomIngBloc>()
-                        .add(ChangeAltMeasureValueCI(index, val));
-                  }),
-            )),
+              initialValue:
+                  context.read<CustomIngBloc>().state.altMeasures[index].value,
+              onChanged: (val) {
+                context
+                    .read<CustomIngBloc>()
+                    .add(ChangeAltMeasureValueCI(index, val));
+              }),
+        )),
       ],
     );
   }

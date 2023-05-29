@@ -340,3 +340,31 @@ String replaceTextForForm(String input) {
   input = input.substring(0, 1).toUpperCase() + input.substring(1);
   return input;
 }
+
+void showErrorMessage(BuildContext context, String message) {
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(
+      content: Row(
+        children: [
+          const Icon(
+            Icons.error_outline,
+            color: Colors.white,
+          ),
+          const SizedBox(width: 8.0),
+          Text(
+            message,
+            style: const TextStyle(
+              color: Colors.white,
+            ),
+          ),
+        ],
+      ),
+      backgroundColor: Colors.red,
+      duration: const Duration(seconds: 3),
+      behavior: SnackBarBehavior.floating,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(8.0),
+      ),
+    ),
+  );
+}

@@ -17,14 +17,17 @@ class IngredientPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-          title: const Text('Ingredients'),
-          actions: [
-            const Center(child: Text('Include Sub-Recipes')),
-            BlocBuilder<IngredientsPageBloc, IngredientsPageState>(builder: (context, state) =>
-                Switch(
-                  onChanged: (toggle) => context.read<IngredientsPageBloc>().add(IngPageIncludeSubRecipes(toggle)),
-                  value: state.includeSubRecipes,)
-          )],
+        title: const Text('Ingredients'),
+        actions: [
+          const Center(child: Text('Include Sub-Recipes')),
+          BlocBuilder<IngredientsPageBloc, IngredientsPageState>(
+              builder: (context, state) => Switch(
+                    onChanged: (toggle) => context
+                        .read<IngredientsPageBloc>()
+                        .add(IngPageIncludeSubRecipes(toggle)),
+                    value: state.includeSubRecipes,
+                  ))
+        ],
       ),
       body: Column(
         children: [
@@ -78,7 +81,6 @@ class IngredientPopUpEnumHolder {
   final PopUpOptions option;
 
   const IngredientPopUpEnumHolder(this.ingredient, this.option);
-
 }
 
 class IngredientTile extends StatelessWidget {
@@ -105,7 +107,7 @@ class IngredientTile extends StatelessWidget {
             child: const Text('Duplicate'),
           ),
         ],
-        onSelected: (IngredientPopUpEnumHolder ing){
+        onSelected: (IngredientPopUpEnumHolder ing) {
           switch (ing.option) {
             case PopUpOptions.edit:
               // TODO: Handle this case.
@@ -248,7 +250,12 @@ void openAddNewIngredientPopUp(BuildContext context) {
                                       context,
                                       MaterialPageRoute(
                                           builder: (context) =>
-                                              const BarcodeReadingPage()));
+                                              BlocProvider.value(
+                                                value: context.read<
+                                                    IngredientsPageBloc>(),
+                                                child:
+                                                    const BarcodeReadingPage(),
+                                              )));
                                 },
                                 child: const Text('Scan UPC')),
                             ElevatedButton(
@@ -256,10 +263,14 @@ void openAddNewIngredientPopUp(BuildContext context) {
                                   Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                          builder: (context) =>
-                                              BlocProvider(
-                                                create: (context) => CustomIngBloc(),
-                                                child: const CustomIngredientPage())));
+                                          builder: (context) => BlocProvider.value(
+                                                value: context.read<IngredientsPageBloc>(),
+                                                child: BlocProvider(
+                                                    create: (context) =>
+                                                        CustomIngBloc(),
+                                                    child:
+                                                        const CustomIngredientPage()),
+                                              )));
                                 },
                                 child: const Text('Create Custom Ingredient')),
                           ],
@@ -281,7 +292,8 @@ void openAddNewIngredientPopUp(BuildContext context) {
                                       (value) => showDialog(
                                           context: context,
                                           builder: (_) => BlocProvider.value(
-                                                value: context.read<IngredientsPageBloc>(),
+                                                value: context.read<
+                                                    IngredientsPageBloc>(),
                                                 child: confirmIngredient(
                                                     value, context),
                                               )), onError: (err) {
