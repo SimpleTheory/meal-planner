@@ -11,8 +11,8 @@ part 'ingredients_page_state.dart';
 
 class IngredientsPageBloc
     extends Bloc<IngredientsPageEvent, IngredientsPageState> {
-  IngredientsPageBloc(App app, [bool? include])
-      : super(IngredientsPageState.initial(app, toBool(include))) {
+  IngredientsPageBloc(App app, {bool? include, bool? backRef})
+      : super(IngredientsPageState.initial(app, include: toBool(include), backRef: toBool(backRef))) {
     on<IngredientsPageEvent>((event, emit) {
       // TODO: implement event handler
     });
@@ -49,7 +49,7 @@ class IngredientsPageBloc
       }
 
       emit(IngPageSuccessfulCreation.fromState(
-          IngredientsPageState.initial(state.app, state.includeSubRecipes),
+          IngredientsPageState.initial(state.app, include: state.includeSubRecipes, backRef: state.backReference),
           event.ingredient
       ));
       // saveApp(state.app);

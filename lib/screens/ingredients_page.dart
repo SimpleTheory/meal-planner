@@ -53,7 +53,12 @@ class IngredientPage extends StatelessWidget {
                   PlusSignTile((context) {
                     openAddNewIngredientPopUp(context);
                   }),
-                  BlocBuilder<IngredientsPageBloc, IngredientsPageState>(
+                  BlocConsumer<IngredientsPageBloc, IngredientsPageState>(
+                    listener: (context, state){
+                      if (state.backReference && state is IngPageSuccessfulCreation){
+                        Navigator.pop(context, state.ingredient);
+                      }
+                    },
                     builder: (context, state) {
                       // Maybe add something for if its empty
                       return ListView.builder(
@@ -167,7 +172,13 @@ class IngredientTile extends StatelessWidget {
       //   )
       // ),
       leading: GetImage(ingredient.photo),
-      onTap: () {},
+      onTap: () {
+        if (ingPgBloc.state.backReference){
+          Navigator.pop(context, ingredient);
+        }
+        //else if (){}
+        else{}
+      },
     );
   }
 }
