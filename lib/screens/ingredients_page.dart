@@ -329,7 +329,7 @@ void openAddNewIngredientPopUp(BuildContext context) {
           ));
 }
 
-AlertDialog confirmIngredient(Ingredient ingredient, BuildContext context) =>
+AlertDialog confirmIngredient(Ingredient ingredient, BuildContext context, [IngredientsPageBloc? ingPgBloc]) =>
     AlertDialog(
       title: const Text('Confirm Ingredient'),
       content: SingleChildScrollView(
@@ -377,9 +377,8 @@ AlertDialog confirmIngredient(Ingredient ingredient, BuildContext context) =>
             ElevatedButton(
                 onPressed: () {
                   // TODO: Add Bloc Functionality of adding Ingredient to App
-                  context
-                      .read<IngredientsPageBloc>()
-                      .add(OnSubmitSolo(ingredient));
+                  // TODO Retrofit to back-references
+                  (ingPgBloc ?? context.read<IngredientsPageBloc>()).add(OnSubmitSolo(ingredient));
                   Navigator.of(context)
                       .popUntil(ModalRoute.withName('/IngredientsPage'));
                 },

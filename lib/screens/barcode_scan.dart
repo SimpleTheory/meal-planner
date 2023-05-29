@@ -14,24 +14,27 @@ class BarcodeReadingPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Barcode Reader')),
-      body: const BarcodeReaderForFood(),
+      body: BarcodeReaderForFood(ingPgBloc: context.read<IngredientsPageBloc>(),),
     );
   }
 }
 
 class BarcodeReaderForFood extends StatelessWidget {
-  bool _isThereCurrentDialogShowing(BuildContext context) =>
+  bool _isDialogShowing(BuildContext context) =>
       ModalRoute.of(context)?.isCurrent != true;
+  final IngredientsPageBloc ingPgBloc;
 
-  const BarcodeReaderForFood({Key? key}) : super(key: key);
+  const BarcodeReaderForFood({Key? key, required this.ingPgBloc}) : super(key: key);
 
   @override
   Widget build(BuildContext context) => ReaderWidget(
         onScan: (Code code) {
           // <editor-fold desc="If Valid">
+          // print(code.text?.length);
+          // print(_isDialogShowing(context));
           if (code.isValid &&
-              _isThereCurrentDialogShowing(context) &&
-              code.toString().length == 12)
+              !_isDialogShowing(context) &&
+              code.text.toString().length == 12)
           // </editor-fold>
           {
             print('Current is valid');
@@ -41,11 +44,12 @@ class BarcodeReaderForFood extends StatelessWidget {
               showDialog(
                   context: context,
                   builder: (context) => BlocProvider.value(
-                        value: context.read<IngredientsPageBloc>(),
-                        child: confirmIngredient(value, context),
+                        value: ingPgBloc,
+                        child: confirmIngredient(value, context, ingPgBloc),
                       ));
             }, onError: (err) {
               showErrorMessage(context, err.toString());
+              Future.delayed(const Duration(seconds: 4));
             });
           }
         },

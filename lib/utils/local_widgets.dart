@@ -1,7 +1,6 @@
 import 'package:ari_utils/ari_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:nutrition_app/domain.dart';
-import 'package:nutrition_app/screens/custom_ingredient.dart';
 import 'package:nutrition_app/screens/diet_details_screen.dart';
 import 'package:nutrition_app/screens/shopping_list_page.dart';
 import 'package:nutrition_app/utils/utils.dart';
@@ -344,23 +343,22 @@ String replaceTextForForm(String input) {
 void showErrorMessage(BuildContext context, String message) {
   ScaffoldMessenger.of(context).showSnackBar(
     SnackBar(
-      content: Row(
-        children: [
-          const Icon(
-            Icons.error_outline,
+      content: ListTile(
+        leading: const Icon(
+          Icons.error_outline,
+          color: Colors.white,
+        ),
+        title: Text(
+          message,
+          maxLines: 5,
+          style: const TextStyle(
             color: Colors.white,
           ),
-          const SizedBox(width: 8.0),
-          Text(
-            message,
-            style: const TextStyle(
-              color: Colors.white,
-            ),
-          ),
-        ],
+        ),
+        selectedColor: Colors.red,
       ),
       backgroundColor: Colors.red,
-      duration: const Duration(seconds: 3),
+      duration: const Duration(seconds: 4),
       behavior: SnackBarBehavior.floating,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(8.0),
