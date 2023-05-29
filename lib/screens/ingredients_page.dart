@@ -208,10 +208,11 @@ class IngredientTile extends StatelessWidget {
 
 void openAddNewIngredientPopUp(BuildContext context) {
   final myController = TextEditingController();
+  final ingPgBloc = context.read<IngredientsPageBloc>();
   showDialog(
       context: context,
       builder: (_) => BlocProvider.value(
-            value: context.read<IngredientsPageBloc>(),
+            value: ingPgBloc,
             child: ScaffoldMessenger(
               child: Builder(
                 builder: (context) => Scaffold(
@@ -228,7 +229,8 @@ void openAddNewIngredientPopUp(BuildContext context) {
                         }
                       },
                       child: SingleChildScrollView(
-                        child: Column(
+                        child: PaddedColumn(
+                          edgeInsets: const EdgeInsets.all(2),
                           children: [
                             const Text(
                                 'Input UPC or name of desired ingredient:'),
@@ -251,8 +253,7 @@ void openAddNewIngredientPopUp(BuildContext context) {
                                       MaterialPageRoute(
                                           builder: (context) =>
                                               BlocProvider.value(
-                                                value: context.read<
-                                                    IngredientsPageBloc>(),
+                                                value: ingPgBloc,
                                                 child:
                                                     const BarcodeReadingPage(),
                                               )));
@@ -263,49 +264,62 @@ void openAddNewIngredientPopUp(BuildContext context) {
                                   Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                          builder: (context) => BlocProvider.value(
-                                                value: context.read<IngredientsPageBloc>(),
-                                                child: BlocProvider(
-                                                    create: (context) =>
-                                                        CustomIngBloc(),
-                                                    child:
-                                                        const CustomIngredientPage()),
-                                              )));
+                                          builder: (context) =>
+                                              MultiBlocProvider(
+                                                  providers: [
+                                                    BlocProvider(
+                                                        create: (context) =>
+                                                            CustomIngBloc()),
+                                                    BlocProvider.value(
+                                                        value: ingPgBloc)
+                                                  ],
+                                                  child:
+                                                      const CustomIngredientPage())));
                                 },
                                 child: const Text('Create Custom Ingredient')),
                           ],
-                        ).pad(const EdgeInsets.all(2)),
+                        ),
                       ),
                     ),
                     actions: [
-                      TextButton(
-                          onPressed: () {
-                            if (myController.text.isNotEmpty) {
-                              Ingredient.fromApi(
-                                      context
-                                          .read<IngredientsPageBloc>()
-                                          .state
-                                          .app
-                                          .settings,
-                                      myController.text)
-                                  .then(
-                                      (value) => showDialog(
-                                          context: context,
-                                          builder: (_) => BlocProvider.value(
-                                                value: context.read<
-                                                    IngredientsPageBloc>(),
-                                                child: confirmIngredient(
-                                                    value, context),
-                                              )), onError: (err) {
-                                context
-                                    .read<IngredientsPageBloc>()
-                                    .add(IngPageAPIErrorEvent(err.toString()));
-                              });
-                            } else {
-                              Navigator.pop(context);
-                            }
-                          },
-                          child: const Text('Submit'))
+                      Row(
+                        children: [
+                          TextButton(
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                              child: const Text('Cancel')),
+                          const Spacer(),
+                          TextButton(
+                              onPressed: () {
+                                if (myController.text.isNotEmpty) {
+                                  Ingredient.fromApi(
+                                          context
+                                              .read<IngredientsPageBloc>()
+                                              .state
+                                              .app
+                                              .settings,
+                                          myController.text)
+                                      .then(
+                                          (value) => showDialog(
+                                              context: context,
+                                              builder: (_) =>
+                                                  BlocProvider.value(
+                                                    value: context.read<
+                                                        IngredientsPageBloc>(),
+                                                    child: confirmIngredient(
+                                                        value, context),
+                                                  )), onError: (err) {
+                                    ingPgBloc.add(
+                                        IngPageAPIErrorEvent(err.toString()));
+                                  });
+                                } else {
+                                  Navigator.pop(context);
+                                }
+                              },
+                              child: const Text('Submit')),
+                        ],
+                      )
                     ],
                   ),
                   backgroundColor: Colors.transparent,
