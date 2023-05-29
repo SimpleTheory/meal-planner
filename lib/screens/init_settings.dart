@@ -15,7 +15,7 @@ class GeneralSettingsPageInit extends StatelessWidget {
     // Wrap with bloc
     return Scaffold(
         appBar: AppBar(title: const Text('General Settings')),
-        resizeToAvoidBottomInset: false,
+        // resizeToAvoidBottomInset: false,
         body: BlocListener<InitSettingsBloc, InitSettingsState>(
           listener: (context, state) {
             if (state is InitSettingsSuccessfulLoad){

@@ -39,5 +39,9 @@ class InitBloc extends Bloc<InitEvent, InitState> {
     on<ReloadApp>((event, emit){
       emit(SuccessfulLoad(event.app ?? state.app!));
     });
+    on<FactoryReset>((event, emit){
+      factoryResetApp();
+      emit(InitInitial());
+    });
   }
 }

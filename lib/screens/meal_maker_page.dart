@@ -62,7 +62,7 @@ class MealMakerPage extends StatelessWidget {
                 //   shrinkWrap: true,
                 //   physics: const ClampingScrollPhysics(),
                 // )
-                ...current_meal!.ingredients.map((e) => MealComponentTile(e)),
+                ...current_meal!.ingredients.map((e) => MCTile(e)),
               ],
             ),
             Row(children: [

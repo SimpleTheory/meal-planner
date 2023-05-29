@@ -15,3 +15,5 @@ class ReloadApp extends InitEvent {
   final App? app;
   ReloadApp({this.app});
 }
+
+class FactoryReset extends InitEvent{}

@@ -33,7 +33,7 @@ class GeneralSettingsPage extends StatelessWidget {
     // Wrap with bloc
     return Scaffold(
         appBar: AppBar(title: const Text('General Settings')),
-        resizeToAvoidBottomInset: false,
+        // resizeToAvoidBottomInset: false,
         body: BlocListener<SettingsBloc, SettingsState>(
           listener: (context, state) {
             if (state is SettingsMeasureChange){
@@ -354,6 +354,44 @@ class GeneralSettingsPage extends StatelessWidget {
                         // final fileName = 'meal_planner_${today.year}_${today.month}_${today.day}.json';
                       },
                       child: const Text('Save Local Back Up')),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(0, 80, 0, 0),
+                    child: ElevatedButton(
+                        onPressed: () {
+                          showDialog(context: context, builder: (context) =>
+                              AlertDialog(
+                                title: const Text('Factory Reset'),
+                                content: const PaddedColumn(
+                                  mainAxisSize: MainAxisSize.min,
+                                  edgeInsets: EdgeInsets.all(12),
+                                  children: [
+                                    Text('Warning you are currently attempting to clear all'
+                                        'data from the app!'),
+                                    Text('If you have no local back ups cancel this and save one. If you don\'t '
+                                        'all data will be irrecoverably lost.'),
+                                    Text('Are you sure you wish to proceed?')
+                                  ],
+                                ),
+                                actions: [
+                                  Row(
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: ElevatedButton(onPressed: (){Navigator.pop(context);}, child: const Text('Cancel')),
+                                      ),
+                                      const Spacer(),
+                                      Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: ElevatedButton(onPressed: (){context.read<InitBloc>().add(FactoryReset());}, child: const Text('Delete All Data')),
+                                      )
+                                    ],
+                                  )
+                                ],
+                              )
+                          );
+                        },
+                        child: const Text('Factory Reset App')),
+                  ),
                   // TODO Way to factory reset app
                 ],
               ),

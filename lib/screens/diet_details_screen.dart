@@ -101,14 +101,15 @@ class DayTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return ExpansionTile(
       title: Center(child: Text('Day ${day.name}')),
+      controlAffinity: ListTileControlAffinity.leading,
       subtitle:
       Center(child: NutrientText(nutrients: day.nutrients, initText: '')),
-      // trailing: PopupMenuButton(
-      //   itemBuilder: (BuildContext context) => [
-      //   PopupMenuItem(value: DayPopUpEnumHolder(day, PopUpOptions.edit),child: const Text('Edit'),),
-      //   PopupMenuItem(value: DayPopUpEnumHolder(day, PopUpOptions.delete), child: const Text('Delete')),
-      //   PopupMenuItem(value: DayPopUpEnumHolder(day, PopUpOptions.duplicate),child: const Text('Duplicate'),),
-      //   ]),
+      trailing: PopupMenuButton(
+        itemBuilder: (BuildContext context) => [
+        PopupMenuItem(value: DayPopUpEnumHolder(day, PopUpOptions.edit),child: const Text('Edit'),),
+        PopupMenuItem(value: DayPopUpEnumHolder(day, PopUpOptions.delete), child: const Text('Delete')),
+        PopupMenuItem(value: DayPopUpEnumHolder(day, PopUpOptions.duplicate),child: const Text('Duplicate'),),
+        ]),
       children: [
         DayStyleNutrientDisplay(day.nutrients, diet.dris),
         Padding(
@@ -284,12 +285,13 @@ class DayPopUpEnumHolder {
 
 class MealComponentTile extends StatelessWidget {
   final MealComponent meal;
-
-  const MealComponentTile(this.meal, {Key? key}) : super(key: key);
+  final expansionController = ExpansionTileController();
+  MealComponentTile(this.meal, {Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return ExpansionTile(
+      controlAffinity: ListTileControlAffinity.trailing,
       trailing: Row(mainAxisSize: MainAxisSize.min, children: [
         if (meal.reference is Meal)
           if (toBool((meal.reference as Meal).notes))
@@ -317,7 +319,9 @@ class MealComponentTile extends StatelessWidget {
               child: const Text('Duplicate'),
             ),
           ],
-        )
+        ),
+        ExpandIcon(onPressed: (bool val){val ? expansionController.expand() :
+          expansionController.collapse();})
       ]),
       // subtitle: nutrientText(nutrients: meal.nutrients, grams: meal.grams.round()),
       // subtitle: RichText(
@@ -342,6 +346,8 @@ class MealComponentTile extends StatelessWidget {
       leading: GetImage(meal.reference.photo),
       title: Text(meal.name),
       expandedCrossAxisAlignment: CrossAxisAlignment.center,
+      onExpansionChanged: (exp){},
+      controller: expansionController,
       // childrenPadding: const EdgeInsets.fromLTRB(40, 0, 0, 5),
       children: [
         Padding(
@@ -380,6 +386,158 @@ class MealComponentTile extends StatelessWidget {
     );
   }
 }
+
+class MCTile extends StatefulWidget {
+  MealComponent meal;
+  final expansionController = ExpansionTileController();
+  late final textController = TextEditingController(text: meal.grams.isInt
+      ? meal.grams.toInt().toString()
+      : roundDecimal(meal.grams.toDouble(), 3).toString());
+  MCTile(this.meal, {Key? key}) : super(key: key);
+  String servingValue = 'grams';
+
+  @override
+  State<MCTile> createState() => _MCTileState();
+}
+
+class _MCTileState extends State<MCTile> {
+  bool _isExpanded = false;
+  _getAltMeasure(String alt) => widget.meal.reference.altMeasures2grams[alt]!;
+
+
+  @override
+  Widget build(BuildContext context) {
+    return ExpansionTile(
+      controlAffinity: ListTileControlAffinity.trailing,
+      trailing: Row(mainAxisSize: MainAxisSize.min, children: [
+        if (widget.meal.reference is Meal)
+          if (toBool((widget.meal.reference as Meal).notes))
+            IconButton(
+              onPressed: () {
+                showDialog(
+                    context: context,
+                    builder: (context) =>
+                        mealNotesPopUp(widget.meal.reference as Meal, context));
+              },
+              icon: const Icon(Icons.info_outline),
+            ),
+        PopupMenuButton(
+          itemBuilder: (BuildContext context) =>
+          [
+            PopupMenuItem(
+              value: MealComponentPopUpEnumHolder(widget.meal, PopUpOptions.edit),
+              child: const Text('Edit'),
+            ),
+            PopupMenuItem(
+                value: MealComponentPopUpEnumHolder(widget.meal, PopUpOptions.delete),
+                child: const Text('Delete')),
+            PopupMenuItem(
+              value: MealComponentPopUpEnumHolder(widget.meal, PopUpOptions.duplicate),
+              child: const Text('Duplicate'),
+            ),
+          ],
+        ),
+        ExpandIcon(
+            isExpanded: _isExpanded,
+            onPressed: (bool currentExpansion){
+          print(currentExpansion);
+          !currentExpansion ? widget.expansionController.expand() :
+          widget.expansionController.collapse();
+          setState(() {
+            _isExpanded = !currentExpansion;
+          });
+            }
+          )
+        ]
+      ),
+      // subtitle: nutrientText(nutrients: widget.meal.nutrients, grams: widget.meal.grams.round()),
+      // subtitle: RichText(
+      //   text: TextSpan(
+      //     children:[
+      //       TextSpan(text: 'Serving:  '),
+      //       TextSpan(text: "${widget.meal.baseNutrient.nutrients.calories.value.round()}\u{1F525}  "),
+      //       TextSpan(text: '\u{1F525}  ', style: TextStyle(fontFamily: 'EmojiOne')),
+      //       TextSpan(text: '${widget.meal.baseNutrient.nutrients.carbohydrate.value.round()}\u{1F35E}  '),
+      //       TextSpan(text: '\u{1F35E}  ', style: TextStyle(fontFamily: 'EmojiOne')),
+      //       TextSpan(text: '${widget.meal.baseNutrient.nutrients.protein.value.round()}\u{1F969}  '),
+      //       TextSpan(text: '\u{1F969}  ', style: TextStyle(fontFamily: 'EmojiOne')),
+      //       // '${widget.meal.baseNutrient.nutrients.unsaturatedFat.value.round()}\u{1FAD2}  '
+      //       TextSpan(text: '${widget.meal.baseNutrient.nutrients.unsaturatedFat.value.round()}$olive  '),
+      //       TextSpan(text: '$olive  ', style: GoogleFonts.notoColorEmoji()),
+      //       // '${widget.meal.baseNutrient.nutrients.saturatedFat.value.round()}\u{1F9C8}',
+      //       TextSpan(text: '${widget.meal.baseNutrient.nutrients.saturatedFat.value.round()}$butter'),
+      //       TextSpan(text: '$butter  ', style: GoogleFonts.notoColorEmoji()),
+      //     ]
+      //   )
+      // ),
+      leading: GetImage(widget.meal.reference.photo),
+      title: Text(widget.meal.name),
+      expandedCrossAxisAlignment: CrossAxisAlignment.center,
+      onExpansionChanged: (newExpState){
+        setState(() {
+          _isExpanded = newExpState;
+        });
+      },
+      controller: widget.expansionController,
+      // childrenPadding: const EdgeInsets.fromLTRB(40, 0, 0, 5),
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(0, 10, 0, 2),
+          child: MealStyleNutrientDisplay(widget.meal.nutrients),
+        ),
+        const Text(
+          'Serving Size',
+          style: TextStyle(fontSize: 16),
+        ),
+        TextFormField(
+          // initialValue: widget.meal.grams.isInt
+          //     ? widget.meal.grams.toInt().toString()
+          //     : roundDecimal(widget.meal.grams.toDouble(), 3).toString(),
+          textAlign: TextAlign.center,
+          decoration: const InputDecoration(
+            contentPadding: EdgeInsets.fromLTRB(10, 0, 0, 0),
+            border: InputBorder.none,
+            // label: Center(child: Text('grams')),
+            // alignLabelWithHint: true,
+            // hintText: 'grams',
+          ),
+          inputFormatters: <TextInputFormatter>[
+            FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*'))
+          ],
+          keyboardType: const TextInputType.numberWithOptions(decimal: true),
+          controller: widget.textController,
+          validator: (val) => val == null || val.isEmpty || val == '.' ? 'Required Field' : null,
+          onChanged: (valString){
+            final val = fixDecimal(valString);
+            if (val == null){return;}
+              setState(() {
+                widget.meal = widget.meal.reference.toMealComponent(
+                    widget.servingValue, val, widget.meal.reference
+                );
+                print(widget.meal.nutrients);
+              });
+           // TODO: Update Bloc
+          },
+        ),
+        DropdownButton<String>(
+            value: widget.servingValue,
+            items: widget.meal.reference.altMeasures2grams.keys
+                .map<DropdownMenuItem<String>>(
+                    (e) => DropdownMenuItem(value: e, child: Text(e)))
+                .toList(),
+            onChanged: (String? newAltMeasure) {
+              if (newAltMeasure == null){return;}
+                setState(() {
+                  final ratio = widget.meal.grams / _getAltMeasure(newAltMeasure);
+                  widget.textController.text = ratio.isInt ? ratio.toInt().toString() : roundDecimal(ratio.toDouble(), 3).toString();
+                  widget.servingValue = newAltMeasure;
+                });
+            })
+      ],
+    );
+  }
+}
+
 
 AlertDialog mealNotesPopUp(Meal meal, BuildContext context) =>
     AlertDialog(

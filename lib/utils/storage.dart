@@ -23,3 +23,13 @@ Future<App?> loadApp() async {
     return null;
   }
 }
+
+void factoryResetApp() async {
+  final box = await Hive.openBox('master');
+
+  // Delete a key-value pair
+  box.delete('app');
+
+  // Close the box
+  await box.close();
+}
