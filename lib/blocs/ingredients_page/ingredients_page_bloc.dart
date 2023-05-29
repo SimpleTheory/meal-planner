@@ -41,11 +41,18 @@ class IngredientsPageBloc
       emit(state.copyWith(searchResults_: result));
     });
     on<OnSubmitSolo>((event, emit) {
-      state.app.baseIngredients[event.ingredient.name] = event.ingredient;
-      // saveApp(state.app);
+      if (event.ingToReplace != null){
+        state.app.updateBaseIngredient(event.ingToReplace!, event.ingredient);
+      }
+      else{
+        state.app.baseIngredients[event.ingredient.name] = event.ingredient;
+      }
+
       emit(IngPageSuccessfulCreation.fromState(
           IngredientsPageState.initial(state.app, state.includeSubRecipes),
-          event.ingredient));
+          event.ingredient
+      ));
+      // saveApp(state.app);
     });
     on<IngPageIncludeSubRecipes>((event, emit){
       state.includeSubRecipes = event.toggle;

@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:nutrition_app/blocs/custom_ing/custom_ing_bloc.dart';
+import 'package:nutrition_app/blocs/ingredients_page/ingredients_page_bloc.dart';
 import 'package:nutrition_app/domain.dart';
 import 'package:nutrition_app/utils/local_widgets.dart';
 import 'package:nutrition_app/utils/utils.dart';
@@ -18,7 +19,13 @@ class CustomIngredientPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: BlocBuilder<CustomIngBloc, CustomIngState>(
+      appBar: AppBar(title: BlocConsumer<CustomIngBloc, CustomIngState>(
+        listener: (context, state){
+          if (state is CustomIngSuccess){
+            Navigator.of(context).popUntil(ModalRoute.withName('/IngredientsPage'));
+            context.read<IngredientsPageBloc>().add(OnSubmitSolo(state.ingredient));
+          }
+        },
         builder: (context, state) {
           return Text('Ingredient: ${state.name}');
         },
@@ -104,8 +111,8 @@ class CustomIngredientPage extends StatelessWidget {
                       inputFormatters: <TextInputFormatter>[
                         FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*'))
                       ],
-                      keyboardType:
-                          const TextInputType.numberWithOptions(decimal: true),
+                      keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                      initialValue: state.baseGrams,
                     );
                   },
                 )),
@@ -133,6 +140,7 @@ class CustomIngredientPage extends StatelessWidget {
                       onChanged: (val) {
                         context.read<CustomIngBloc>().add(ChangeNameCI(val));
                       },
+                      initialValue: state.name,
                     ));
                   },
                 ),
@@ -280,9 +288,9 @@ class AltMeasureFormField extends StatelessWidget {
               decoration: const InputDecoration(
                   labelText: 'name',
                   contentPadding: EdgeInsets.fromLTRB(10, 0, 0, 0)),
-              inputFormatters: <TextInputFormatter>[
-                FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z \-]+'))
-              ],
+              // inputFormatters: <TextInputFormatter>[
+              //   FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z \-]+'))
+              // ],
               initialValue:
                   context.read<CustomIngBloc>().state.altMeasures[index].key,
               onChanged: (val) {

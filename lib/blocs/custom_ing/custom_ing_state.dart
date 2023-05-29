@@ -16,14 +16,20 @@ class CustomIngState {
       altMeasures: [const MapEntry('', '')],
       nutrientFields: {for (Nutrient nut in nutList) nut.name: '0'});
 
-  factory CustomIngState.fromIngredient(Ingredient ref) =>
-    CustomIngState(
+  factory CustomIngState.fromIngredient(Ingredient ref) {
+    final reNutList = List<Nutrient>.from(ref.baseNutrient.nutrients.attributes__.values);
+    return CustomIngState(
         baseGrams: ref.baseNutrient.grams.toString(),
         name: ref.name,
-        altMeasures: ref.altMeasures2grams.map((key, value) => MapEntry(key, value.toString())).entries.toList(),
-        nutrientFields: (ref.baseNutrient.nutrients.attributes__ as Map<String, Nutrient>).map((key, value) => MapEntry(key, value.value.toString())),
-        image: ref.photo
-    );
+        altMeasures: ref.altMeasures2grams
+            .map((key, value) => MapEntry(key, value.toString()))
+            .entries
+            .toList(),
+        nutrientFields: Map<String, String>.fromEntries(
+            reNutList.map((value) =>
+                MapEntry<String, String>(value.name, value.value.toString()))),
+        image: ref.photo);
+  }
 
   bool isInvalid() {
     if (baseGrams.isEmpty || name.isEmpty || baseGrams == '.') {
@@ -47,87 +53,93 @@ class CustomIngState {
     return false;
   }
 
-
   Future<Ingredient> toIngredient() async {
     // Todo: Save image more as file and use that as Image
-    final transformedAlts =
-        Map<String, num>.fromEntries(altMeasures.map<MapEntry<String, num>>((e) => MapEntry<String, num>(e.key, fixDecimal(e.value)!)));
-    transformedAlts.remove('');
+    final transformedAlts = Map<String, num>.fromEntries(altMeasures
+        .where((element) => element.key != '')
+        .map((e) => MapEntry<String, num>(e.key, fixDecimal(e.value)!)));
+    Uri? finalImage;
+    if (image == null){
+      // pass
+    }
+    else if (image!.scheme == 'file'){
+      finalImage = await saveImage(image!.path);
+    }
+    else {
+      finalImage = image;
+    }
+    // transformedAlts.remove('');
     Ingredient result = Ingredient(
         name: name,
         baseNutrient: BaseNutrients(
             grams: fixDecimal(baseGrams)!,
             nutrients: Nutrients.fromValues(
-                calcium: fixDecimal(nutrientFields['calcium']!)!,
-                carbohydrate: fixDecimal(nutrientFields['carbohydrate']!)!,
-                cholesterol: fixDecimal(nutrientFields['cholesterol']!)!,
-                calories: fixDecimal(nutrientFields['calories']!)!,
-                saturatedFat: fixDecimal(nutrientFields['saturatedFat']!)!,
-                totalFat: fixDecimal(nutrientFields['totalFat']!)!,
-                transFat: fixDecimal(nutrientFields['transFat']!)!,
-                iron: fixDecimal(nutrientFields['iron']!)!,
-                fiber: fixDecimal(nutrientFields['fiber']!)!,
-                potassium: fixDecimal(nutrientFields['potassium']!)!,
-                sodium: fixDecimal(nutrientFields['sodium']!)!,
-                protein: fixDecimal(nutrientFields['protein']!)!,
-                sugars: fixDecimal(nutrientFields['sugars']!)!,
-                choline: fixDecimal(nutrientFields['choline']!)!,
-                copper: fixDecimal(nutrientFields['copper']!)!,
-                ala: fixDecimal(nutrientFields['ala']!)!,
-                linoleicAcid: fixDecimal(nutrientFields['linoleicAcid']!)!,
-                epa: fixDecimal(nutrientFields['epa']!)!,
-                dpa: fixDecimal(nutrientFields['dpa']!)!,
-                dha: fixDecimal(nutrientFields['dha']!)!,
-                folate: fixDecimal(nutrientFields['folate']!)!,
-                magnesium: fixDecimal(nutrientFields['magnesium']!)!,
-                manganese: fixDecimal(nutrientFields['manganese']!)!,
-                niacin: fixDecimal(nutrientFields['niacin']!)!,
-                phosphorus: fixDecimal(nutrientFields['phosphorus']!)!,
-                pantothenicAcid: fixDecimal(nutrientFields['pantothenicAcid']!)!,
-                riboflavin: fixDecimal(nutrientFields['riboflavin']!)!,
-                selenium: fixDecimal(nutrientFields['selenium']!)!,
-                thiamin: fixDecimal(nutrientFields['thiamin']!)!,
-                vitaminE: fixDecimal(nutrientFields['vitaminE']!)!,
-                vitaminA: fixDecimal(nutrientFields['vitaminA']!)!,
-                vitaminB12: fixDecimal(nutrientFields['vitaminB12']!)!,
-                vitaminB6: fixDecimal(nutrientFields['vitaminB6']!)!,
-                vitaminC: fixDecimal(nutrientFields['vitaminC']!)!,
-                vitaminD: fixDecimal(nutrientFields['vitaminD']!)!,
-                vitaminK: fixDecimal(nutrientFields['vitaminK']!)!,
-                zinc: fixDecimal(nutrientFields['zinc']!)!)
-        ),
+                calcium: fixDecimal(nutrientFields['Calcium']!)!,
+                carbohydrate: fixDecimal(nutrientFields['Carbohydrate']!)!,
+                cholesterol: fixDecimal(nutrientFields['Cholesterol']!)!,
+                calories: fixDecimal(nutrientFields['Calories']!)!,
+                saturatedFat: fixDecimal(nutrientFields['SaturatedFat']!)!,
+                totalFat: fixDecimal(nutrientFields['TotalFat']!)!,
+                transFat: fixDecimal(nutrientFields['TransFat']!)!,
+                iron: fixDecimal(nutrientFields['Iron']!)!,
+                fiber: fixDecimal(nutrientFields['Fiber']!)!,
+                potassium: fixDecimal(nutrientFields['Potassium']!)!,
+                sodium: fixDecimal(nutrientFields['Sodium']!)!,
+                protein: fixDecimal(nutrientFields['Protein']!)!,
+                sugars: fixDecimal(nutrientFields['Sugars']!)!,
+                choline: fixDecimal(nutrientFields['Choline']!)!,
+                copper: fixDecimal(nutrientFields['Copper']!)!,
+                ala: fixDecimal(nutrientFields['ALA']!)!,
+                linoleicAcid: fixDecimal(nutrientFields['LinoleicAcid']!)!,
+                epa: fixDecimal(nutrientFields['EPA']!)!,
+                dpa: fixDecimal(nutrientFields['DPA']!)!,
+                dha: fixDecimal(nutrientFields['DHA']!)!,
+                folate: fixDecimal(nutrientFields['Folate']!)!,
+                magnesium: fixDecimal(nutrientFields['Magnesium']!)!,
+                manganese: fixDecimal(nutrientFields['Manganese']!)!,
+                niacin: fixDecimal(nutrientFields['Niacin']!)!,
+                phosphorus: fixDecimal(nutrientFields['Phosphorus']!)!,
+                pantothenicAcid:
+                    fixDecimal(nutrientFields['PantothenicAcid']!)!,
+                riboflavin: fixDecimal(nutrientFields['Riboflavin']!)!,
+                selenium: fixDecimal(nutrientFields['Selenium']!)!,
+                thiamin: fixDecimal(nutrientFields['Thiamin']!)!,
+                vitaminE: fixDecimal(nutrientFields['VitaminE']!)!,
+                vitaminA: fixDecimal(nutrientFields['VitaminA']!)!,
+                vitaminB12: fixDecimal(nutrientFields['VitaminB12']!)!,
+                vitaminB6: fixDecimal(nutrientFields['VitaminB6']!)!,
+                vitaminC: fixDecimal(nutrientFields['VitaminC']!)!,
+                vitaminD: fixDecimal(nutrientFields['VitaminD']!)!,
+                vitaminK: fixDecimal(nutrientFields['VitaminK']!)!,
+                zinc: fixDecimal(nutrientFields['Zinc']!)!)),
         altMeasures2grams: transformedAlts,
         source: IngredientSource.custom,
-        photo: image?.path == null ? null : await saveImage(image!.path)
-    );
+        photo: finalImage);
     return result;
   }
 
-  CustomIngState({
-    required this.baseGrams,
-    required this.name,
-    required this.altMeasures,
-    required this.nutrientFields,
-    this.image,
-    this.refIngredient
-  });
+  CustomIngState(
+      {required this.baseGrams,
+      required this.name,
+      required this.altMeasures,
+      required this.nutrientFields,
+      this.image,
+      this.refIngredient});
 
-  CustomIngState copyWith({
-    String? baseGrams_,
-    String? name_,
-    List<MapEntry<String, String>>? altMeasures_,
-    Map<String, String>? nutrientFields_,
-    Uri? img,
-    Ingredient? ref
-  }) {
+  CustomIngState copyWith(
+      {String? baseGrams_,
+      String? name_,
+      List<MapEntry<String, String>>? altMeasures_,
+      Map<String, String>? nutrientFields_,
+      Uri? img,
+      Ingredient? ref}) {
     return CustomIngState(
         baseGrams: baseGrams_ ?? baseGrams,
         name: name_ ?? name,
         altMeasures: altMeasures_ ?? altMeasures,
         nutrientFields: nutrientFields_ ?? nutrientFields,
         refIngredient: ref ?? refIngredient,
-        image: img ?? image
-    );
+        image: img ?? image);
   }
 
   factory CustomIngState.fromState(CustomIngState state) {
@@ -137,8 +149,7 @@ class CustomIngState {
         altMeasures: state.altMeasures,
         nutrientFields: state.nutrientFields,
         refIngredient: state.refIngredient,
-        image: state.image
-    );
+        image: state.image);
   }
 }
 
@@ -150,18 +161,16 @@ class CustomIngErrors extends CustomIngState {
         altMeasures: state.altMeasures,
         nutrientFields: state.nutrientFields,
         refIngredient: state.refIngredient,
-        image: state.image
-    );
+        image: state.image);
   }
 
-  CustomIngErrors({
-    required super.baseGrams,
-    required super.name,
-    required super.altMeasures,
-    required super.nutrientFields,
-    super.image,
-    super.refIngredient
-  });
+  CustomIngErrors(
+      {required super.baseGrams,
+      required super.name,
+      required super.altMeasures,
+      required super.nutrientFields,
+      super.image,
+      super.refIngredient});
 }
 
 class CustomIngAddedPhoto extends CustomIngState {
@@ -172,24 +181,23 @@ class CustomIngAddedPhoto extends CustomIngState {
         altMeasures: state.altMeasures,
         nutrientFields: state.nutrientFields,
         refIngredient: state.refIngredient,
-        image: state.image
-    );
+        image: state.image);
   }
 
-  CustomIngAddedPhoto({
-    required super.baseGrams,
-    required super.name,
-    required super.altMeasures,
-    required super.nutrientFields,
-    super.image,
-    super.refIngredient
-  });
+  CustomIngAddedPhoto(
+      {required super.baseGrams,
+      required super.name,
+      required super.altMeasures,
+      required super.nutrientFields,
+      super.image,
+      super.refIngredient});
 }
 
 class CustomIngSuccess extends CustomIngState {
   Ingredient ingredient;
 
-  factory CustomIngSuccess.fromState(CustomIngState state, Ingredient ingredient) {
+  factory CustomIngSuccess.fromState(
+      CustomIngState state, Ingredient ingredient) {
     return CustomIngSuccess(
         baseGrams: state.baseGrams,
         name: state.name,
@@ -197,19 +205,17 @@ class CustomIngSuccess extends CustomIngState {
         nutrientFields: state.nutrientFields,
         refIngredient: state.refIngredient,
         image: state.image,
-        ingredient: ingredient
-    );
+        ingredient: ingredient);
   }
 
-  CustomIngSuccess({
-    required super.baseGrams,
-    required super.name,
-    required super.altMeasures,
-    required super.nutrientFields,
-    super.image,
-    super.refIngredient,
-    required this.ingredient
-  });
+  CustomIngSuccess(
+      {required super.baseGrams,
+      required super.name,
+      required super.altMeasures,
+      required super.nutrientFields,
+      super.image,
+      super.refIngredient,
+      required this.ingredient});
 }
 
 // class CustomIngInitial extends CustomIngState {}

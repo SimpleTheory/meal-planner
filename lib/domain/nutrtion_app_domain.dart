@@ -21,14 +21,22 @@ class App {
   void addMeal(Meal meal) {
     meals[meal.name] = meal;
   }
-
   void addBaseIngredient(Ingredient ingredient) {
     baseIngredients[ingredient.name] = ingredient;
   }
-
   void addDiet(Diet diet) {
     diets[diet.name] = diet;
   }
+
+  void updateBaseIngredient(Ingredient ingToUpdate, Ingredient replacer){
+    deleteBaseIngredient(ingToUpdate);
+    addBaseIngredient(replacer);
+  }
+  void updateMeal(Meal mealToUpdate, Meal replacer){
+    deleteMeal(mealToUpdate);
+    addMeal(replacer);
+  }
+
 
   // Update Meal, Diet: just access key with copyWith
 

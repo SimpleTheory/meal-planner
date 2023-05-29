@@ -52,11 +52,13 @@ class CustomIngBloc extends Bloc<CustomIngEvent, CustomIngState> {
       state.image = event.path;
       emit(CustomIngAddedPhoto.fromState(state));
     });
-    on<OnSubmitCI>((event, emit) {
+    on<OnSubmitCI>((event, emit) async {
       if (state.isInvalid()){
         emit(CustomIngErrors.fromState(state));
         return;
       }
+      final result = await state.toIngredient();
+      emit(CustomIngSuccess.fromState(state, result));
     });
   }
 }

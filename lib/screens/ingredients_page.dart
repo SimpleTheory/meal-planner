@@ -90,6 +90,7 @@ class IngredientTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ingPgBloc = context.read<IngredientsPageBloc>();
     return ListTile(
       title: Text(ingredient.name),
       trailing: PopupMenuButton(
@@ -110,13 +111,24 @@ class IngredientTile extends StatelessWidget {
         onSelected: (IngredientPopUpEnumHolder ing) {
           switch (ing.option) {
             case PopUpOptions.edit:
-              // TODO: Handle this case.
+              if (ing.ingredient is Ingredient) {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => MultiBlocProvider(providers: [
+                              BlocProvider(
+                                  create: (context) => CustomIngBloc(
+                                      ing.ingredient as Ingredient)),
+                              BlocProvider.value(
+                                  value: ingPgBloc)
+                            ], child: const CustomIngredientPage())));
+              }
               break;
             case PopUpOptions.delete:
-              context.read<IngredientsPageBloc>().add(IngDelete(ingredient));
+              ingPgBloc.add(IngDelete(ingredient));
               break;
             case PopUpOptions.duplicate:
-              context.read<IngredientsPageBloc>().add(IngDuplicate(ingredient));
+              ingPgBloc.add(IngDuplicate(ingredient));
               break;
           }
         },
@@ -329,11 +341,13 @@ void openAddNewIngredientPopUp(BuildContext context) {
           ));
 }
 
-AlertDialog confirmIngredient(Ingredient ingredient, BuildContext context, [IngredientsPageBloc? ingPgBloc]) =>
+AlertDialog confirmIngredient(Ingredient ingredient, BuildContext context,
+        [IngredientsPageBloc? ingPgBloc]) =>
     AlertDialog(
       title: const Text('Confirm Ingredient'),
       content: SingleChildScrollView(
-        child: Column(
+        child: PaddedColumn(
+          edgeInsets: const EdgeInsets.all(12),
           children: [
             Center(child: GetImage(ingredient.photo, width: 200, height: 200)),
             Center(
@@ -363,7 +377,7 @@ AlertDialog confirmIngredient(Ingredient ingredient, BuildContext context, [Ingr
               style: TextStyle(fontSize: 16),
             )
           ],
-        ).pad(const EdgeInsets.all(12)),
+        ),
       ),
       actions: [
         Row(
@@ -378,9 +392,10 @@ AlertDialog confirmIngredient(Ingredient ingredient, BuildContext context, [Ingr
                 onPressed: () {
                   // TODO: Add Bloc Functionality of adding Ingredient to App
                   // TODO Retrofit to back-references
-                  (ingPgBloc ?? context.read<IngredientsPageBloc>()).add(OnSubmitSolo(ingredient));
                   Navigator.of(context)
                       .popUntil(ModalRoute.withName('/IngredientsPage'));
+                  (ingPgBloc ?? context.read<IngredientsPageBloc>())
+                      .add(OnSubmitSolo(ingredient));
                 },
                 child: const Text('Yes'))
           ],

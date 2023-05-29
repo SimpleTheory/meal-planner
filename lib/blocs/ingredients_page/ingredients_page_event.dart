@@ -4,8 +4,9 @@ abstract class IngredientsPageEvent {}
 
 class OnSubmitSolo extends IngredientsPageEvent {
   Ingredient ingredient;
+  Ingredient? ingToReplace;
 
-  OnSubmitSolo(this.ingredient);
+  OnSubmitSolo(this.ingredient, {this.ingToReplace});
 }
 class OnSubmitWithRef extends IngredientsPageEvent {}
 class UpdateSearchIng extends IngredientsPageEvent {
