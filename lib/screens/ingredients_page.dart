@@ -177,7 +177,20 @@ class IngredientTile extends StatelessWidget {
           Navigator.pop(context, ingredient);
         }
         //else if (){}
-        else{}
+        else{
+          if (ingredient is Ingredient){
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => MultiBlocProvider(providers: [
+                      BlocProvider(
+                          create: (context) => CustomIngBloc(
+                              ingredient as Ingredient)),
+                      BlocProvider.value(
+                          value: ingPgBloc)
+                    ], child: const CustomIngredientPage())));
+          }
+        }
       },
     );
   }
