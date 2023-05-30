@@ -28,7 +28,7 @@ class MealMakerPage extends StatelessWidget {
               context.read<IngredientsPageBloc>().add(
                   OnSubmitSolo(state.meal, ingToReplace: state.refIngredient));
             }
-          }, // todo
+          },
           builder: (context, state) {
             return Text('Meal Maker: ${state.name}');
           },

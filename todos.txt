@@ -1,17 +1,19 @@
 Make Diet Details Bloc: (Creation)
-    - shopping list
     - everything that has to do with days
+    - shopping list
+    - save local backup
 
 Things not working:
 -  if one more image gets a HTTP exception closed error I think I'm going to blow a casket
    • if local/(internet) image not found default to back up instead of erroring.
-   • cache the images with https://pub.dev/packages/cached_network_image perhaps, According to some stack Overflow users this might deal with the exception as well
+   • cache the images with https://pub.dev/packages/cached_network_image perhaps,
+    According to some stack Overflow users this might deal with the exception as well
 
 QoL:
 -  mmpage if serving size 1 only have total weight
 
 Questions:
--  MCTile nutrient re total or re per serving?
+-  MCTile nutrient re total or re per serving? (or toggleable)
 
 Known things/Qs for late:
 - Overwriting

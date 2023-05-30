@@ -28,13 +28,13 @@ class IndexBloc extends Bloc<IndexEvent, IndexState> {
     });
     on<DuplicateDiet>((event, emit) {
       // TODO Deal with overrides (in this on and in general)
-      Match? match = duplicateRegex.firstMatch(event.diet.name);
-      String duplicateName = '${event.diet.name} (2)';
-      if (match != null){
-        duplicateName = '${event.diet.name.substring(0, event.diet.name.length - 4)} '
-            '(${(int.parse(match.group(1)!) + 1)})';
-      }
-      state.app.addDiet(event.diet.copyWithDiet(name: duplicateName));
+      // Match? match = duplicateRegex.firstMatch(event.diet.name);
+      // String duplicateName = '${event.diet.name} (2)';
+      // if (match != null){
+      //   duplicateName = '${event.diet.name.substring(0, event.diet.name.length - 4)} '
+      //       '(${(int.parse(match.group(1)!) + 1)})';
+      // }
+      state.app.addDiet(event.diet.copyWithDiet(name: duplicateNamer(state.app.diets.values, event.diet)));
       emit(state.copyWith());
     });
     on<DeleteDiet>((event, emit) async {

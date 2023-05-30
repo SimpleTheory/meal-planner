@@ -73,6 +73,7 @@ bool isMobile() => Platform.isAndroid || Platform.isIOS;
 
 /// In Dart Maps are ordered so you can re-order them.
 /// Accepts negative indices (pythonic)
+/// Returns a shallow copy of the list (not done in place)
 Map<K, V> reorderMap<K, V>(Map<K, V> map, int oldIndex, int newIndex, {bool safe=false}){
   if (oldIndex == newIndex){return map;}
   if (oldIndex > map.length){
@@ -318,4 +319,42 @@ Future<Uri> saveImage(String imagePath) async {
   final img = File(join(dir.path, name));
   final result = await File(imagePath).copy(img.path);
   return Uri.file(result.path, windows: Platform.isWindows);
+}
+
+String duplicateNamer(iterWithName, thingToName){
+  if (iterWithName is! Iterable<String>){
+    iterWithName = iterWithName.map((e)=>e.name);
+  }
+  if (thingToName is! String){
+    thingToName = thingToName.name;
+  }
+  final regex = RegExp('^' + thingToName + r' \((\d+)\)$');
+  int highestInt = 1;
+  for (String name in iterWithName){
+    Match? match = regex.firstMatch(name);
+    if (match != null){
+      int newNum = int.parse(match.group(1)!);
+      if (newNum > highestInt){
+        highestInt = newNum;
+      }
+    }
+  }
+  return '$thingToName (${highestInt + 1})';
+}
+
+
+extension ListReIndex<T> on List<T> {
+  List<T> reIndex(int old, int new_, {bool safe=true, bool inPlace=false}){
+    while (old < 0){old+=length;}
+    while (new_ < 0){new_+=length;}
+    final item = this[old];
+    final toModfiy = inPlace ? this : List<T>.from(this);
+    toModfiy.remove(old);
+    if (safe && new_ >= length){
+      toModfiy.add(item);
+      return toModfiy;
+    }
+    toModfiy.insert(new_, item);
+    return toModfiy;
+  }
 }

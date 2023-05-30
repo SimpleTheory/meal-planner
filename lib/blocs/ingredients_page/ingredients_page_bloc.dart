@@ -90,10 +90,10 @@ class IngredientsPageBloc
     on<IngDuplicate>((event, emit) {
       if (event.ingredient is Ingredient) {
         app.addBaseIngredient((event.ingredient as Ingredient)
-            .copyWithIngredient(name: '${event.ingredient.name} (duplicate)'));
+            .copyWithIngredient(name: duplicateNamer(state.app.baseIngredients.values, event.ingredient)));
       } else {
         app.addMeal((event.ingredient as Meal)
-            .copyWithMeal(name: '${event.ingredient.name} (duplicate)'));
+            .copyWithMeal(name: duplicateNamer(state.app.baseIngredients.values, event.ingredient)));
       }
       add(UpdateSearchIng(state.currentText));
     });
