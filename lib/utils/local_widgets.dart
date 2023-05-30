@@ -516,12 +516,9 @@ class MCTile extends StatefulWidget {
   final Function(MealComponent meal, num grams, String servingValue) onGramsChange;
   final Function(MealComponent meal) onEdit;
   final Function(MealComponent meal) onDelete;
-  MealComponent meal;
+  final MealComponent meal;
   final expansionController = ExpansionTileController();
-  late final textController = TextEditingController(
-      text: meal.grams.isInt
-          ? meal.grams.toInt().toString()
-          : roundDecimal(meal.grams.toDouble(), 3).toString());
+
 
   MCTile(this.meal,
       {Key? key,
@@ -529,20 +526,23 @@ class MCTile extends StatefulWidget {
         required this.onEdit,
         required this.onDelete})
       : super(key: key);
-  String servingValue = 'grams';
+  // String servingValue = 'grams';
 
   @override
   State<MCTile> createState() => _MCTileState();
 }
 
 class _MCTileState extends State<MCTile> {
+  final textController = TextEditingController();
   bool _isExpanded = false;
+  String servingValue = 'grams';
 
   // late Nutrients _nutrientDisplay;
   _getAltMeasure(String alt) => widget.meal.reference.altMeasures2grams[alt]!;
 
   @override
   Widget build(BuildContext context) {
+    print('mcrebuild');
     return ExpansionTile(
       controlAffinity: ListTileControlAffinity.trailing,
       trailing: Row(mainAxisSize: MainAxisSize.min, children: [
@@ -625,7 +625,6 @@ class _MCTileState extends State<MCTile> {
       title: Text(widget.meal.name),
       expandedCrossAxisAlignment: CrossAxisAlignment.center,
       onExpansionChanged: (newExpState) {
-        print(widget.meal.nutrients);
         setState(() {
           _isExpanded = newExpState;
         });
@@ -658,23 +657,22 @@ class _MCTileState extends State<MCTile> {
             FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*'))
           ],
           keyboardType: const TextInputType.numberWithOptions(decimal: true),
-          controller: widget.textController,
+          controller: textController,
           validator: (val) =>
           val == null || val.isEmpty || val == '.'
-              ? 'Required Field'
-              : null,
+              ? 'Required Field' : null,
           onChanged: (valString) {
             num val = fixDecimal(valString) ?? 0;
-            widget.onGramsChange(widget.meal, val, widget.servingValue);
+            widget.onGramsChange(widget.meal, val, servingValue);
             // TODO update meal in bloc
             setState(() {
               // widget.meal = widget.meal.reference.toMealComponent(
-              //     widget.servingValue, val, widget.meal.reference);
+              //     servingValue, val, widget.meal.reference);
             });
           },
         ),
         DropdownButton<String>(
-            value: widget.servingValue,
+            value: servingValue,
             items: widget.meal.reference.altMeasures2grams.keys
                 .map<DropdownMenuItem<String>>(
                     (e) => DropdownMenuItem(value: e, child: Text(e)))
@@ -685,13 +683,21 @@ class _MCTileState extends State<MCTile> {
               }
               setState(() {
                 final ratio = widget.meal.grams / _getAltMeasure(newAltMeasure);
-                widget.textController.text = ratio.isInt
+                textController.text = ratio.isInt
                     ? ratio.toInt().toString()
                     : roundDecimal(ratio.toDouble(), 3).toString();
-                widget.servingValue = newAltMeasure;
+                servingValue = newAltMeasure;
               });
             })
       ],
     );
+  }
+
+  @override
+  void initState() {
+    textController.text = widget.meal.grams.isInt
+        ? widget.meal.grams.toInt().toString()
+        : roundDecimal(widget.meal.grams.toDouble(), 3).toString();
+    super.initState();
   }
 }
