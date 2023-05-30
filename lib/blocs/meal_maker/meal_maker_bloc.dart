@@ -73,12 +73,13 @@ class MealMakerBloc extends Bloc<MealMakerEvent, MealMakerState> {
       state.altMeasures.add(const MapEntry('', ''));
       emit(state.copyWith());
     });
-    on<SubmitMM>((event, emit){
+    on<SubmitMM>((event, emit) async {
       if (state.isInvalid()){
         emit(MMError.fromState(state));
         return;
       }
-
+      final result = await state.toMeal();
+      emit(MMSuccess.fromState(state, result));
     });
   }
 }

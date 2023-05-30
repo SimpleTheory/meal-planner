@@ -19,7 +19,14 @@ class MealMakerPage extends StatelessWidget {
     final mmbloc = context.read<MealMakerBloc>();
     return Scaffold(
       appBar: AppBar(
-        title: BlocBuilder<MealMakerBloc, MealMakerState>(
+        title: BlocConsumer<MealMakerBloc, MealMakerState>(
+          listener: (context, state){
+            if (state is MMSuccess){
+              Navigator.pop(context);
+              context.read<IngredientsPageBloc>()
+                  .add(OnSubmitSolo(state.meal, ingToReplace: state.refIngredient));
+            }
+          }, // todo
           builder: (context, state) {
             return Text('Meal Maker: ${state.name}');
           },
@@ -138,8 +145,6 @@ class MealMakerPage extends StatelessWidget {
               listener: (context, state) {
                 if (state is MMError && state.nutrients == zeroNut) {
                   showErrorMessage(context, 'Meals must have food!');
-                } else if (state is MMSuccess) {
-                  // TODO
                 }
               },
               builder: (context, state) {
@@ -293,7 +298,6 @@ class AltMeasureFormFieldMM extends StatelessWidget {
               //   FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z \-]+'))
               // ],
               initialValue: mmbloc.state.altMeasures[index].key,
-              // todo
               onChanged: (name) {
                 mmbloc.add(AltMeasureName(name, index));
               }),
@@ -333,3 +337,11 @@ class AltMeasureFormFieldMM extends StatelessWidget {
     );
   }
 }
+
+
+/// Things not working
+/// Test functionality
+/// Create MM from editing
+/// Add a total meal grams that displays the total weight of the recipe
+/// MCTile nutrient re total or re per serving?
+///

@@ -11,6 +11,13 @@ class MealMakerState {
   Meal? refIngredient;
   bool showErrors;
 
+  num get totalGrams => mealComponents.isEmpty ? 0 :
+    mealComponents
+      .map((e) => e.grams)
+      .toList()
+      .reduce((previous, current) => previous + current);
+  num get servingGrams => !validServing() ? 0 : totalGrams / int.parse(servings);
+
   Nutrients get nutrients =>
       Nutrients.sum(mealComponents.map((e) => e.nutrients)) /
       (validServing() ? int.parse(servings) : 1);

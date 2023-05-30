@@ -198,7 +198,4 @@ class MealTile extends StatelessWidget {
   }
 }
 
-/// Things not working
-/// On MCTile when refreshed any chosen unit will default back to grams!
-/// OnSubmit not started nor state.toMeal()
-/// Back ref from ingpgbloc not implemented yet
+

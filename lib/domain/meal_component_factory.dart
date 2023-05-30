@@ -389,9 +389,10 @@ class Meal extends MealComponentFactory {
     bool isSubRecipe = map['isSubRecipe'];
     String notes = map['notes'];
     Uri? photo = dejsonify(map['photo']);
-    Map<String, num> alt2grams = jsonDecode(map['altMeasures2grams']);
+    Map alt2gramsTemp = dejsonifyMap(map['altMeasures2grams']);
 
     List<MealComponent> ingredients = List<MealComponent>.from(ingredientsTemp);
+    Map<String, num> alt2grams = Map<String, num>.from(alt2gramsTemp);
 
     return Meal(
         name: name,

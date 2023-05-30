@@ -15,13 +15,14 @@ class IngredientsPageBloc
     extends Bloc<IngredientsPageEvent, IngredientsPageState> {
   IngredientsPageBloc(App app, MCFTypes mcfType, {bool? include, bool? backRef})
       : super(
-      mcfType == MCFTypes.ingredient ?
+      mcfType == MCFTypes.ingredient
+          ?
       IngredientsPageState.initialIngredient(app,
-            include: toBool(include), backRef: toBool(backRef)) :
-      IngredientsPageState.initialMeal(app,
             include: toBool(include), backRef: toBool(backRef))
-
-  ) {
+          :
+      IngredientsPageState.initialMeal(app, backRef: toBool(backRef))
+  )
+  {
     on<IngredientsPageEvent>((event, emit) {
       // TODO: implement event handler
     });
@@ -76,8 +77,7 @@ class IngredientsPageBloc
             state.isIngredient() ?
             IngredientsPageState.initialIngredient(state.app,
               include: state.includeSubRecipes, backRef: state.backReference) :
-            IngredientsPageState.initialMeal(state.app,
-                include: state.includeSubRecipes, backRef: state.backReference) ,
+            IngredientsPageState.initialMeal(state.app, backRef: state.backReference) ,
             event.ingredient
         )
       );

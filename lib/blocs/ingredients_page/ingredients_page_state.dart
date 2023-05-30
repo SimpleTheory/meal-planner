@@ -21,7 +21,8 @@ class IngredientsPageState {
         type: MCFTypes.ingredient);
   }
   factory IngredientsPageState.initialMeal(App app,
-      {bool include=false, bool backRef = false}) {
+      {bool backRef = false}) {
+    final bool include = !backRef;
     return IngredientsPageState(
         app: app,
         includeSubRecipes: include,

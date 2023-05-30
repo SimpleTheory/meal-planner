@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nutrition_app/blocs/custom_ing/custom_ing_bloc.dart';
+import 'package:nutrition_app/blocs/meal_maker/meal_maker_bloc.dart';
 import 'package:nutrition_app/screens/barcode_scan.dart';
 import 'package:nutrition_app/screens/custom_ingredient.dart';
 import 'package:nutrition_app/utils/local_widgets.dart';
@@ -130,7 +131,16 @@ class IngredientTile extends StatelessWidget {
                             ], child: const CustomIngredientPage())));
               }
               else if (ing.ingredient is Meal){
-                // TODO Implement case
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => MultiBlocProvider(providers: [
+                          BlocProvider(
+                              create: (context) => MealMakerBloc(
+                                  ing.ingredient as Meal)),
+                          BlocProvider.value(
+                              value: ingPgBloc)
+                        ], child: const CustomIngredientPage())));
               }
               break;
             case PopUpOptions.delete:
