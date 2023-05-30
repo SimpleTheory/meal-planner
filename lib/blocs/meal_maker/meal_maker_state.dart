@@ -11,12 +11,15 @@ class MealMakerState {
   Meal? refIngredient;
   bool showErrors;
 
-  num get totalGrams => mealComponents.isEmpty ? 0 :
-    mealComponents
-      .map((e) => e.grams)
-      .toList()
-      .reduce((previous, current) => previous + current);
-  num get servingGrams => !validServing() ? 0 : totalGrams / int.parse(servings);
+  num get totalGrams => mealComponents.isEmpty
+      ? 0
+      : mealComponents
+          .map((e) => e.grams)
+          .toList()
+          .reduce((previous, current) => previous + current);
+
+  num get servingGrams =>
+      !validServing() ? 0 : totalGrams / int.parse(servings);
 
   Nutrients get nutrients =>
       Nutrients.sum(mealComponents.map((e) => e.nutrients)) /
@@ -84,8 +87,12 @@ class MealMakerState {
   }
 
 // </editor-fold>
-
-  bool isInvalid() => name.isEmpty || !validServing() || nutrients == zeroNut;
+  bool containsSelf() => mealComponents.map((e) => e.reference).contains(refIngredient);
+  bool isInvalid() =>
+      name.isEmpty ||
+      !validServing() ||
+      nutrients == zeroNut ||
+      containsSelf();
 
   Future<Meal> toMeal() async {
     final transformedAlts = Map<String, num>.fromEntries(altMeasures
@@ -104,9 +111,7 @@ class MealMakerState {
         isSubRecipe: subRecipe,
         photo: finalImage,
         notes: notes,
-        alt2grams: transformedAlts
-
-    );
+        alt2grams: transformedAlts);
   }
 }
 

@@ -9,20 +9,15 @@ part 'ingredients_page_event.dart';
 
 part 'ingredients_page_state.dart';
 
-enum MCFTypes {meal, ingredient}
+enum MCFTypes { meal, ingredient }
 
 class IngredientsPageBloc
     extends Bloc<IngredientsPageEvent, IngredientsPageState> {
   IngredientsPageBloc(App app, MCFTypes mcfType, {bool? include, bool? backRef})
-      : super(
-      mcfType == MCFTypes.ingredient
-          ?
-      IngredientsPageState.initialIngredient(app,
-            include: toBool(include), backRef: toBool(backRef))
-          :
-      IngredientsPageState.initialMeal(app, backRef: toBool(backRef))
-  )
-  {
+      : super(mcfType == MCFTypes.ingredient
+            ? IngredientsPageState.initialIngredient(app,
+                include: toBool(include), backRef: toBool(backRef))
+            : IngredientsPageState.initialMeal(app, backRef: toBool(backRef))) {
     on<IngredientsPageEvent>((event, emit) {
       // TODO: implement event handler
     });
@@ -37,7 +32,9 @@ class IngredientsPageBloc
       if (state.isMeal()) {
         base = state.includeSubRecipes
             ? state.app.meals.values.toList()
-            : state.app.meals.values.where((element) => !element.isSubRecipe).toList();
+            : state.app.meals.values
+                .where((element) => !element.isSubRecipe)
+                .toList();
       }
       List<MealComponentFactory> result = base
           .where((element) => element.name
@@ -56,31 +53,34 @@ class IngredientsPageBloc
       emit(state.copyWith(searchResults_: result));
     });
     on<OnSubmitSolo>((event, emit) {
-      if (state.isIngredient()) {
+      if (event.ingredient is Ingredient) {
         if (event.ingToReplace != null) {
-          state.app.updateBaseIngredient(event.ingToReplace as Ingredient, event.ingredient as Ingredient);
+          state.app.updateBaseIngredient(
+              event.ingToReplace as Ingredient, event.ingredient as Ingredient);
         } else {
-          state.app.baseIngredients[event.ingredient.name] = event.ingredient as Ingredient;
+          state.app.baseIngredients[event.ingredient.name] =
+              event.ingredient as Ingredient;
         }
       }
       // Else is Meal
       else {
         if (event.ingToReplace != null) {
-          state.app.updateMeal(event.ingToReplace as Meal, event.ingredient as Meal);
+          state.app
+              .updateMeal(event.ingToReplace as Meal, event.ingredient as Meal);
         } else {
           state.app.meals[event.ingredient.name] = event.ingredient as Meal;
         }
       }
 
-      emit(
-          IngPageSuccessfulCreation.fromState(
-            state.isIngredient() ?
-            IngredientsPageState.initialIngredient(state.app,
-              include: state.includeSubRecipes, backRef: state.backReference) :
-            IngredientsPageState.initialMeal(state.app, backRef: state.backReference) ,
-            event.ingredient
-        )
-      );
+      emit(IngPageSuccessfulCreation.fromState(
+          state.isIngredient()
+              ? // Uses this to tell which screens its from not the specifics of the returned object
+              IngredientsPageState.initialIngredient(state.app,
+                  include: state.includeSubRecipes,
+                  backRef: state.backReference)
+              : IngredientsPageState.initialMeal(state.app,
+                  backRef: state.backReference),
+          event.ingredient));
       // saveApp(state.app);
     });
     on<IngPageIncludeSubRecipes>((event, emit) {

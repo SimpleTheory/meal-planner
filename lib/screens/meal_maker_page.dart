@@ -1,3 +1,4 @@
+import 'package:ari_utils/ari_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -10,6 +11,7 @@ import '../blocs/ingredients_page/ingredients_page_bloc.dart';
 import '../blocs/init/init_bloc.dart';
 import '../blocs/meal_maker/meal_maker_bloc.dart';
 import 'ingredients_page.dart';
+import 'package:dataclasses/dataclasses.dart' as data;
 
 class MealMakerPage extends StatelessWidget {
   const MealMakerPage({Key? key}) : super(key: key);
@@ -20,11 +22,11 @@ class MealMakerPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: BlocConsumer<MealMakerBloc, MealMakerState>(
-          listener: (context, state){
-            if (state is MMSuccess){
+          listener: (context, state) {
+            if (state is MMSuccess) {
               Navigator.pop(context);
-              context.read<IngredientsPageBloc>()
-                  .add(OnSubmitSolo(state.meal, ingToReplace: state.refIngredient));
+              context.read<IngredientsPageBloc>().add(
+                  OnSubmitSolo(state.meal, ingToReplace: state.refIngredient));
             }
           }, // todo
           builder: (context, state) {
@@ -141,10 +143,30 @@ class MealMakerPage extends StatelessWidget {
                 )),
               ],
             ),
+            BlocBuilder<MealMakerBloc, MealMakerState>(
+                builder: (context, state) {
+                  return Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text('Total weight: ${roundDecimal(state.totalGrams, 1)}',
+                          style: servingWeightTextStyle),
+                      Text('Serving weight: ${roundDecimal(state.servingGrams, 1)}',
+                          style: servingWeightTextStyle),
+                    ],
+                  );
+                },
+                buildWhen: (pre, curr) =>
+                    pre.servingGrams != curr.servingGrams ||
+                    pre.totalGrams != curr.totalGrams ||
+                    curr is MMChangeGrams),
             BlocConsumer<MealMakerBloc, MealMakerState>(
               listener: (context, state) {
                 if (state is MMError && state.nutrients == zeroNut) {
                   showErrorMessage(context, 'Meals must have food!');
+                }
+                if (state is MMError && state.containsSelf()) {
+                  showErrorMessage(context,
+                      'Meals cannot contain themselves! It\'s an infinite loop!');
                 }
               },
               builder: (context, state) {
@@ -206,8 +228,10 @@ class MealMakerPage extends StatelessWidget {
                   ],
                 );
               },
-              buildWhen: (pre, curr) =>
-                  pre.nutrients != curr.nutrients && curr is! MMChangeGrams,
+              buildWhen: (pre, curr) {
+                return !data.equals(pre.mealComponents, curr.mealComponents) &&
+                    curr is! MMChangeGrams;
+              },
             ),
             Center(
               child: Row(
@@ -232,7 +256,8 @@ class MealMakerPage extends StatelessWidget {
             PlusSignTile((context) {
               mmbloc.add(AddAltMeasure());
             }),
-            BlocBuilder<MealMakerBloc, MealMakerState>(builder: (context, state) {
+            BlocBuilder<MealMakerBloc, MealMakerState>(
+                builder: (context, state) {
               return ListView.builder(
                 itemBuilder: (context, index) => AltMeasureFormFieldMM(index),
                 shrinkWrap: true,
@@ -314,10 +339,9 @@ class AltMeasureFormFieldMM extends StatelessWidget {
                     labelText: 'grams',
                     errorMaxLines: 4,
                     // invalid value and there is name and is error state
-                    errorText:
-                      state.altMeasures[index].value.isEmpty &&
-                      state.altMeasures[index].key.isNotEmpty &&
-                      state.showErrors
+                    errorText: state.altMeasures[index].value.isEmpty &&
+                            state.altMeasures[index].key.isNotEmpty &&
+                            state.showErrors
                         ? 'Required (delete name to ignore)'
                         : null,
                   ),
@@ -338,8 +362,14 @@ class AltMeasureFormFieldMM extends StatelessWidget {
   }
 }
 
+const TextStyle servingWeightTextStyle = TextStyle(
+  color: Color.fromRGBO(125, 125, 125, 1),
+  fontStyle: FontStyle.italic,
+  // fontSize: ,
+);
 
 /// Things not working
+/// LOCAL IMAGE PERSISTENCE NOT WORKING!
 /// Test functionality
 /// Create MM from editing
 /// Add a total meal grams that displays the total weight of the recipe

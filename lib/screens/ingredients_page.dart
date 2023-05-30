@@ -5,6 +5,7 @@ import 'package:nutrition_app/blocs/custom_ing/custom_ing_bloc.dart';
 import 'package:nutrition_app/blocs/meal_maker/meal_maker_bloc.dart';
 import 'package:nutrition_app/screens/barcode_scan.dart';
 import 'package:nutrition_app/screens/custom_ingredient.dart';
+import 'package:nutrition_app/screens/meal_maker_page.dart';
 import 'package:nutrition_app/utils/local_widgets.dart';
 import 'package:nutrition_app/utils/utils.dart';
 import 'package:nutrition_app/domain.dart';
@@ -123,10 +124,10 @@ class IngredientTile extends StatelessWidget {
                     context,
                     MaterialPageRoute(
                         builder: (context) => MultiBlocProvider(providers: [
-                              BlocProvider(
+                              BlocProvider<CustomIngBloc>(
                                   create: (context) => CustomIngBloc(
                                       ing.ingredient as Ingredient)),
-                              BlocProvider.value(
+                              BlocProvider<IngredientsPageBloc>.value(
                                   value: ingPgBloc)
                             ], child: const CustomIngredientPage())));
               }
@@ -135,12 +136,13 @@ class IngredientTile extends StatelessWidget {
                     context,
                     MaterialPageRoute(
                         builder: (context) => MultiBlocProvider(providers: [
-                          BlocProvider(
+                          BlocProvider<MealMakerBloc>(
                               create: (context) => MealMakerBloc(
                                   ing.ingredient as Meal)),
-                          BlocProvider.value(
+                          BlocProvider<IngredientsPageBloc>.value(
                               value: ingPgBloc)
-                        ], child: const CustomIngredientPage())));
+                        ],
+                            child: const MealMakerPage())));
               }
               break;
             case PopUpOptions.delete:
@@ -191,6 +193,20 @@ class IngredientTile extends StatelessWidget {
           Navigator.pop(context, ingredient);
         }
         //else if (){}
+        //else if (){}
+        else if (ingredient is Meal){
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => MultiBlocProvider(providers: [
+                    BlocProvider<MealMakerBloc>(
+                        create: (context) => MealMakerBloc(
+                            ingredient as Meal)),
+                    BlocProvider<IngredientsPageBloc>.value(
+                        value: ingPgBloc)
+                  ],
+                      child: const MealMakerPage())));
+        }
         else if (ingredient is Ingredient){
             Navigator.push(
                 context,
@@ -202,19 +218,6 @@ class IngredientTile extends StatelessWidget {
                       BlocProvider.value(
                           value: ingPgBloc)
                     ], child: const CustomIngredientPage())));
-          }
-        else if (ingredient is Meal){
-          // TODO Implement case
-            // Navigator.push(
-            //     context,
-            //     MaterialPageRoute(
-            //         builder: (context) => MultiBlocProvider(providers: [
-            //           BlocProvider(
-            //               create: (context) => CustomIngBloc(
-            //                   ingredient as Ingredient)),
-            //           BlocProvider.value(
-            //               value: ingPgBloc)
-            //         ], child: const CustomIngredientPage())));
           }
         }
     );
