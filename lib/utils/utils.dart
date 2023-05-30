@@ -328,6 +328,11 @@ String duplicateNamer(iterWithName, thingToName){
   if (thingToName is! String){
     thingToName = thingToName.name;
   }
+  // var x = 'a'.s;
+  if (RegExp(r'\(\d+\)$').hasMatch(thingToName)){
+    final upto = RegExp(r' \(\d+\)$').firstMatch(thingToName)!.start;
+    thingToName = thingToName.substring(0, upto);
+  }
   final regex = RegExp('^' + thingToName + r' \((\d+)\)$');
   int highestInt = 1;
   for (String name in iterWithName){
