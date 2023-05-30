@@ -274,7 +274,8 @@ class Meal extends MealComponentFactory {
       this.servings = 1,
       this.photo,
       this.notes = '',
-      required this.isSubRecipe})
+      required this.isSubRecipe,
+      Map<String, num>? alt2grams})
       : super(
             BaseNutrients(
                 grams: (ingredients
@@ -285,14 +286,15 @@ class Meal extends MealComponentFactory {
                 nutrients: Nutrients.sum(
                         ingredients.map((e) => e.nutrients).toList()) /
                     servings),
-            {
-              'serving': (ingredients
-                      .map((e) => e.grams)
-                      .toList()
-                      .reduce((previous, current) => previous + current)) /
-                  servings
-            },
-            name);
+            alt2grams ?? {},
+            name)
+  {
+      altMeasures2grams['serving'] = (ingredients
+          .map((e) => e.grams)
+          .toList()
+          .reduce((previous, current) => previous + current)) /
+          servings;
+  }
 
   Map<String, dynamic> get attributes__ => {
         "name": name,
@@ -314,14 +316,16 @@ class Meal extends MealComponentFactory {
           required servings,
           required isSubRecipe,
           photo,
-          notes}) =>
+          notes,
+          alt2grams
+          }) =>
       Meal(
           name: name,
           ingredients: ingredients,
           servings: servings,
           isSubRecipe: isSubRecipe,
           photo: photo,
-          notes: notes);
+          notes: notes, alt2grams: alt2grams);
 
   @override
   bool operator ==(Object other) =>
@@ -333,7 +337,9 @@ class Meal extends MealComponentFactory {
           equals(servings, other.servings) &&
           equals(isSubRecipe, other.isSubRecipe) &&
           equals(notes, other.notes) &&
-          equals(photo, other.photo));
+          equals(photo, other.photo) &&
+          equals(altMeasures2grams, other.altMeasures2grams)
+      );
 
   @override
   int get hashCode =>
@@ -342,11 +348,13 @@ class Meal extends MealComponentFactory {
       servings.hashCode ^
       isSubRecipe.hashCode ^
       photo.hashCode ^
-      notes.hashCode;
+      notes.hashCode ^
+      altMeasures2grams.hashCode
+  ;
 
   @override
   String toString() =>
-      'Meal(name: $name, ingredients: $ingredients, servings: $servings, isSubRecipe: $isSubRecipe, photo: $photo, notes: $notes)';
+      'Meal(name: $name, ingredients: $ingredients, servings: $servings, isSubRecipe: $isSubRecipe, photo: $photo, notes: $notes, altmeasures2grams: $altMeasures2grams)';
 
   Meal copyWithMeal(
           {String? name,
@@ -354,14 +362,18 @@ class Meal extends MealComponentFactory {
           int? servings,
           bool? isSubRecipe,
           String? notes,
-          Uri? photo}) =>
+          Uri? photo,
+          Map<String, num>? alt2grams
+          }) =>
       Meal(
           name: name ?? this.name,
           ingredients: ingredients ?? this.ingredients,
           servings: servings ?? this.servings,
           isSubRecipe: isSubRecipe ?? this.isSubRecipe,
           notes: notes ?? this.notes,
-          photo: photo ?? this.photo);
+          photo: photo ?? this.photo,
+          alt2grams: alt2grams ?? altMeasures2grams
+      );
 
   String toJson() => jsonEncode(toMap());
 
@@ -377,12 +389,14 @@ class Meal extends MealComponentFactory {
     bool isSubRecipe = map['isSubRecipe'];
     String notes = map['notes'];
     Uri? photo = dejsonify(map['photo']);
+    Map<String, num> alt2grams = jsonDecode(map['altMeasures2grams']);
 
     List<MealComponent> ingredients = List<MealComponent>.from(ingredientsTemp);
 
     return Meal(
         name: name,
         ingredients: ingredients,
+        alt2grams: alt2grams,
         servings: servings,
         isSubRecipe: isSubRecipe,
         notes: notes,

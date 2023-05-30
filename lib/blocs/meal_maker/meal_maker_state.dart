@@ -18,17 +18,16 @@ class MealMakerState {
   bool validServing() => servings.isNotEmpty && int.parse(servings) > 0;
 
   // <editor-fold desc="Construction">
-  MealMakerState({
-    required this.servings,
-    required this.name,
-    required this.altMeasures,
-    required this.notes,
-    required this.subRecipe,
-    required this.mealComponents,
-    this.image,
-    this.refIngredient,
-    this.showErrors = false
-  });
+  MealMakerState(
+      {required this.servings,
+      required this.name,
+      required this.altMeasures,
+      required this.notes,
+      required this.subRecipe,
+      required this.mealComponents,
+      this.image,
+      this.refIngredient,
+      this.showErrors = false});
 
   factory MealMakerState.fromNew() {
     return MealMakerState(
@@ -55,17 +54,16 @@ class MealMakerState {
         image: ref.photo);
   }
 
-  MealMakerState copyWith({
-    String? servings,
-    String? name,
-    List<MapEntry<String, String>>? altMeasures,
-    String? notes,
-    bool? subRecipe,
-    List<MealComponent>? mealComponents,
-    Uri? image,
-    Meal? refIngredient,
-    bool? showErrors
-  }) {
+  MealMakerState copyWith(
+      {String? servings,
+      String? name,
+      List<MapEntry<String, String>>? altMeasures,
+      String? notes,
+      bool? subRecipe,
+      List<MealComponent>? mealComponents,
+      Uri? image,
+      Meal? refIngredient,
+      bool? showErrors}) {
     return MealMakerState(
         servings: servings ?? this.servings,
         name: name ?? this.name,
@@ -75,45 +73,58 @@ class MealMakerState {
         mealComponents: mealComponents ?? List.from(this.mealComponents),
         image: image ?? this.image,
         refIngredient: refIngredient ?? this.refIngredient,
-        showErrors: showErrors ?? this.showErrors
-
-    );
+        showErrors: showErrors ?? this.showErrors);
   }
 
 // </editor-fold>
 
-  bool isInvalid() =>
-      name.isEmpty ||
-      !validServing() ||
-      nutrients == zeroNut;
+  bool isInvalid() => name.isEmpty || !validServing() || nutrients == zeroNut;
 
-// TODO: Meal toMeal(){}
+  Future<Meal> toMeal() async {
+    final transformedAlts = Map<String, num>.fromEntries(altMeasures
+        .where((element) => element.key != '')
+        .map((e) => MapEntry<String, num>(e.key, fixDecimal(e.value)!)));
+    Uri? finalImage;
+    if (image!.scheme == 'file') {
+      finalImage = await saveImage(image!.path);
+    } else {
+      finalImage = image;
+    }
+    return Meal(
+        name: name,
+        servings: int.parse(servings),
+        ingredients: mealComponents,
+        isSubRecipe: subRecipe,
+        photo: finalImage,
+        notes: notes,
+        alt2grams: transformedAlts
+
+    );
+  }
 }
 
 class MMError extends MealMakerState {
-  MMError({
-    required super.servings,
-    required super.name,
-    required super.altMeasures,
-    required super.notes,
-    required super.subRecipe,
-    required super.mealComponents,
-    super.image,
-    super.refIngredient,
-    super.showErrors = true
-  });
+  MMError(
+      {required super.servings,
+      required super.name,
+      required super.altMeasures,
+      required super.notes,
+      required super.subRecipe,
+      required super.mealComponents,
+      super.image,
+      super.refIngredient,
+      super.showErrors = true});
 
-  MMError copyWithMMError({
-    String? servings,
-    String? name,
-    List<MapEntry<String, String>>? altMeasures,
-    String? notes,
-    bool? subRecipe,
-    List<MealComponent>? mealComponents,
-    Uri? image,
-    Meal? refIngredient,
-    bool? showErrors
-  }) {
+  MMError copyWithMMError(
+      {String? servings,
+      String? name,
+      List<MapEntry<String, String>>? altMeasures,
+      String? notes,
+      bool? subRecipe,
+      List<MealComponent>? mealComponents,
+      Uri? image,
+      Meal? refIngredient,
+      bool? showErrors}) {
     return MMError(
         servings: servings ?? this.servings,
         name: name ?? this.name,
@@ -123,9 +134,7 @@ class MMError extends MealMakerState {
         mealComponents: mealComponents ?? List.from(this.mealComponents),
         image: image ?? this.image,
         refIngredient: refIngredient ?? this.refIngredient,
-        showErrors: showErrors ?? this.showErrors
-
-    );
+        showErrors: showErrors ?? this.showErrors);
   }
 
   factory MMError.fromState(MealMakerState state) => MMError(
@@ -137,34 +146,31 @@ class MMError extends MealMakerState {
       mealComponents: state.mealComponents,
       showErrors: true,
       refIngredient: state.refIngredient,
-      image: state.image
-  );
+      image: state.image);
 }
 
 class MMChangeGrams extends MealMakerState {
-  MMChangeGrams({
-    required super.servings,
-    required super.name,
-    required super.altMeasures,
-    required super.notes,
-    required super.subRecipe,
-    required super.mealComponents,
-    super.image,
-    super.refIngredient,
-    super.showErrors = false
-  });
+  MMChangeGrams(
+      {required super.servings,
+      required super.name,
+      required super.altMeasures,
+      required super.notes,
+      required super.subRecipe,
+      required super.mealComponents,
+      super.image,
+      super.refIngredient,
+      super.showErrors = false});
 
-  MMChangeGrams copyWithMMChangeGrams({
-    String? servings,
-    String? name,
-    List<MapEntry<String, String>>? altMeasures,
-    String? notes,
-    bool? subRecipe,
-    List<MealComponent>? mealComponents,
-    Uri? image,
-    Meal? refIngredient,
-    bool? showErrors
-  }) {
+  MMChangeGrams copyWithMMChangeGrams(
+      {String? servings,
+      String? name,
+      List<MapEntry<String, String>>? altMeasures,
+      String? notes,
+      bool? subRecipe,
+      List<MealComponent>? mealComponents,
+      Uri? image,
+      Meal? refIngredient,
+      bool? showErrors}) {
     return MMChangeGrams(
         servings: servings ?? this.servings,
         name: name ?? this.name,
@@ -174,10 +180,9 @@ class MMChangeGrams extends MealMakerState {
         mealComponents: mealComponents ?? List.from(this.mealComponents),
         image: image ?? this.image,
         refIngredient: refIngredient ?? this.refIngredient,
-        showErrors: showErrors ?? this.showErrors
-
-    );
+        showErrors: showErrors ?? this.showErrors);
   }
+
   factory MMChangeGrams.fromState(MealMakerState state) => MMChangeGrams(
       servings: state.servings,
       name: state.name,
@@ -187,26 +192,23 @@ class MMChangeGrams extends MealMakerState {
       mealComponents: state.mealComponents,
       showErrors: state.showErrors,
       refIngredient: state.refIngredient,
-      image: state.image
-  );
-
+      image: state.image);
 }
 
 class MMSuccess extends MealMakerState {
   Meal meal;
 
-  MMSuccess({
-    required this.meal,
-    required super.servings,
-    required super.name,
-    required super.altMeasures,
-    required super.notes,
-    required super.subRecipe,
-    required super.mealComponents,
-    super.image,
-    super.refIngredient,
-    super.showErrors = false
-  });
+  MMSuccess(
+      {required this.meal,
+      required super.servings,
+      required super.name,
+      required super.altMeasures,
+      required super.notes,
+      required super.subRecipe,
+      required super.mealComponents,
+      super.image,
+      super.refIngredient,
+      super.showErrors = false});
 
   factory MMSuccess.fromState(MealMakerState state, Meal meal) => MMSuccess(
       meal: meal,
@@ -217,8 +219,7 @@ class MMSuccess extends MealMakerState {
       subRecipe: state.subRecipe,
       mealComponents: state.mealComponents,
       refIngredient: state.refIngredient,
-      image: state.image
-  );
+      image: state.image);
 }
 
 // class MealMakerInitial extends MealMakerState {}

@@ -542,7 +542,6 @@ class _MCTileState extends State<MCTile> {
 
   @override
   Widget build(BuildContext context) {
-    print('mcrebuild');
     return ExpansionTile(
       controlAffinity: ListTileControlAffinity.trailing,
       trailing: Row(mainAxisSize: MainAxisSize.min, children: [
@@ -592,7 +591,6 @@ class _MCTileState extends State<MCTile> {
         ExpandIcon(
             isExpanded: _isExpanded,
             onPressed: (bool currentExpansion) {
-              print(currentExpansion);
               !currentExpansion
                   ? widget.expansionController.expand()
                   : widget.expansionController.collapse();
