@@ -150,8 +150,10 @@ class MealMakerPage extends StatelessWidget {
                     children: [
                       Text('Total weight: ${roundDecimal(state.totalGrams, 1)}',
                           style: servingWeightTextStyle),
-                      Text('Serving weight: ${roundDecimal(state.servingGrams, 1)}',
-                          style: servingWeightTextStyle),
+                      if (state.validServing() && int.parse(state.servings) > 1)
+                        Text(
+                            'Serving weight: ${roundDecimal(state.servingGrams, 1)}',
+                            style: servingWeightTextStyle),
                     ],
                   );
                 },
@@ -367,4 +369,3 @@ const TextStyle servingWeightTextStyle = TextStyle(
   fontStyle: FontStyle.italic,
   // fontSize: ,
 );
-
