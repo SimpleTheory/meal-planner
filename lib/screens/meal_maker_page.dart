@@ -1,96 +1,335 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:nutrition_app/screens/custom_ingredient.dart';
-import 'package:nutrition_app/screens/diet_details_screen.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:io';
 import 'package:nutrition_app/utils/local_widgets.dart';
 import 'package:nutrition_app/utils/utils.dart';
-import 'package:nutrition_app/temp_dummy_data.dart';
-
-final current_meal = meals['breaky'];
+import 'package:nutrition_app/domain.dart';
+import '../blocs/ingredients_page/ingredients_page_bloc.dart';
+import '../blocs/init/init_bloc.dart';
+import '../blocs/meal_maker/meal_maker_bloc.dart';
+import 'ingredients_page.dart';
 
 class MealMakerPage extends StatelessWidget {
   const MealMakerPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final mmbloc = context.read<MealMakerBloc>();
     return Scaffold(
-      appBar: AppBar(title: Text('Meal Maker: breaky')),
+      appBar: AppBar(
+        title: BlocBuilder<MealMakerBloc, MealMakerState>(
+          builder: (context, state) {
+            return Text('Meal Maker: ${state.name}');
+          },
+        ),
+      ),
       body: SingleChildScrollView(
-        child: Column(
+        child: PaddedColumn(
+          edgeInsets: const EdgeInsets.all(12),
           children: [
             Center(
-              child: GestureDetector(
-                  onTap: (){},
-                  child: Image.asset('cache/images/null.png', width: 200, height: 200,)
-              ),
+              child: GestureDetector(onTap: () {
+                showDialog(
+                    context: context,
+                    builder: (_) => BlocProvider.value(
+                          value: mmbloc,
+                          child: BlocListener<MealMakerBloc, MealMakerState>(
+                            listener: (context, state) {
+                              Navigator.pop(context);
+                            },
+                            listenWhen: (previous, current) =>
+                                previous.image != current.image,
+                            child: AlertDialog(
+                              content: PaddedColumn(
+                                mainAxisSize: MainAxisSize.min,
+                                edgeInsets: const EdgeInsets.all(8),
+                                children: [
+                                  ElevatedButton(
+                                      onPressed: () async {
+                                        final img = await ImagePicker()
+                                            .pickImage(
+                                                source: ImageSource.camera);
+                                        if (img == null) {
+                                          return;
+                                        }
+                                        mmbloc.add(ChangePhoto(Uri.file(
+                                            img.path,
+                                            windows: Platform.isWindows)));
+                                      },
+                                      child: const Text('Camera')),
+                                  ElevatedButton(
+                                      onPressed: () async {
+                                        final img = await ImagePicker()
+                                            .pickImage(
+                                                source: ImageSource.gallery);
+                                        if (img == null) {
+                                          return;
+                                        }
+                                        mmbloc.add(ChangePhoto(Uri.file(
+                                            img.path,
+                                            windows: Platform.isWindows)));
+                                      },
+                                      child: const Text('Gallery')),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ));
+              }, child: BlocBuilder<MealMakerBloc, MealMakerState>(
+                builder: (context, state) {
+                  return GetImage(
+                    state.image,
+                    width: 200,
+                    height: 200,
+                  );
+                },
+              )),
             ),
             Row(
               children: [
                 const Text('Name: '),
-                Flexible(child: TextFormField(
-                  decoration: const InputDecoration(
-                      labelText: 'name',
-                      contentPadding: EdgeInsets.fromLTRB(10, 0, 0, 0)
-                  ),
+                Flexible(child: BlocBuilder<MealMakerBloc, MealMakerState>(
+                  builder: (context, state) {
+                    return TextFormField(
+                      initialValue: state.name,
+                      onChanged: (name) {
+                        mmbloc.add(ChangeName(name));
+                      },
+                      decoration: InputDecoration(
+                          labelText: 'name',
+                          contentPadding:
+                              const EdgeInsets.fromLTRB(10, 0, 0, 0),
+                          errorText: state.name.isEmpty && state.showErrors
+                              ? "Required Field"
+                              : null),
+                    );
+                  },
                 )),
               ],
             ),
             Row(
               children: [
                 const Text('Servings: '),
-                Flexible(child: TextFormField(
-                  decoration: const InputDecoration(
-                      labelText: 'Servings',
-                      contentPadding: EdgeInsets.fromLTRB(10, 0, 0, 0)
-                  ),
-                  inputFormatters: <TextInputFormatter>[
-                    FilteringTextInputFormatter.digitsOnly
-                  ],
-                  keyboardType: TextInputType.number
+                Flexible(child: BlocBuilder<MealMakerBloc, MealMakerState>(
+                  builder: (context, state) {
+                    return TextFormField(
+                        initialValue: state.servings,
+                        onChanged: (servings) {
+                          mmbloc.add(ChangeServings(servings));
+                        },
+                        decoration: InputDecoration(
+                            errorText: !state.validServing() && state.showErrors
+                                ? "Required Field"
+                                : null,
+                            labelText: 'Servings',
+                            contentPadding:
+                                const EdgeInsets.fromLTRB(10, 0, 0, 0)),
+                        inputFormatters: <TextInputFormatter>[
+                          FilteringTextInputFormatter.digitsOnly
+                        ],
+                        keyboardType: TextInputType.number);
+                  },
                 )),
               ],
             ),
-            ListView(
-              physics: const NeverScrollableScrollPhysics(),
-              shrinkWrap: true,
-              children: [
-                MealStyleNutrientDisplay(current_meal!.baseNutrient.nutrients),
-                PlusSignTile((context) {}),
-                // ListView.builder(
-                //   itemBuilder: (context, index)=>MealComponentTile(current_meal!.ingredients[index]),
-                //   itemCount: ingredients.length,
-                //   shrinkWrap: true,
-                //   physics: const ClampingScrollPhysics(),
-                // )
-                ...current_meal!.ingredients.map((e) => MCTile(e)),
-              ],
+            BlocConsumer<MealMakerBloc, MealMakerState>(
+              listener: (context, state) {
+                if (state is MMError && state.nutrients == zeroNut) {
+                  showErrorMessage(context, 'Meals must have food!');
+                } else if (state is MMSuccess) {
+                  // TODO
+                }
+              },
+              builder: (context, state) {
+                return ListView(
+                  physics: const NeverScrollableScrollPhysics(),
+                  shrinkWrap: true,
+                  children: [
+                    BlocBuilder<MealMakerBloc, MealMakerState>(
+                      builder: (context, state) {
+                        return mealStyleNutrientDisplay(state.nutrients);
+                      },
+                    ),
+                    PlusSignTile((_) async {
+                      final result = await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              settings:
+                                  const RouteSettings(name: "/IngredientsPage"),
+                              builder: (_) => BlocProvider(
+                                  create: (context) => IngredientsPageBloc(
+                                      context.read<InitBloc>().state.app!,
+                                      MCFTypes.ingredient,
+                                      include: true,
+                                      backRef: true),
+                                  child: IngredientPage())));
+                      if (result is MealComponentFactory) {
+                        final serving = result.toServing();
+                        mmbloc.add(AddMC(serving));
+                      }
+                    }),
+                    ReorderableListView.builder(
+                      itemBuilder: (context, index) => MCTile(
+                        state.mealComponents[index],
+                        onGramsChange:
+                            (MealComponent meal, num grams, String serving) {
+                          mmbloc.add(UpdateGramsMC(meal, grams, serving));
+                        },
+                        onEdit: (MealComponent meal) {},
+                        onDelete: (MealComponent meal) {
+                          mmbloc.add(DeleteMC(meal));
+                        },
+                        key: ValueKey<MealComponent>(
+                            state.mealComponents[index]),
+                      ),
+                      itemCount: state.mealComponents.length,
+                      shrinkWrap: true,
+                      physics: const ClampingScrollPhysics(),
+                      onReorder: (int oldIndex, int newIndex) {
+                        mmbloc.add(ReorderMC(oldIndex, newIndex));
+                      },
+                    )
+                    // ...state.mealComponents.map((e) => MCTile(
+                    //       e,
+                    //       onGramsChange: (MealComponent meal, num grams)
+                    //         {mmbloc.add(UpdateGramsMC(meal, grams));},
+                    //       onEdit: (MealComponent meal) {},
+                    //       onDelete: (MealComponent meal) {DeleteMC(meal);},
+                    //     )),
+                  ],
+                );
+              },
+              buildWhen: (pre, curr) =>
+                  pre.nutrients != curr.nutrients && curr is! MMChangeGrams,
             ),
-            Row(children: [
-              const Text('Subrecipe: ', style: TextStyle(fontSize: 20)), Switch(value: false, onChanged: (bool isSubRecipe){})
-            ],),
-            const Text('Alternate measures:', style: TextStyle(fontSize: 20),),
-            PlusSignTile((context) {}),
-            Text('Alt measure place holder'),
-            // const AltMeasureFormField(),
+            Center(
+              child: Row(
+                children: [
+                  const Text('Sub-recipe ', style: TextStyle(fontSize: 20)),
+                  BlocBuilder<MealMakerBloc, MealMakerState>(
+                    builder: (context, state) {
+                      return Switch(
+                          value: state.subRecipe,
+                          onChanged: (bool isSubRecipe) {
+                            mmbloc.add(ToggleSub(isSubRecipe));
+                          });
+                    },
+                  )
+                ],
+              ),
+            ),
+            const Text(
+              'Alternate measures:',
+              style: TextStyle(fontSize: 20),
+            ),
+            PlusSignTile((context) {
+              mmbloc.add(AddAltMeasure());
+            }),
+            BlocBuilder<MealMakerBloc, MealMakerState>(builder: (context, state) {
+              return ListView.builder(
+                itemBuilder: (context, index) => AltMeasureFormFieldMM(index),
+                shrinkWrap: true,
+                physics: const ClampingScrollPhysics(),
+                itemCount: state.altMeasures.length,
+              );
+            }),
             Container(
-              decoration: const BoxDecoration(border: Border(top: BorderSide(color: Colors.grey))),
+              decoration: const BoxDecoration(
+                  border: Border(top: BorderSide(color: Colors.grey))),
               child: Column(
-                children: const [
-                  Text('Notes:', style: TextStyle(fontSize: 20),),
-                  TextField(
-                    decoration: InputDecoration(contentPadding: EdgeInsets.fromLTRB(8, 8, 0, 8)),
+                children: [
+                  const Text(
+                    'Notes:',
+                    style: TextStyle(fontSize: 20),
+                  ),
+                  TextFormField(
+                    initialValue: mmbloc.state.notes,
+                    decoration: const InputDecoration(
+                        contentPadding: EdgeInsets.fromLTRB(8, 8, 0, 8)),
                     maxLines: null,
                     keyboardType: TextInputType.multiline,
+                    onChanged: (notes) {
+                      mmbloc.add(UpdateNotes(notes));
+                    },
                   ),
                 ],
               ),
             ),
-            ElevatedButton(onPressed: (){}, child: const Text('Submit'),),
-
-
+            ElevatedButton(
+              onPressed: () {
+                mmbloc.add(SubmitMM());
+              },
+              child: const Text('Submit'),
+            ),
           ],
-        ).pad(const EdgeInsets.all(12)),
+        ),
       ),
+    );
+  }
+}
+
+class AltMeasureFormFieldMM extends StatelessWidget {
+  final int index;
+
+  const AltMeasureFormFieldMM(this.index, {Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final mmbloc = context.read<MealMakerBloc>();
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        const Text('Name: '),
+        Flexible(
+            child: Padding(
+          padding: const EdgeInsets.fromLTRB(10, 3, 10, 3),
+          child: TextFormField(
+              decoration: const InputDecoration(
+                  labelText: 'name',
+                  contentPadding: EdgeInsets.fromLTRB(10, 0, 0, 0)),
+              // inputFormatters: <TextInputFormatter>[
+              //   FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z \-]+'))
+              // ],
+              initialValue: mmbloc.state.altMeasures[index].key,
+              // todo
+              onChanged: (name) {
+                mmbloc.add(AltMeasureName(name, index));
+              }),
+        )),
+        const Text('Grams: '),
+        Flexible(
+            child: Padding(
+          padding: const EdgeInsets.fromLTRB(10, 3, 10, 3),
+          child: BlocBuilder<MealMakerBloc, MealMakerState>(
+            builder: (context, state) {
+              return TextFormField(
+                  decoration: InputDecoration(
+                    contentPadding: const EdgeInsets.fromLTRB(10, 0, 0, 0),
+                    labelText: 'grams',
+                    errorMaxLines: 4,
+                    // invalid value and there is name and is error state
+                    errorText:
+                      state.altMeasures[index].value.isEmpty &&
+                      state.altMeasures[index].key.isNotEmpty &&
+                      state.showErrors
+                        ? 'Required (delete name to ignore)'
+                        : null,
+                  ),
+                  inputFormatters: <TextInputFormatter>[
+                    FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*'))
+                  ],
+                  keyboardType:
+                      const TextInputType.numberWithOptions(decimal: true),
+                  initialValue: state.altMeasures[index].value,
+                  onChanged: (val) {
+                    mmbloc.add(AltMeasureValue(val, index));
+                  });
+            },
+          ),
+        )),
+      ],
     );
   }
 }

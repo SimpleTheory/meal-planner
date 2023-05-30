@@ -28,6 +28,8 @@ abstract class MealComponentFactory {
   Uri? get photo => null;
 
   baseIngredients(); // MealComponent | List<MealComponent>
+
+  MealComponent toServing() => MealComponent(reference: this, grams: baseNutrient.grams);
 }
 
 /// Meal Component Implementation

@@ -9,10 +9,19 @@ part 'ingredients_page_event.dart';
 
 part 'ingredients_page_state.dart';
 
+enum MCFTypes {meal, ingredient}
+
 class IngredientsPageBloc
     extends Bloc<IngredientsPageEvent, IngredientsPageState> {
-  IngredientsPageBloc(App app, {bool? include, bool? backRef})
-      : super(IngredientsPageState.initial(app, include: toBool(include), backRef: toBool(backRef))) {
+  IngredientsPageBloc(App app, MCFTypes mcfType, {bool? include, bool? backRef})
+      : super(
+      mcfType == MCFTypes.ingredient ?
+      IngredientsPageState.initialIngredient(app,
+            include: toBool(include), backRef: toBool(backRef)) :
+      IngredientsPageState.initialMeal(app,
+            include: toBool(include), backRef: toBool(backRef))
+
+  ) {
     on<IngredientsPageEvent>((event, emit) {
       // TODO: implement event handler
     });
@@ -24,6 +33,11 @@ class IngredientsPageBloc
       List<MealComponentFactory> base = state.includeSubRecipes
           ? state.app.ingredients
           : state.app.baseIngredients.values.toList();
+      if (state.isMeal()) {
+        base = state.includeSubRecipes
+            ? state.app.meals.values.toList()
+            : state.app.meals.values.where((element) => !element.isSubRecipe).toList();
+      }
       List<MealComponentFactory> result = base
           .where((element) => element.name
               .toLowerCase()
@@ -41,38 +55,52 @@ class IngredientsPageBloc
       emit(state.copyWith(searchResults_: result));
     });
     on<OnSubmitSolo>((event, emit) {
-      if (event.ingToReplace != null){
-        state.app.updateBaseIngredient(event.ingToReplace!, event.ingredient);
+      if (state.isIngredient()) {
+        if (event.ingToReplace != null) {
+          state.app.updateBaseIngredient(event.ingToReplace as Ingredient, event.ingredient as Ingredient);
+        } else {
+          state.app.baseIngredients[event.ingredient.name] = event.ingredient as Ingredient;
+        }
       }
-      else{
-        state.app.baseIngredients[event.ingredient.name] = event.ingredient;
+      // Else is Meal
+      else {
+        if (event.ingToReplace != null) {
+          state.app.updateMeal(event.ingToReplace as Meal, event.ingredient as Meal);
+        } else {
+          state.app.meals[event.ingredient.name] = event.ingredient as Meal;
+        }
       }
 
-      emit(IngPageSuccessfulCreation.fromState(
-          IngredientsPageState.initial(state.app, include: state.includeSubRecipes, backRef: state.backReference),
-          event.ingredient
-      ));
+      emit(
+          IngPageSuccessfulCreation.fromState(
+            state.isIngredient() ?
+            IngredientsPageState.initialIngredient(state.app,
+              include: state.includeSubRecipes, backRef: state.backReference) :
+            IngredientsPageState.initialMeal(state.app,
+                include: state.includeSubRecipes, backRef: state.backReference) ,
+            event.ingredient
+        )
+      );
       // saveApp(state.app);
     });
-    on<IngPageIncludeSubRecipes>((event, emit){
+    on<IngPageIncludeSubRecipes>((event, emit) {
       state.includeSubRecipes = event.toggle;
       add(UpdateSearchIng(state.currentText));
     });
-    on<IngDuplicate>((event, emit){
-      if (event.ingredient is Ingredient){
-        app.addBaseIngredient((event.ingredient as Ingredient).copyWithIngredient(name: '${event.ingredient.name} (duplicate)'));
-      }
-      else{
-        app.addMeal((event.ingredient as Meal).copyWithMeal(name: '${event.ingredient.name} (duplicate)'));
+    on<IngDuplicate>((event, emit) {
+      if (event.ingredient is Ingredient) {
+        app.addBaseIngredient((event.ingredient as Ingredient)
+            .copyWithIngredient(name: '${event.ingredient.name} (duplicate)'));
+      } else {
+        app.addMeal((event.ingredient as Meal)
+            .copyWithMeal(name: '${event.ingredient.name} (duplicate)'));
       }
       add(UpdateSearchIng(state.currentText));
-
     });
-    on<IngDelete>((event, emit){
-      if (event.ingredient is Ingredient){
+    on<IngDelete>((event, emit) {
+      if (event.ingredient is Ingredient) {
         app.deleteBaseIngredient(event.ingredient as Ingredient);
-      }
-      else{
+      } else {
         app.deleteMeal(event.ingredient as Meal);
       }
       add(UpdateSearchIng(state.currentText));

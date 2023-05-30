@@ -3,8 +3,8 @@ part of 'ingredients_page_bloc.dart';
 abstract class IngredientsPageEvent {}
 
 class OnSubmitSolo extends IngredientsPageEvent {
-  Ingredient ingredient;
-  Ingredient? ingToReplace;
+  MealComponentFactory ingredient;
+  MealComponentFactory? ingToReplace;
 
   OnSubmitSolo(this.ingredient, {this.ingToReplace});
 }

@@ -77,8 +77,13 @@ class IndexPage extends StatelessWidget {
             ElevatedButton(
               // title: Text('Meals'),
               onPressed: () {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => const MealPage()));
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => BlocProvider(
+                              create: (context) => IngredientsPageBloc(context.read<InitBloc>().state.app!, MCFTypes.meal),
+                              child: const MealPage(),
+                            )));
               },
               child: const Text('Meals'),
               // children: [
@@ -92,9 +97,9 @@ class IndexPage extends StatelessWidget {
                     MaterialPageRoute(
                         settings: const RouteSettings(name: "/IngredientsPage"),
                         builder: (_) => BlocProvider(
-                              create: (context) => IngredientsPageBloc(context.read<InitBloc>().state.app!),
-                              child: IngredientPage()
-                            )));
+                            create: (context) => IngredientsPageBloc(
+                                context.read<InitBloc>().state.app!, MCFTypes.ingredient),
+                            child: IngredientPage())));
               },
               child: const Text('Ingredients'),
               // children: [

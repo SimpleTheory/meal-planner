@@ -6,8 +6,10 @@ class IngredientsPageState {
   List<MealComponentFactory> searchResults;
   String currentText = '';
   bool backReference = false;
-
-  factory IngredientsPageState.initial(App app,
+  MCFTypes type;
+  bool isMeal() => type == MCFTypes.meal;
+  bool isIngredient() => type == MCFTypes.ingredient;
+  factory IngredientsPageState.initialIngredient(App app,
       {bool? include, bool backRef = false}) {
     return IngredientsPageState(
         app: app,
@@ -15,7 +17,20 @@ class IngredientsPageState {
         searchResults: toBool(include)
             ? app.ingredients
             : app.baseIngredients.values.toList(),
-        backReference: backRef);
+        backReference: backRef,
+        type: MCFTypes.ingredient);
+  }
+  factory IngredientsPageState.initialMeal(App app,
+      {bool include=false, bool backRef = false}) {
+    return IngredientsPageState(
+        app: app,
+        includeSubRecipes: include,
+        searchResults: include
+            ? app.meals.values.toList()
+            : app.meals.values.where((element) => !element.isSubRecipe).toList(),
+        backReference: backRef,
+        type: MCFTypes.meal
+    );
   }
 
   factory IngredientsPageState.fromState(IngredientsPageState state) =>
@@ -24,12 +39,15 @@ class IngredientsPageState {
           includeSubRecipes: state.includeSubRecipes,
           searchResults: state.searchResults,
           currentText: state.currentText,
-          backReference: state.backReference);
+          backReference: state.backReference,
+          type: state.type
+      );
 
   IngredientsPageState(
       {required this.app,
       required this.includeSubRecipes,
       required this.searchResults,
+      required this.type,
       String? currentText,
       this.backReference = false}) {
     if (currentText != null) {
@@ -49,28 +67,31 @@ class IngredientsPageState {
         includeSubRecipes: includeSubRecipes_ ?? includeSubRecipes,
         searchResults: searchResults_ ?? List.from(searchResults),
         currentText: currentText_ ?? currentText,
+        type: type,
         backReference: backRef ?? backReference);
   }
 }
 
 class IngPageSuccessfulCreation extends IngredientsPageState {
-  Ingredient ingredient;
+  MealComponentFactory ingredient;
 
   IngPageSuccessfulCreation(
       {required super.app,
       required super.includeSubRecipes,
       required super.searchResults,
       required this.ingredient,
+      required super.type,
       required super.backReference});
 
   factory IngPageSuccessfulCreation.fromState(
-          IngredientsPageState state, Ingredient newIngredient) =>
+          IngredientsPageState state, MealComponentFactory newIngredient) =>
       IngPageSuccessfulCreation(
           app: state.app,
           includeSubRecipes: state.includeSubRecipes,
           searchResults: state.searchResults,
           ingredient: newIngredient,
-          backReference: state.backReference);
+          backReference: state.backReference,
+          type: state.type);
 }
 
 class IngPageApiError extends IngredientsPageState {
@@ -82,7 +103,9 @@ class IngPageApiError extends IngredientsPageState {
       required super.includeSubRecipes,
       required super.searchResults,
       required super.currentText,
-      required super.backReference});
+      required super.backReference,
+      required super.type
+      });
 
   factory IngPageApiError.fromState(
           IngredientsPageState state, String message) =>
@@ -92,7 +115,7 @@ class IngPageApiError extends IngredientsPageState {
           searchResults: state.searchResults,
           message: message,
           currentText: state.currentText,
-          backReference: state.backReference);
+          backReference: state.backReference, type: state.type);
 }
 
 // class IngredientsPageInitial extends IngredientsPageState {}

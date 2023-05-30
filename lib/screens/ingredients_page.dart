@@ -44,7 +44,8 @@ class IngredientPage extends StatelessWidget {
                       border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(30.0)),
                       contentPadding: const EdgeInsets.all(20),
-                      suffixIcon: const Icon(Icons.search)))),
+                      suffixIcon: const Icon(Icons.search))
+              )),
           Flexible(
             child: Padding(
               padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
@@ -128,6 +129,9 @@ class IngredientTile extends StatelessWidget {
                                   value: ingPgBloc)
                             ], child: const CustomIngredientPage())));
               }
+              else if (ing.ingredient is Meal){
+                // TODO Implement case
+              }
               break;
             case PopUpOptions.delete:
               ingPgBloc.add(IngDelete(ingredient));
@@ -140,7 +144,7 @@ class IngredientTile extends StatelessWidget {
       ),
       subtitle: NutrientText(
         nutrients: ingredient.baseNutrient.nutrients,
-        grams: ingredient.baseNutrient.grams,
+        grams: ingredient is Ingredient ? ingredient.baseNutrient.grams : null,
       ),
       // subtitle: Text(
       //     'Serving (${ingredient.baseNutrient.grams}g):  '
@@ -177,8 +181,7 @@ class IngredientTile extends StatelessWidget {
           Navigator.pop(context, ingredient);
         }
         //else if (){}
-        else{
-          if (ingredient is Ingredient){
+        else if (ingredient is Ingredient){
             Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -190,8 +193,20 @@ class IngredientTile extends StatelessWidget {
                           value: ingPgBloc)
                     ], child: const CustomIngredientPage())));
           }
+        else if (ingredient is Meal){
+          // TODO Implement case
+            // Navigator.push(
+            //     context,
+            //     MaterialPageRoute(
+            //         builder: (context) => MultiBlocProvider(providers: [
+            //           BlocProvider(
+            //               create: (context) => CustomIngBloc(
+            //                   ingredient as Ingredient)),
+            //           BlocProvider.value(
+            //               value: ingPgBloc)
+            //         ], child: const CustomIngredientPage())));
+          }
         }
-      },
     );
   }
 }
@@ -414,8 +429,6 @@ AlertDialog confirmIngredient(Ingredient ingredient, BuildContext context,
             const Spacer(),
             ElevatedButton(
                 onPressed: () {
-                  // TODO: Add Bloc Functionality of adding Ingredient to App
-                  // TODO Retrofit to back-references
                   Navigator.of(context)
                       .popUntil(ModalRoute.withName('/IngredientsPage'));
                   (ingPgBloc ?? context.read<IngredientsPageBloc>())

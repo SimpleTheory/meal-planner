@@ -1,32 +1,49 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:nutrition_app/blocs/ingredients_page/ingredients_page_bloc.dart';
+import 'package:nutrition_app/blocs/meal_maker/meal_maker_bloc.dart';
+import 'package:nutrition_app/screens/ingredients_page.dart';
 import 'package:nutrition_app/utils/local_widgets.dart';
 import 'package:nutrition_app/utils/utils.dart';
 import 'package:nutrition_app/domain.dart';
-
-import '../temp_dummy_data.dart';
 import 'meal_maker_page.dart';
 
-final mealList = meals.values.toList();
 
 class MealPage extends StatelessWidget {
   const MealPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final ingPgBloc = context.read<IngredientsPageBloc>();
     return Scaffold(
-      appBar: AppBar(title: const Text('Meals')),
+      appBar: AppBar(
+        title: const Text('Meals'),
+        actions: [BlocBuilder<IngredientsPageBloc, IngredientsPageState>(
+          builder: (context, state) {
+            return Switch(
+                value: state.includeSubRecipes,
+                onChanged: (toggle) {
+                  ingPgBloc.add(IngPageIncludeSubRecipes(toggle));
+                });
+          },
+        )
+        ],
+      ),
       body: Column(
         children: [
           Padding(
               padding: const EdgeInsets.fromLTRB(5, 8, 5, 2.5),
               child: TextField(
-                  decoration: InputDecoration(
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(30.0)
-                      ),
-                      contentPadding: const EdgeInsets.all(20),
-                      suffixIcon: const Icon(Icons.search)
-                  )
+                decoration: InputDecoration(
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(30.0)),
+                    contentPadding: const EdgeInsets.all(20),
+                    suffixIcon: const Icon(Icons.search)
+                ),
+                onChanged: (val) {
+                  ingPgBloc.add(UpdateSearchIng(val));
+                },
               )
           ),
           Flexible(
@@ -34,14 +51,31 @@ class MealPage extends StatelessWidget {
               padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
               child: ListView(
                 children: [
-                  PlusSignTile((context){
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => const MealMakerPage()));
+                  PlusSignTile((_) {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                MultiBlocProvider(
+                                  providers: [
+                                    BlocProvider(create: (context) => MealMakerBloc()),
+                                    BlocProvider.value(value: ingPgBloc)
+                                  ],
+                                  child: const MealMakerPage(),
+                                )
+                        )
+                    );
                   }),
-                  ListView.builder(
-                    itemBuilder: (context, index)=>MealTile(mealList[index]),
-                    itemCount: mealList.length,
-                    shrinkWrap: true,
-                    physics: const ClampingScrollPhysics(),
+                  BlocBuilder<IngredientsPageBloc, IngredientsPageState>(
+                    builder: (context, state) {
+                      return ListView.builder(
+                        itemBuilder: (context, index) =>
+                            IngredientTile(state.searchResults[index]),
+                        itemCount: state.searchResults.length,
+                        shrinkWrap: true,
+                        physics: const ClampingScrollPhysics(),
+                      );
+                    },
                   )
                 ],
               ),
@@ -53,7 +87,7 @@ class MealPage extends StatelessWidget {
   }
 }
 
-class MealPopUpEnumHolder{
+class MealPopUpEnumHolder {
   const MealPopUpEnumHolder(Meal meal, PopUpOptions option);
 }
 
@@ -105,6 +139,7 @@ class MealPopUpEnumHolder{
 
 class MealTile extends StatelessWidget {
   final Meal meal;
+
   const MealTile(this.meal, {Key? key}) : super(key: key);
 
   @override
@@ -112,10 +147,19 @@ class MealTile extends StatelessWidget {
     return ListTile(
       title: Text(meal.name),
       trailing: PopupMenuButton(
-        itemBuilder: (BuildContext context) => [
-          PopupMenuItem(value: MealPopUpEnumHolder(meal, PopUpOptions.edit),child: const Text('Edit'),),
-          PopupMenuItem(value: MealPopUpEnumHolder(meal, PopUpOptions.delete), child: const Text('Delete')),
-          PopupMenuItem(value: MealPopUpEnumHolder(meal, PopUpOptions.duplicate),child: const Text('Duplicate'),),
+        itemBuilder: (BuildContext context) =>
+        [
+          PopupMenuItem(
+            value: MealPopUpEnumHolder(meal, PopUpOptions.edit),
+            child: const Text('Edit'),
+          ),
+          PopupMenuItem(
+              value: MealPopUpEnumHolder(meal, PopUpOptions.delete),
+              child: const Text('Delete')),
+          PopupMenuItem(
+            value: MealPopUpEnumHolder(meal, PopUpOptions.duplicate),
+            child: const Text('Duplicate'),
+          ),
         ],
       ),
       // subtitle: Text(
@@ -149,10 +193,11 @@ class MealTile extends StatelessWidget {
       // ),
       subtitle: NutrientText(nutrients: meal.baseNutrient.nutrients),
       leading: GetImage(meal.photo),
-      onTap: (){},
+      onTap: () {},
     );
   }
 }
 
-
-
+/// Things not working
+/// Meal's nutrient not updating
+/// MCTile is totally refreshed after build

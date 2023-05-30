@@ -19,11 +19,15 @@ class CustomIngredientPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: BlocConsumer<CustomIngBloc, CustomIngState>(
-        listener: (context, state){
-          if (state is CustomIngSuccess){
-            Navigator.of(context).popUntil(ModalRoute.withName('/IngredientsPage'));
-            context.read<IngredientsPageBloc>().add(OnSubmitSolo(state.ingredient));
+      appBar: AppBar(
+          title: BlocConsumer<CustomIngBloc, CustomIngState>(
+        listener: (context, state) {
+          if (state is CustomIngSuccess) {
+            Navigator.of(context)
+                .popUntil(ModalRoute.withName('/IngredientsPage'));
+            context
+                .read<IngredientsPageBloc>()
+                .add(OnSubmitSolo(state.ingredient));
           }
         },
         builder: (context, state) {
@@ -81,8 +85,9 @@ class CustomIngredientPage extends StatelessWidget {
                             ),
                           ),
                         ));
-              }, child: BlocBuilder<CustomIngBloc, CustomIngState>(
-                builder: (context, state) {
+              },
+                child: BlocBuilder<CustomIngBloc, CustomIngState>(
+                  builder: (context, state) {
                   return GetImage(
                     state.image,
                     width: 200,
@@ -111,7 +116,8 @@ class CustomIngredientPage extends StatelessWidget {
                       inputFormatters: <TextInputFormatter>[
                         FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*'))
                       ],
-                      keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                      keyboardType:
+                          const TextInputType.numberWithOptions(decimal: true),
                       initialValue: state.baseGrams,
                     );
                   },
@@ -161,7 +167,7 @@ class CustomIngredientPage extends StatelessWidget {
                         return ListView.builder(
                           physics: const ClampingScrollPhysics(),
                           shrinkWrap: true,
-                          itemBuilder: (_, index) => AltMeasureFormField(index),
+                          itemBuilder: (_, index) => AltMeasureFormFieldCI(index),
                           itemCount: state.altMeasures.length,
                         );
                       },
@@ -243,10 +249,11 @@ class NutrientFormField extends StatelessWidget {
                 child: TextFormField(
                   decoration: InputDecoration(
                       contentPadding: const EdgeInsets.fromLTRB(10, 0, 0, 0),
-                      errorText: invalidateNum(state.nutrientFields[nut.name]!) &&
-                          state is CustomIngErrors
-                          ? 'Required Field'
-                          : null,
+                      errorText:
+                          invalidateNum(state.nutrientFields[nut.name]!) &&
+                                  state is CustomIngErrors
+                              ? 'Required Field'
+                              : null,
                       // hintText: '0',
                       labelText: nut.unit),
                   inputFormatters: <TextInputFormatter>[
@@ -257,9 +264,10 @@ class NutrientFormField extends StatelessWidget {
                       const TextInputType.numberWithOptions(decimal: true),
                   initialValue: state.nutrientFields[nut.name],
                   onChanged: (val) {
-                    context.read<CustomIngBloc>().add(ChangeNutrientValueCI(nut, val));
+                    context
+                        .read<CustomIngBloc>()
+                        .add(ChangeNutrientValueCI(nut, val));
                   },
-
                 ),
               ),
             );
@@ -270,10 +278,10 @@ class NutrientFormField extends StatelessWidget {
   }
 }
 
-class AltMeasureFormField extends StatelessWidget {
+class AltMeasureFormFieldCI extends StatelessWidget {
   final int index;
 
-  const AltMeasureFormField(this.index, {Key? key}) : super(key: key);
+  const AltMeasureFormFieldCI(this.index, {Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
