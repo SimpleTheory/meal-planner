@@ -1,3 +1,13 @@
-Make Diet Details Bloc
+Make Diet Details Bloc: (Creation)
+    - shopping list
+    - everything that has to do with days
 
-Implement Image Picker
+Things not working:
+- LOCAL IMAGE PERSISTENCE NOT WORKING ON Emulator!
+
+Questions:
+-  MCTile nutrient re total or re per serving?
+
+Known things/Qs for late:
+- Overwriting
+- Saving

@@ -368,10 +368,3 @@ const TextStyle servingWeightTextStyle = TextStyle(
   // fontSize: ,
 );
 
-/// Things not working
-/// LOCAL IMAGE PERSISTENCE NOT WORKING!
-/// Test functionality
-/// Create MM from editing
-/// Add a total meal grams that displays the total weight of the recipe
-/// MCTile nutrient re total or re per serving?
-///
