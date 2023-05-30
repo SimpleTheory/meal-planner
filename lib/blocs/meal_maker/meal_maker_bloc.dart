@@ -24,6 +24,7 @@ class MealMakerBloc extends Bloc<MealMakerEvent, MealMakerState> {
     });
     on<AddMC>((event, emit){
       if(state.mealComponents.contains(event.mc)){return;}
+      if(state.mealComponents.map((e) => e.reference).contains(state.refIngredient)){return;}
       final copy = List<MealComponent>.from(state.mealComponents);
       copy.add(event.mc);
       emit(state.copyWith(mealComponents: copy));
