@@ -2,6 +2,7 @@ Make Diet Details Bloc: (Creation)
     (- get lazy/busy friends to contribute their assets)
 
 Things not working:
+-  on first load after factory reset shopping list is empty (reset and check with breakpoints)
 -  if one more image gets a HTTP exception closed error I think I'm going to blow a casket
    • if local/(internet) image not found default to back up instead of erroring.
    • cache the images with https://pub.dev/packages/cached_network_image perhaps,
