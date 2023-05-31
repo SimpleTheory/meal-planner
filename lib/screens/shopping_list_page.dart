@@ -1,8 +1,9 @@
 import 'package:drag_and_drop_lists/drag_and_drop_lists.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:nutrition_app/blocs/micro_blocs/shopping_list_bloc.dart';
 import 'package:nutrition_app/utils/local_widgets.dart';
 import 'package:nutrition_app/utils/utils.dart';
-import '../temp_dummy_data.dart';
 import 'package:nutrition_app/domain.dart';
 
 // // <editor-fold desc="Horz Example">
@@ -146,79 +147,187 @@ import 'package:nutrition_app/domain.dart';
 
 // <editor-fold desc="Attempt">
 
+class StfulAttempt extends StatefulWidget {
+  const StfulAttempt({Key? key}) : super(key: key);
+
+  @override
+  State<StfulAttempt> createState() => _StfulAttemptState();
+}
+
+class _StfulAttemptState extends State<StfulAttempt> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Shopping List'),
+      ),
+      drawer: DietDrawer(context.read<ShoppingListBloc>().state.diet),
+      body: BlocBuilder<ShoppingListBloc, ShoppingListState>(
+        builder: (context, state) {
+          print('rebuild');
+          print(state.shoppingList);
+          return DragAndDropLists(
+            children: state.shoppingList
+                .map((entry) => entryList(entry, context))
+                .toList(),
+            onItemReorder: (int oldItemIndex, int oldListIndex,
+                int newItemIndex, int newListIndex) {
+              context.read<ShoppingListBloc>().add(ReIndexItem(
+                  oldItemIndex: oldItemIndex,
+                  oldListIndex: oldListIndex,
+                  newItemIndex: newItemIndex,
+                  newListIndex: newListIndex));
+              setState(() {});
+            },
+            onListReorder: (int oldListIndex, int newListIndex) {
+              context
+                  .read<ShoppingListBloc>()
+                  .add(ReIndexList(oldListIndex, newListIndex));
+              setState(() {});
+            },
+            // axis: Axis.horizontal,
+            listWidth: 150,
+            listDraggingWidth: 150,
+            listDecoration: BoxDecoration(
+                color: Theme.of(context).primaryColor,
+                borderRadius: const BorderRadius.all(Radius.circular(7.0)),
+                boxShadow: const <BoxShadow>[
+                  BoxShadow(
+                    color: Colors.black45,
+                    spreadRadius: 3.0,
+                    blurRadius: 6.0,
+                    offset: Offset(2, 3),
+                  ),
+                ]),
+            listPadding: const EdgeInsets.all(8.0),
+          );
+        },
+      ),
+      //   body: InteractiveViewer(
+      //     panEnabled: false,
+      //     minScale: .001,
+      //     maxScale: 2,
+      //     boundaryMargin: const EdgeInsets.all(80),
+      //     child: DragAndDropLists(
+      //       children: diet.shoppingList.entries.map((entry) => entryList(entry, context)).toList(),
+      //       onItemReorder: (int oldItemIndex, int oldListIndex, int newItemIndex, int newListIndex) {
+      //           // var movedItem = _lists[oldListIndex].children.removeAt(oldItemIndex);
+      //           // _lists[newListIndex].children.insert(newItemIndex, movedItem);
+      //       },
+      //       onListReorder: (int oldListIndex, int newListIndex) {
+      //         // var movedList = _lists.removeAt(oldListIndex);
+      //         // _lists.insert(newListIndex, movedList);
+      // },
+      //       axis: Axis.horizontal,
+      //       listWidth: 150,
+      //       listDraggingWidth: 150,
+      //       listDecoration: BoxDecoration(
+      //         color: Theme.of(context).primaryColor,
+      //         borderRadius: const BorderRadius.all(Radius.circular(7.0)),
+      //         boxShadow: const <BoxShadow>[
+      //           BoxShadow(
+      //             color: Colors.black45,
+      //             spreadRadius: 3.0,
+      //             blurRadius: 6.0,
+      //             offset: Offset(2, 3),
+      //           ),
+      //         ]
+      //       ),
+      //       listPadding: const EdgeInsets.all(8.0),
+      //     ),
+      //   )
+    );
+  }
+}
+
+
 class ShoppingListPage extends StatelessWidget {
   const ShoppingListPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Shopping List'),),
-      drawer: DietDrawer(diet),
-    body: DragAndDropLists(
-      children: diet.shoppingList.entries.map((entry) => entryList(entry, context)).toList(),
-      onItemReorder: (int oldItemIndex, int oldListIndex, int newItemIndex, int newListIndex) {
-        // var movedItem = _lists[oldListIndex].children.removeAt(oldItemIndex);
-        // _lists[newListIndex].children.insert(newItemIndex, movedItem);
-      },
-      onListReorder: (int oldListIndex, int newListIndex) {
-        // var movedList = _lists.removeAt(oldListIndex);
-        // _lists.insert(newListIndex, movedList);
-      },
-      // axis: Axis.horizontal,
-      listWidth: 150,
-      listDraggingWidth: 150,
-      listDecoration: BoxDecoration(
-          color: Theme.of(context).primaryColor,
-          borderRadius: const BorderRadius.all(Radius.circular(7.0)),
-          boxShadow: const <BoxShadow>[
-            BoxShadow(
-              color: Colors.black45,
-              spreadRadius: 3.0,
-              blurRadius: 6.0,
-              offset: Offset(2, 3),
-            ),
-          ]
+      appBar: AppBar(
+        title: const Text('Shopping List'),
       ),
-      listPadding: const EdgeInsets.all(8.0),
-    ),
-    //   body: InteractiveViewer(
-    //     panEnabled: false,
-    //     minScale: .001,
-    //     maxScale: 2,
-    //     boundaryMargin: const EdgeInsets.all(80),
-    //     child: DragAndDropLists(
-    //       children: diet.shoppingList.entries.map((entry) => entryList(entry, context)).toList(),
-    //       onItemReorder: (int oldItemIndex, int oldListIndex, int newItemIndex, int newListIndex) {
-    //           // var movedItem = _lists[oldListIndex].children.removeAt(oldItemIndex);
-    //           // _lists[newListIndex].children.insert(newItemIndex, movedItem);
-    //       },
-    //       onListReorder: (int oldListIndex, int newListIndex) {
-    //         // var movedList = _lists.removeAt(oldListIndex);
-    //         // _lists.insert(newListIndex, movedList);
-    // },
-    //       axis: Axis.horizontal,
-    //       listWidth: 150,
-    //       listDraggingWidth: 150,
-    //       listDecoration: BoxDecoration(
-    //         color: Theme.of(context).primaryColor,
-    //         borderRadius: const BorderRadius.all(Radius.circular(7.0)),
-    //         boxShadow: const <BoxShadow>[
-    //           BoxShadow(
-    //             color: Colors.black45,
-    //             spreadRadius: 3.0,
-    //             blurRadius: 6.0,
-    //             offset: Offset(2, 3),
-    //           ),
-    //         ]
-    //       ),
-    //       listPadding: const EdgeInsets.all(8.0),
-    //     ),
-    //   )
+      drawer: DietDrawer(context.read<ShoppingListBloc>().state.diet),
+      body: BlocBuilder<ShoppingListBloc, ShoppingListState>(
+        builder: (context, state) {
+          print('rebuild');
+          return DragAndDropLists(
+            children: state.shoppingList
+                .map((entry) => entryList(entry, context))
+                .toList(),
+            onItemReorder: (int oldItemIndex, int oldListIndex,
+                int newItemIndex, int newListIndex) {
+              context.read<ShoppingListBloc>().add(ReIndexItem(
+                  oldItemIndex: oldItemIndex,
+                  oldListIndex: oldListIndex,
+                  newItemIndex: newItemIndex,
+                  newListIndex: newListIndex));
+            },
+            onListReorder: (int oldListIndex, int newListIndex) {
+              context
+                  .read<ShoppingListBloc>()
+                  .add(ReIndexList(oldListIndex, newListIndex));
+            },
+            // axis: Axis.horizontal,
+            listWidth: 150,
+            listDraggingWidth: 150,
+            listDecoration: BoxDecoration(
+                color: Theme.of(context).primaryColor,
+                borderRadius: const BorderRadius.all(Radius.circular(7.0)),
+                boxShadow: const <BoxShadow>[
+                  BoxShadow(
+                    color: Colors.black45,
+                    spreadRadius: 3.0,
+                    blurRadius: 6.0,
+                    offset: Offset(2, 3),
+                  ),
+                ]),
+            listPadding: const EdgeInsets.all(8.0),
+          );
+        },
+      ),
+      //   body: InteractiveViewer(
+      //     panEnabled: false,
+      //     minScale: .001,
+      //     maxScale: 2,
+      //     boundaryMargin: const EdgeInsets.all(80),
+      //     child: DragAndDropLists(
+      //       children: diet.shoppingList.entries.map((entry) => entryList(entry, context)).toList(),
+      //       onItemReorder: (int oldItemIndex, int oldListIndex, int newItemIndex, int newListIndex) {
+      //           // var movedItem = _lists[oldListIndex].children.removeAt(oldItemIndex);
+      //           // _lists[newListIndex].children.insert(newItemIndex, movedItem);
+      //       },
+      //       onListReorder: (int oldListIndex, int newListIndex) {
+      //         // var movedList = _lists.removeAt(oldListIndex);
+      //         // _lists.insert(newListIndex, movedList);
+      // },
+      //       axis: Axis.horizontal,
+      //       listWidth: 150,
+      //       listDraggingWidth: 150,
+      //       listDecoration: BoxDecoration(
+      //         color: Theme.of(context).primaryColor,
+      //         borderRadius: const BorderRadius.all(Radius.circular(7.0)),
+      //         boxShadow: const <BoxShadow>[
+      //           BoxShadow(
+      //             color: Colors.black45,
+      //             spreadRadius: 3.0,
+      //             blurRadius: 6.0,
+      //             offset: Offset(2, 3),
+      //           ),
+      //         ]
+      //       ),
+      //       listPadding: const EdgeInsets.all(8.0),
+      //     ),
+      //   )
     );
   }
 }
 
-DragAndDropList entryList(MapEntry<String, List<MealComponent>> entry, BuildContext context){
+DragAndDropList entryList(
+    MapEntry<String, List<MealComponent>> entry, BuildContext context) {
   return DragAndDropList(
     header: Row(
       children: <Widget>[
@@ -268,25 +377,28 @@ DragAndDropList entryList(MapEntry<String, List<MealComponent>> entry, BuildCont
     footer: const Divider(
       color: Colors.green,
       height: 1.5,
-      thickness: 1.5,),
+      thickness: 1.5,
+    ),
     children: entry.value.map((e) => buildItem(e)).toList(),
   );
 }
-DragAndDropItem buildItem(MealComponent data) =>
-    DragAndDropItem(
-        child: ListTile(
-            title: Text(data.name),
-            subtitle: Text('${data.grams}g', style: const TextStyle(fontStyle: FontStyle.italic),),
-            leading: GetImage(data.reference.photo),
 
-            // shape: const BeveledRectangleBorder(
-            //     side: BorderSide(
-            //         color: Color.fromRGBO(150, 150, 150, 80),
-            //         width: 1
-            //     )
-            // ),
-        )
-    );
+DragAndDropItem buildItem(MealComponent data) => DragAndDropItem(
+        child: ListTile(
+      title: Text(data.name),
+      subtitle: Text(
+        '${data.grams}g',
+        style: const TextStyle(fontStyle: FontStyle.italic),
+      ),
+      leading: GetImage(data.reference.photo),
+
+      // shape: const BeveledRectangleBorder(
+      //     side: BorderSide(
+      //         color: Color.fromRGBO(150, 150, 150, 80),
+      //         width: 1
+      //     )
+      // ),
+    ));
 // </editor-fold>
 
 /// DragAndDropLists

@@ -99,7 +99,10 @@ class MealMakerState {
         .where((element) => element.key != '')
         .map((e) => MapEntry<String, num>(e.key, fixDecimal(e.value)!)));
     Uri? finalImage;
-    if (image!.scheme == 'file') {
+    if (image == null){
+      // pass (needed to not trigger next else if)
+    }
+    else if (image!.scheme == 'file') {
       finalImage = await saveImage(image!.path);
     } else {
       finalImage = image;

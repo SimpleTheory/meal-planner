@@ -269,8 +269,8 @@ class Diet {
     }
     else{
       days.insert(index, duplicate);
-      refreshDays();
     }
+    refreshDays();
   }
 
   List<MealComponent> initShoppingList() {
@@ -299,30 +299,46 @@ class Diet {
       currentShoppingDummy
           .addAll({for (MealComponent ing in keyList.value) ing: keyList.key});
     }
-    Map<String, MealComponent> namesDummy = {
-      for (MealComponent meal in currentShoppingDummy.keys) meal.name: meal
-    };
+    final shoppingDummyForNames = currentShoppingDummy.map((key, value) => MapEntry(key.name, value));
+    // Map<String, MealComponent> namesDummy = {
+    //   for (MealComponent meal in currentShoppingDummy.keys) meal.name: meal
+    // };
+    shoppingList = shoppingList.map((key, value) => MapEntry(key, <MealComponent>[]));
+
     for (MealComponent mealComponent in initShoppingList()) {
+      final String? itemWithChangedWeightCategory = shoppingDummyForNames[mealComponent.name];
+
+      // Weight is the same
       if (currentShoppingDummy.keys.contains(mealComponent)) {
-        continue;
-      } else if (namesDummy.containsKey(mealComponent.name)) {
-        final temp = currentShoppingDummy[namesDummy[mealComponent.name]];
-        currentShoppingDummy.remove(namesDummy[mealComponent.name]);
-        currentShoppingDummy[mealComponent] = temp!;
-      } else {
-        currentShoppingDummy[mealComponent] = 'Good';
+        shoppingList[currentShoppingDummy[mealComponent]]?.add(mealComponent);
+        // continue;
+      }
+
+      // Item is there but the weight changed
+      else if (itemWithChangedWeightCategory != null) {
+        shoppingList[itemWithChangedWeightCategory]?.add(mealComponent);
+        // final temp = currentShoppingDummy[namesDummy[mealComponent.name]];
+        // currentShoppingDummy.remove(namesDummy[mealComponent.name]);
+        // currentShoppingDummy[mealComponent] = temp!;
+      }
+
+      // Item didn't exist before
+      else {
+        shoppingList['Good']?.add(mealComponent);
+        // currentShoppingDummy[mealComponent] = 'Good';
       }
     }
-    shoppingList = {
-      'Good': [],
-      'Running Low': [],
-      'Out of Stock': [],
-      'On the Way': []
-    };
-    for (MapEntry<MealComponent, String> entry
-        in currentShoppingDummy.entries) {
-      shoppingList[entry.value]?.add(entry.key);
-    }
+    // shoppingList = {
+    //   'Good': [],
+    //   'Running Low': [],
+    //   'Out of Stock': [],
+    //   'On the Way': []
+    // };
+
+    // for (MapEntry<MealComponent, String> entry
+    //     in currentShoppingDummy.entries) {
+    //   shoppingList[entry.value]?.add(entry.key);
+    // }
   }
 
   // <editor-fold desc="Dataclass Section">
