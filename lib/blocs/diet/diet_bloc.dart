@@ -42,11 +42,16 @@ class DietBloc extends Bloc<DietEvent, DietState> {
     
     on<DuplicateDay>((event, emit){
       state.diet.duplicateDay(event.dayIndex);
+      emit(DuplicateDayState(state.diet));
     });
     
     on<DeleteDay>((event, emit){
       state.diet.removeDay(event.day);
+      emit(DeleteDayState(state.diet));
     });
-    
+    on<DuplicateMealInDay>((event, emit){
+      event.day.meals.add(event.meal);
+      emit(AddMealToDayState(state.diet, event.day));
+    });
   }
 }

@@ -354,7 +354,7 @@ extension ListReIndex<T> on List<T> {
     while (new_ < 0){new_+=length;}
     final item = this[old];
     final toModfiy = inPlace ? this : List<T>.from(this);
-    toModfiy.remove(old);
+    toModfiy.removeAt(old);
     if (safe && new_ >= length){
       toModfiy.add(item);
       return toModfiy;

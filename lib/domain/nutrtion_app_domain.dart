@@ -252,13 +252,13 @@ class Diet {
   }
 
   void refreshDays(){
-    for (ari.EnumListItem<Day> index_day in ari.enumerateList(days)){
-      index_day.value.name = 'Day ${index_day.i + 1}';
+    for (int i in ari.range(days.length)){
+      days[i].name = (i + 1).toString();
     }
   }
 
   void reorderDay(int old, int new_){
-    days.reIndex(old, new_, inPlace: true);
+    days = days.reIndex(old, new_);
     refreshDays();
   }
 
@@ -269,8 +269,8 @@ class Diet {
     }
     else{
       days.insert(index, duplicate);
+      refreshDays();
     }
-    refreshDays();
   }
 
   List<MealComponent> initShoppingList() {
@@ -415,7 +415,7 @@ class Day {
   Nutrients get nutrients => meals.isEmpty ? Nutrients.zero() : Nutrients.sum(meals.map((e) => e.nutrients));
 
   void addDayMeal(Meal meal) {
-    meals.add(meal.toMealComponent('servings', 1, meal));
+    meals.add(meal.toMealComponent('serving', 1, meal));
   }
 
   void deleteDayMeal(int index) {

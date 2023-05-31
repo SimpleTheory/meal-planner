@@ -12,6 +12,11 @@ class AddMealToDay extends DietEvent{
 
   AddMealToDay(this.meal, this.day);
 }
+class DuplicateMealInDay extends DietEvent{
+  final MealComponent meal;
+  final Day day;
+  DuplicateMealInDay(this.meal, this.day);
+}
 class MealUpdateGrams extends DietEvent{
   final int index;
   final Day day;

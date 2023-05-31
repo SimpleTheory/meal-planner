@@ -71,11 +71,12 @@ class NutrientText extends StatelessWidget {
   late final String? initText;
   final TextStyle? style;
 
-  NutrientText({required this.nutrients,
-    this.grams,
-    String? initText,
-    this.style,
-    Key? key})
+  NutrientText(
+      {required this.nutrients,
+      this.grams,
+      String? initText,
+      this.style,
+      Key? key})
       : super(key: key) {
     final serving = grams == null ? '' : ' (${grams}g)';
     this.initText = initText ?? 'Serving$serving:  ';
@@ -85,13 +86,13 @@ class NutrientText extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(
       '$initText'
-          "${nutrients.calories.value.round()}\u{1F525}  "
-          '${nutrients.carbohydrate.value.round()}\u{1F35E}  '
-          '${nutrients.protein.value.round()}\u{1F969}  '
+      "${nutrients.calories.value.round()}\u{1F525}  "
+      '${nutrients.carbohydrate.value.round()}\u{1F35E}  '
+      '${nutrients.protein.value.round()}\u{1F969}  '
       // '${meal.baseNutrient.nutrients.unsaturatedFat.value.round()}\u{1FAD2}  '
-          '${nutrients.unsaturatedFat.value.round()}$olive  '
+      '${nutrients.unsaturatedFat.value.round()}$olive  '
       // '${meal.baseNutrient.nutrients.saturatedFat.value.round()}\u{1F9C8}',
-          '${nutrients.saturatedFat.value.round()}$butter',
+      '${nutrients.saturatedFat.value.round()}$butter',
       style: style,
     );
   }
@@ -151,7 +152,7 @@ class _DayStyleNutrientDisplayState extends State<DayStyleNutrientDisplay> {
     final trackedNuts = widget.dris.comparator(widget.nutrients);
     for (MapEntry<String, List> nut in trackedNuts.entries) {
       final color =
-      nut.value[2].startsWith(RegExp(r'[+-]')) ? Colors.red : Colors.green;
+          nut.value[2].startsWith(RegExp(r'[+-]')) ? Colors.red : Colors.green;
       nutWidgets.add(Padding(
         padding: const EdgeInsets.fromLTRB(16, 0, 0, 0),
         child: Column(children: [
@@ -182,6 +183,7 @@ class _DayStyleNutrientDisplayState extends State<DayStyleNutrientDisplay> {
     );
   }
 }
+
 // TODO ADD DRIS TRACKING CAPACITY TO MEAL NUT
 Widget mealStyleNutrientDisplay(Nutrients nutrients) {
   List<Widget> nutWidgets = [];
@@ -227,7 +229,7 @@ class _MealStyleNutrientDisplayState extends State<MealStyleNutrientDisplay> {
     // TODO: implement initState
 
     for (MapEntry<String, dynamic> nut
-    in widget.nutrients.attributes__.entries) {
+        in widget.nutrients.attributes__.entries) {
       nutWidgets.add(Padding(
         padding: const EdgeInsets.fromLTRB(16, 0, 0, 0),
         child: Column(children: [
@@ -282,9 +284,9 @@ class DietDrawer extends StatelessWidget {
             margin: const EdgeInsets.all(0),
             child: Center(
                 child: Text(
-                  diet.name,
-                  style: const TextStyle(fontSize: 40),
-                )),
+              diet.name,
+              style: const TextStyle(fontSize: 40),
+            )),
           ),
           ListTile(
             title: const Text('Days'),
@@ -298,9 +300,9 @@ class DietDrawer extends StatelessWidget {
             onTap: () {
               Navigator.pushReplacement(context,
                   MaterialPageRoute(builder: (context) {
-                    // TODO RUN A SHOPPING LIST UPDATE BEFORE NAVIGATION WITH BLOC
-                    return const ShoppingListPage();
-                  }));
+                // TODO RUN A SHOPPING LIST UPDATE BEFORE NAVIGATION WITH BLOC
+                return const ShoppingListPage();
+              }));
             },
           ),
           ListTile(
@@ -330,8 +332,8 @@ final List<Nutrient> nutList = List<Nutrient>.from(zeroNut.attributes__.values);
 /// Alert Dialogue to prompt user for a string
 AlertDialog nameAThing(BuildContext context,
     {required String title,
-      String? labelText,
-      required Function(BuildContext context, String inputValue) onSubmit}) {
+    String? labelText,
+    required Function(BuildContext context, String inputValue) onSubmit}) {
   TextEditingController controller = TextEditingController();
   return AlertDialog(
     title: Text(title),
@@ -429,8 +431,7 @@ class MealComponentTile extends StatelessWidget {
               icon: const Icon(Icons.info_outline),
             ),
         PopupMenuButton(
-          itemBuilder: (BuildContext context) =>
-          [
+          itemBuilder: (BuildContext context) => [
             PopupMenuItem(
               value: MealComponentPopUpEnumHolder(meal, PopUpOptions.edit),
               child: const Text('Edit'),
@@ -513,19 +514,22 @@ class MealComponentTile extends StatelessWidget {
 }
 
 class MCTile extends StatefulWidget {
-  final Function(MealComponent meal, num grams, String servingValue) onGramsChange;
-  final Function(MealComponent meal) onEdit;
+  final Function(MealComponent meal, num grams, String servingValue)
+      onGramsChange;
+  final Function(MealComponent meal)? onEdit;
   final Function(MealComponent meal) onDelete;
+  final Function(MealComponent meal)? onDuplicate;
   final MealComponent meal;
   final expansionController = ExpansionTileController();
 
-
   MCTile(this.meal,
       {Key? key,
-        required this.onGramsChange,
-        required this.onEdit,
-        required this.onDelete})
+      required this.onGramsChange,
+      this.onEdit,
+      required this.onDelete,
+      this.onDuplicate})
       : super(key: key);
+
   // String servingValue = 'grams';
 
   @override
@@ -557,11 +561,10 @@ class _MCTileState extends State<MCTile> {
               icon: const Icon(Icons.info_outline),
             ),
         PopupMenuButton(
-          itemBuilder: (BuildContext context) =>
-          [
+          itemBuilder: (BuildContext context) => [
             PopupMenuItem(
               value:
-              MealComponentPopUpEnumHolder(widget.meal, PopUpOptions.edit),
+                  MealComponentPopUpEnumHolder(widget.meal, PopUpOptions.edit),
               child: const Text('Edit'),
             ),
             PopupMenuItem(
@@ -577,13 +580,17 @@ class _MCTileState extends State<MCTile> {
           onSelected: (val) {
             switch (val.popUpOption) {
               case PopUpOptions.edit:
-              // TODO: Handle this case.
+                if (widget.onEdit != null) {
+                  widget.onEdit!(val.mealComponent);
+                }
                 break;
               case PopUpOptions.delete:
                 widget.onDelete(val.mealComponent);
                 break;
               case PopUpOptions.duplicate:
-              // TODO: Handle this case.
+                if (widget.onDuplicate != null) {
+                  widget.onDuplicate!(val.mealComponent);
+                }
                 break;
             }
           },
@@ -656,9 +663,9 @@ class _MCTileState extends State<MCTile> {
           ],
           keyboardType: const TextInputType.numberWithOptions(decimal: true),
           controller: textController,
-          validator: (val) =>
-          val == null || val.isEmpty || val == '.'
-              ? 'Required Field' : null,
+          validator: (val) => val == null || val.isEmpty || val == '.'
+              ? 'Required Field'
+              : null,
           onChanged: (valString) {
             num val = fixDecimal(valString) ?? 0;
             widget.onGramsChange(widget.meal, val, servingValue);

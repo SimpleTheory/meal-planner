@@ -1,6 +1,4 @@
-import 'package:ari_utils/ari_utils.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nutrition_app/blocs/diet/diet_bloc.dart';
 import 'package:nutrition_app/domain.dart';
@@ -58,8 +56,13 @@ class DietPage extends StatelessWidget {
               builder: (context, state) {
                 return ReorderableListView.builder(
                   itemCount: state.diet.days.length,
-                  itemBuilder: (context, index) =>
-                      DayTile(state.diet.days[index]),
+                  itemBuilder: (context, index) => BlocProvider.value(
+                    value: context.read<DietBloc>(),
+                    key: Key(index.toString()),
+                    child: DayTile(
+                      state.diet.days[index],
+                    ),
+                  ),
                   physics: const ClampingScrollPhysics(),
                   shrinkWrap: true,
                   onReorder: (int old, int new_) {
@@ -111,7 +114,12 @@ class DayTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final dietBloc = context.read<DietBloc>();
     return ExpansionTile(
-      title: Center(child: Text('Day ${day.name}')),
+      title: Center(child: BlocBuilder<DietBloc, DietState>(
+        builder: (context, state) {
+          return Text('Day ${day.name}');
+        },
+        buildWhen: (_, state) => state is ReorderDayState || state is DeleteDayState,
+      )),
       controlAffinity: ListTileControlAffinity.leading,
       subtitle: BlocBuilder<DietBloc, DietState>(
         builder: (context, state) {
@@ -189,15 +197,24 @@ class DayTile extends StatelessWidget {
                       serving: servingValue,
                       value: grams));
                 },
-                onEdit: (MealComponent meal) {},
+                // onEdit: (MealComponent meal) {},
                 onDelete: (MealComponent meal) {
                   dietBloc.add(DeleteMealFromDay(index, day));
                 },
+                onDuplicate: (MealComponent meal){
+                  dietBloc.add(DuplicateMealInDay(meal, day));
+                },
+                key: KeyHolder<Day, int, void, void, void, void>(
+                        value1: day, value2: index)
+                    .key(),
               ),
               itemCount: day.meals.length,
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
               onReorder: (int old, int new_) {
+                if (old == new_) {
+                  return;
+                }
                 dietBloc.add(ReorderMealInDay(day: day, new_: new_, old: old));
               },
             );
