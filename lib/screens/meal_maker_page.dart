@@ -206,7 +206,7 @@ class MealMakerPage extends StatelessWidget {
                             (MealComponent meal, num grams, String serving) {
                           mmbloc.add(UpdateGramsMC(meal, grams, serving));
                         },
-                        onEdit: (MealComponent meal) {},
+                        // onEdit: (MealComponent meal) {},
                         onDelete: (MealComponent meal) {
                           mmbloc.add(DeleteMC(meal));
                         },
