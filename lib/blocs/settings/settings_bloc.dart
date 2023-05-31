@@ -70,5 +70,11 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
       state.settings.darkMode = event.darkMode;
       emit(SettingsStateDarkModeUpdate(state.settings));
     });
+    on<BackupSuccess>((event, emit) {
+      emit(LocalBackUpSuccess(state.settings));
+    });
+    on<BackupFailure>((event, emit) {
+      emit(LocalBackUpFailure(state.settings, event.err));
+    });
   }
 }

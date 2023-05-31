@@ -334,8 +334,7 @@ final List<Nutrient> nutList = List<Nutrient>.from(zeroNut.attributes__.values);
 /// Alert Dialogue to prompt user for a string
 AlertDialog nameAThing(BuildContext context,
     {required String title,
-      String? labelText,
-      required Function(BuildContext context, String inputValue) onSubmit}) {
+      String? labelText}) {
   TextEditingController controller = TextEditingController();
   return AlertDialog(
     title: Text(title),
@@ -357,8 +356,8 @@ AlertDialog nameAThing(BuildContext context,
                   Navigator.pop(context);
                   return;
                 } else {
-                  onSubmit(context, controller.text);
-                  Navigator.pop(context);
+                  // onSubmit(context, controller.text);
+                  Navigator.pop(context, controller.text);
                 }
               },
               child: const Text('submit'))

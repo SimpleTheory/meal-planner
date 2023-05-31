@@ -25,9 +25,18 @@ class SettingsState {
 class SettingsStateDarkModeUpdate extends SettingsState {
   SettingsStateDarkModeUpdate(super.settings);
 }
+
 class SettingsMeasureChange extends SettingsState {
   Measure get measure => settings.measure;
   SettingsMeasureChange(super.settings);
 }
 
+class LocalBackUpSuccess extends SettingsState {
+  LocalBackUpSuccess(super.settings);
+}
+
+class LocalBackUpFailure extends SettingsState {
+  String err;
+  LocalBackUpFailure(super.settings, this.err);
+}
 

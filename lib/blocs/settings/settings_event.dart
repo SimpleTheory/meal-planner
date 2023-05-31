@@ -50,3 +50,8 @@ class DarkModeUpdate extends SettingsEvent {
   final bool darkMode;
   DarkModeUpdate(this.darkMode);
 }
+class BackupSuccess extends SettingsEvent {}
+class BackupFailure extends SettingsEvent {
+  final String err;
+  BackupFailure(this.err);
+}

@@ -17,6 +17,7 @@ class IndexPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final indexBloc = context.read<IndexBloc>();
     // Wrap with bloc
     return Scaffold(
       appBar: AppBar(
@@ -42,24 +43,22 @@ class IndexPage extends StatelessWidget {
             ExpansionTile(
               title: const Text('Diets'),
               children: [
-                PlusSignTile((context) {
-                  showDialog(
+                PlusSignTile((_) async {
+                  String? val = await showDialog(
                       context: context,
                       builder: (context) => nameAThing(
                             context,
                             title: 'New Diet Name',
-                            onSubmit:
-                                (BuildContext context, String inputValue) {
-                              context
-                                  .read<IndexBloc>()
-                                  .add(AddDiet(inputValue));
-                            },
                           ));
+                  if (val != null) {
+                    indexBloc.add(AddDiet(val));
+                  }
                 }),
                 BlocConsumer<IndexBloc, IndexState>(
-                  listener: (context, state){
-                    if (state is FailedToLoadDiet){
-                      showErrorMessage(context, 'Failed to load Diet!\n${state.errMessage}');
+                  listener: (context, state) {
+                    if (state is FailedToLoadDiet) {
+                      showErrorMessage(
+                          context, 'Failed to load Diet!\n${state.errMessage}');
                     }
                   },
                   builder: (context, state) {
@@ -86,7 +85,9 @@ class IndexPage extends StatelessWidget {
                     context,
                     MaterialPageRoute(
                         builder: (context) => BlocProvider(
-                              create: (context) => IngredientsPageBloc(context.read<InitBloc>().state.app!, MCFTypes.meal),
+                              create: (context) => IngredientsPageBloc(
+                                  context.read<InitBloc>().state.app!,
+                                  MCFTypes.meal),
                               child: const MealPage(),
                             )));
               },
@@ -103,7 +104,8 @@ class IndexPage extends StatelessWidget {
                         settings: const RouteSettings(name: "/IngredientsPage"),
                         builder: (_) => BlocProvider(
                             create: (context) => IngredientsPageBloc(
-                                context.read<InitBloc>().state.app!, MCFTypes.ingredient),
+                                context.read<InitBloc>().state.app!,
+                                MCFTypes.ingredient),
                             child: IngredientPage())));
               },
               child: const Text('Ingredients'),
@@ -182,6 +184,7 @@ class DietTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final indexBloc = context.read<IndexBloc>();
     return ListTile(
         title: Text(diet.name),
         onTap: () {
@@ -189,18 +192,18 @@ class DietTile extends StatelessWidget {
               context, MaterialPageRoute(builder: (context) => DietPage(diet)));
         },
         trailing: PopupMenuButton(
-          onSelected: (DietPopUpEnumHolder dietPopUpSelection) {
+          onSelected: (DietPopUpEnumHolder dietPopUpSelection) async {
             switch (dietPopUpSelection.popUpOptions) {
               case PopUpOptions.edit:
-                showDialog(
+                String? val = await showDialog(
                     context: context,
-                    builder: (context) => nameAThing(context,
-                            title: 'Rename Diet (from ${diet.name})',
-                            onSubmit: (context, val) {
-                          context
-                              .read<IndexBloc>()
-                              .add(RenameDiet(diet: diet, newName: val));
-                        }));
+                    builder: (context) => nameAThing(
+                          context,
+                          title: 'Rename Diet (from ${diet.name})',
+                        ));
+                if (val != null) {
+                  indexBloc.add(RenameDiet(diet: diet, newName: val));
+                }
                 break;
               case PopUpOptions.delete:
                 showDialog(

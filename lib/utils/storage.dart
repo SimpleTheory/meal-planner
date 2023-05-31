@@ -1,5 +1,8 @@
+import 'dart:io';
 import 'package:hive/hive.dart';
 import 'package:nutrition_app/domain.dart';
+import 'package:lecle_downloads_path_provider/lecle_downloads_path_provider.dart';
+
 
 void saveApp(App app) async {
   final box = await Hive.openBox('master');
@@ -32,4 +35,23 @@ void factoryResetApp() async {
 
   // Close the box
   await box.close();
+}
+
+Future<void> saveAppBackupMobile({String? fileName, required App app}) async {
+  fileName ??= 'nut_app_backup.json';
+  // Get the downloads directory
+  Directory downloadsDirectory = (await DownloadsPath.downloadsDirectory())!;
+  // List<FileSystemEntity> files = downloadsDirectory.listSync();
+  //
+  // List<String> fileNames = files
+  //     .where((entity) => entity is File) // Filter out directories
+  //     .map((entity) => entity.path.split('/').last) // Extract file names
+  //     .toList();
+  // Create a File instance with the desired file name
+  File file = File('${downloadsDirectory.path}/${(fileName)}');
+
+  // Write the file
+  await file.writeAsString(app.toJson());
+
+  print('File saved to ${file.path}');
 }

@@ -2,9 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nutrition_app/blocs/settings/settings_bloc.dart';
-import 'package:nutrition_app/utils/utils.dart';
+import 'package:nutrition_app/utils.dart';
 import 'package:nutrition_app/domain.dart';
-
 import '../blocs/init/init_bloc.dart';
 
 class GeneralSettingsPage extends StatelessWidget {
@@ -30,22 +29,22 @@ class GeneralSettingsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final App app = context.read<InitBloc>().state.app!;
+    final settingsBloc = context.read<SettingsBloc>();
     // Wrap with bloc
     return Scaffold(
         appBar: AppBar(title: const Text('General Settings')),
         // resizeToAvoidBottomInset: false,
         body: BlocListener<SettingsBloc, SettingsState>(
           listener: (context, state) {
-            if (state is SettingsMeasureChange){
-              if (state.measure == Measure.metric){
+            if (state is SettingsMeasureChange) {
+              if (state.measure == Measure.metric) {
                 weightCon.text = state.settings.anthroMetrics.kg.toString();
                 cmCon.text = state.settings.anthroMetrics.cm.toString();
-              }
-              else{
+              } else {
                 weightCon.text = state.settings.anthroMetrics.weight.toString();
                 feetCon.text = state.settings.anthroMetrics.feet.toString();
                 inchesCon.text = state.settings.anthroMetrics.inches.toString();
-
               }
             }
           },
@@ -347,48 +346,84 @@ class GeneralSettingsPage extends StatelessWidget {
                       )
                     ],
                   ),
-                  ElevatedButton(
-                      onPressed: () {
-                        // TODO Local Back Up System
-                        // final today = DateTime.now();
-                        // final fileName = 'meal_planner_${today.year}_${today.month}_${today.day}.json';
-                      },
-                      child: const Text('Save Local Back Up')),
+                  BlocListener<SettingsBloc, SettingsState>(
+                    listener: (context, state) {
+                      if (state is LocalBackUpSuccess){
+                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                          content: Text('A back up of the app has been saved!'),
+                          backgroundColor: Colors.green,
+                        ));
+                      }
+                      if (state is LocalBackUpFailure){
+                        showErrorMessage(context, 'Couldn\'t save backup :(\n${state.err}');
+                      }
+                    },
+                    child: ElevatedButton(
+                        onPressed: () async {
+                          if (isMobile()) {
+                            String? fname = await showDialog(
+                                context: context,
+                                builder: (context) => nameAThing(context,
+                                    title: 'Back Up Name (w/o extension)'));
+                            try {
+                              saveAppBackupMobile(app: app, fileName: fname);
+                              settingsBloc.add(BackupSuccess());
+                            } on Exception catch (e) {
+                              settingsBloc.add(BackupFailure(e.toString()));
+                            }
+                          }
+                        },
+                        child: const Text('Save Local Back Up')),
+                  ),
                   Padding(
                     padding: const EdgeInsets.fromLTRB(0, 80, 0, 0),
                     child: ElevatedButton(
                         onPressed: () {
-                          showDialog(context: context, builder: (context) =>
-                              AlertDialog(
-                                title: const Text('Factory Reset'),
-                                content: const PaddedColumn(
-                                  mainAxisSize: MainAxisSize.min,
-                                  edgeInsets: EdgeInsets.all(12),
-                                  children: [
-                                    Text('Warning you are currently attempting to clear all'
-                                        'data from the app!'),
-                                    Text('If you have no local back ups cancel this and save one. If you don\'t '
-                                        'all data will be irrecoverably lost.'),
-                                    Text('Are you sure you wish to proceed?')
-                                  ],
-                                ),
-                                actions: [
-                                  Row(
-                                    children: [
-                                      Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: ElevatedButton(onPressed: (){Navigator.pop(context);}, child: const Text('Cancel')),
-                                      ),
-                                      const Spacer(),
-                                      Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: ElevatedButton(onPressed: (){context.read<InitBloc>().add(FactoryReset());}, child: const Text('Delete All Data')),
+                          showDialog(
+                              context: context,
+                              builder: (context) => AlertDialog(
+                                    title: const Text('Factory Reset'),
+                                    content: const PaddedColumn(
+                                      mainAxisSize: MainAxisSize.min,
+                                      edgeInsets: EdgeInsets.all(12),
+                                      children: [
+                                        Text(
+                                            'Warning you are currently attempting to clear all'
+                                            'data from the app!'),
+                                        Text(
+                                            'If you have no local back ups cancel this and save one. If you don\'t '
+                                            'all data will be irrecoverably lost.'),
+                                        Text(
+                                            'Are you sure you wish to proceed?')
+                                      ],
+                                    ),
+                                    actions: [
+                                      Row(
+                                        children: [
+                                          Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: ElevatedButton(
+                                                onPressed: () {
+                                                  Navigator.pop(context);
+                                                },
+                                                child: const Text('Cancel')),
+                                          ),
+                                          const Spacer(),
+                                          Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: ElevatedButton(
+                                                onPressed: () {
+                                                  context
+                                                      .read<InitBloc>()
+                                                      .add(FactoryReset());
+                                                },
+                                                child: const Text(
+                                                    'Delete All Data')),
+                                          )
+                                        ],
                                       )
                                     ],
-                                  )
-                                ],
-                              )
-                          );
+                                  ));
                         },
                         child: const Text('Factory Reset App')),
                   ),

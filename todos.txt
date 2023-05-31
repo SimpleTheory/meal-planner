@@ -1,5 +1,4 @@
 Make Diet Details Bloc: (Creation)
-    - save local backup
     (- get lazy/busy friends to contribute their assets)
 
 Things not working:
@@ -14,6 +13,10 @@ Questions:
 Known things/Qs for later:
 - Overwriting
 - Saving
+- Desktop compatibility:
+    • Create copy of project without stupid barcode scanner or kill its bridge
+    • Implement features like local back up and file saving
+    • find what other plugins may inhibit this and refactor
 
 Ideas?:
     ing measure pref for shopping list?
