@@ -1,3 +1,4 @@
+import 'package:ari_utils/ari_utils.dart' as ari;
 import 'package:nutrition_app/mydataclasses/metadata.dart';
 import 'dart:convert';
 import 'package:dataclasses/dataclasses.dart';
@@ -226,12 +227,13 @@ class Diet {
   // TODO persistent shopping list with categories
 
   Nutrients get averageNutrition {
-    if (days.isEmpty){
+    final trueAvg = days.where((element) => element.nutrients != zeroNut);
+    if (trueAvg.isEmpty){
       return Nutrients.zero();
     }
-    final dayNut = days.map((e) => e.nutrients);
+    final dayNut = trueAvg.map((e) => e.nutrients);
     Nutrients sum = Nutrients.sum(dayNut);
-    return sum / dayNut.length;
+    return sum / trueAvg.length;
   }
 
   void createDay() {
@@ -244,8 +246,31 @@ class Diet {
 }
   // For update access by index setter days[index] = newDay;
 
-  void removeDay(int day) {
-    days.removeAt(day);
+  void removeDay(Day day) {
+    days.remove(day);
+    refreshDays();
+  }
+
+  void refreshDays(){
+    for (ari.EnumListItem<Day> index_day in ari.enumerateList(days)){
+      index_day.value.name = 'Day ${index_day.i + 1}';
+    }
+  }
+
+  void reorderDay(int old, int new_){
+    days.reIndex(old, new_, inPlace: true);
+    refreshDays();
+  }
+
+  void duplicateDay(int index){
+    final duplicate = days[index].copyWithDay();
+    if (index >= days.length - 1){
+      days.add(duplicate);
+    }
+    else{
+      days.insert(index, duplicate);
+    }
+    refreshDays();
   }
 
   List<MealComponent> initShoppingList() {
@@ -314,15 +339,17 @@ class Diet {
           'On the Way': []
         };
   }
-  @Generate()
+
   // <Dataclass>
 
   factory Diet.staticConstructor({
     required name,
     required days,
     required dris,
+    Map<String, List<MealComponent>>? shoppingList
+
   }) =>
-      Diet(name: name, days: days, dris: dris);
+      Diet(name: name, days: days, dris: dris, shoppingList: shoppingList);
 
   Map<String, dynamic> get attributes__ =>
       {"name": name, "days": days, "dris": dris, "shoppingList": shoppingList};
@@ -345,10 +372,12 @@ class Diet {
   String toString() =>
       'Diet(name: $name, days: $days, dris: $dris, shoppingList: $shoppingList)';
 
-  Diet copyWithDiet({String? name, List<Day>? days, DRIS? dris}) => Diet(
+  Diet copyWithDiet({String? name, List<Day>? days, DRIS? dris, Map<String, List<MealComponent>>? shoppingList}) => Diet(
       name: name ?? this.name,
       days: days ?? this.days,
-      dris: dris ?? this.dris);
+      dris: dris ?? this.dris,
+      shoppingList: shoppingList ?? this.shoppingList
+  );
 
   String toJson() => jsonEncode(toMap());
   Map<String, dynamic> toMap() =>
@@ -360,10 +389,18 @@ class Diet {
     String name = map['name'];
     List daysTemp = dejsonify(map['days']);
     DRIS dris = dejsonify(map['dris']);
+    Map shoppingTemp = dejsonifyMap(map['shoppingList']);
 
     List<Day> days = List<Day>.from(daysTemp);
+    Map<String, List<MealComponent>> shoppingList =
+      Map<String, List<MealComponent>>.from(
+          shoppingTemp.map((key, value) => MapEntry(key,
+              List<MealComponent>.from(value)
+            )
+          )
+      );
 
-    return Diet(name: name, days: days, dris: dris);
+    return Diet(name: name, days: days, dris: dris, shoppingList: shoppingList);
   }
   // </Dataclass>
 
@@ -525,3 +562,6 @@ class MealComponent {
 
 // </editor-fold>
 }
+
+
+final zeroNut = Nutrients.zero();

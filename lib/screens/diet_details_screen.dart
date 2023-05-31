@@ -4,9 +4,11 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nutrition_app/blocs/diet/diet_bloc.dart';
 import 'package:nutrition_app/domain.dart';
-import 'package:nutrition_app/temp_dummy_data.dart';
 import 'package:nutrition_app/utils/local_widgets.dart';
 import 'package:nutrition_app/utils/utils.dart';
+import '../blocs/ingredients_page/ingredients_page_bloc.dart';
+import '../blocs/init/init_bloc.dart';
+import 'meal_page.dart';
 
 class DietPage extends StatelessWidget {
   final Diet diet;
@@ -32,14 +34,17 @@ class DietPage extends StatelessWidget {
                       padding: EdgeInsets.all(8.0),
                       child: Center(
                           child: Text(
-                            'Average Day Breakdown:',
-                            style: TextStyle(fontSize: 27),
-                          )),
+                        'Average Day Breakdown:',
+                        style: TextStyle(fontSize: 27),
+                      )),
                     ),
                     BlocBuilder<DietBloc, DietState>(
                       builder: (context, state) {
                         return DayStyleNutrientDisplay(
                             state.diet.averageNutrition, state.diet.dris);
+                      },
+                      buildWhen: (pre, curr) {
+                        return affectsNutrition(curr);
                       },
                     ),
                   ],
@@ -51,13 +56,18 @@ class DietPage extends StatelessWidget {
             }),
             BlocBuilder<DietBloc, DietState>(
               builder: (context, state) {
-                return ListView.builder(
+                return ReorderableListView.builder(
                   itemCount: state.diet.days.length,
-                  itemBuilder: (context, index) => DayTile(state.diet.days[index]),
+                  itemBuilder: (context, index) =>
+                      DayTile(state.diet.days[index]),
                   physics: const ClampingScrollPhysics(),
                   shrinkWrap: true,
+                  onReorder: (int old, int new_) {
+                    context.read<DietBloc>().add(ReorderDay(old, new_));
+                  },
                 );
               },
+              buildWhen: (pre, curr) => curr is! DayState,
             )
             // ...diet.days.map((e) => DayTile(e))
           ],
@@ -99,29 +109,101 @@ class DayTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final dietBloc = context.read<DietBloc>();
     return ExpansionTile(
       title: Center(child: Text('Day ${day.name}')),
       controlAffinity: ListTileControlAffinity.leading,
-      subtitle:
-      Center(child: NutrientText(nutrients: day.nutrients, initText: '')),
+      subtitle: BlocBuilder<DietBloc, DietState>(
+        builder: (context, state) {
+          return Center(
+              child: NutrientText(nutrients: day.nutrients, initText: ''));
+        },
+        buildWhen: (pre, curr) =>
+            curr is DayState && (curr as DayState).day == day,
+      ),
       trailing: PopupMenuButton(
         itemBuilder: (BuildContext context) => [
-        PopupMenuItem(value: DayPopUpEnumHolder(day, PopUpOptions.edit),child: const Text('Edit'),),
-        PopupMenuItem(value: DayPopUpEnumHolder(day, PopUpOptions.delete), child: const Text('Delete')),
-        PopupMenuItem(value: DayPopUpEnumHolder(day, PopUpOptions.duplicate),child: const Text('Duplicate'),),
-        ]),
+          PopupMenuItem(
+            value: DayPopUpEnumHolder(day, PopUpOptions.edit),
+            child: const Text('Edit'),
+          ),
+          PopupMenuItem(
+              value: DayPopUpEnumHolder(day, PopUpOptions.delete),
+              child: const Text('Delete')),
+          PopupMenuItem(
+            value: DayPopUpEnumHolder(day, PopUpOptions.duplicate),
+            child: const Text('Duplicate'),
+          ),
+        ],
+        onSelected: (val) {
+          switch (val.popUpOption) {
+            case PopUpOptions.edit:
+              // TODO: Handle this case.
+              break;
+            case PopUpOptions.delete:
+              dietBloc.add(DeleteDay(val.day));
+              break;
+            case PopUpOptions.duplicate:
+              dietBloc.add(DuplicateDay.fromDay(dietBloc.state.diet, val.day));
+              break;
+          }
+        },
+      ),
       children: [
-        DayStyleNutrientDisplay(day.nutrients, diet.dris),
+        BlocBuilder<DietBloc, DietState>(
+          builder: (context, state) {
+            return DayStyleNutrientDisplay(
+                day.nutrients, dietBloc.state.diet.dris);
+          },
+          buildWhen: (pre, curr) =>
+              curr is DayState && (curr as DayState).day == day,
+        ),
         Padding(
           padding: const EdgeInsets.all(8.0),
-          child: PlusSignTile((context) {}),
+          child: PlusSignTile((_) async {
+            final result = await Navigator.push(
+                context,
+                MaterialPageRoute(
+                    settings: const RouteSettings(name: "/IngredientsPage"),
+                    builder: (_) => BlocProvider(
+                        create: (context) => IngredientsPageBloc(
+                            context.read<InitBloc>().state.app!, MCFTypes.meal,
+                            include: true, backRef: true),
+                        child: const MealPage())));
+            if (result is Meal) {
+              // final serving = result.toServing();
+              dietBloc.add(AddMealToDay(result, day));
+            }
+          }),
         ),
-        ListView.builder(
-          itemBuilder: (BuildContext context, int index) =>
-              MealComponentTile(day.meals[index]),
-          itemCount: day.meals.length,
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
+        BlocBuilder<DietBloc, DietState>(
+          builder: (context, state) {
+            return ReorderableListView.builder(
+              itemBuilder: (BuildContext context, int index) => MCTile(
+                day.meals[index],
+                onGramsChange:
+                    (MealComponent meal, num grams, String servingValue) {
+                  dietBloc.add(MealUpdateGrams(
+                      index: index,
+                      day: day,
+                      serving: servingValue,
+                      value: grams));
+                },
+                onEdit: (MealComponent meal) {},
+                onDelete: (MealComponent meal) {
+                  dietBloc.add(DeleteMealFromDay(index, day));
+                },
+              ),
+              itemCount: day.meals.length,
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              onReorder: (int old, int new_) {
+                dietBloc.add(ReorderMealInDay(day: day, new_: new_, old: old));
+              },
+            );
+          },
+          buildWhen: (pre, curr) =>
+              curr is DayState && (curr as DayState).day == day,
         )
         // ...day.meals.map<Widget>((e) => MealComponentTile(e))
       ],
@@ -283,9 +365,7 @@ class DayPopUpEnumHolder {
 //   );
 // }
 
-
-AlertDialog mealNotesPopUp(Meal meal, BuildContext context) =>
-    AlertDialog(
+AlertDialog mealNotesPopUp(Meal meal, BuildContext context) => AlertDialog(
       title: Text(meal.name),
       content: Text(meal.notes),
       actions: [

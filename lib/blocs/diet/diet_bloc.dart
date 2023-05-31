@@ -13,8 +13,40 @@ class DietBloc extends Bloc<DietEvent, DietState> {
     });
     on<AddDay>((event, emit) {
       state.diet.createDay();
-      emit(state.copyWith());
+      emit(AddDayState(state.diet));
     });
-
+    on<AddMealToDay>((event, emit){
+      event.day.addDayMeal(event.meal);
+      emit(AddMealToDayState(state.diet, event.day));
+    });
+    
+    on<MealUpdateGrams>((event, emit){
+      event.day.updateMealServingSize(event.index, event.serving, event.value);
+      emit(MealUpdateGramsState(state.diet, event.day));
+    });
+    
+    on<DeleteMealFromDay>((event, emit){
+      event.day.deleteDayMeal(event.index);
+      emit(DeleteMealFromDayState(state.diet, event.day));
+    });
+    
+    on<ReorderMealInDay>((event, emit){
+      event.day.meals.reIndex(event.old, event.new_, inPlace: true);
+      emit(ReorderMealInDayState(state.diet, event.day));
+    });
+    
+    on<ReorderDay>((event, emit){
+      state.diet.reorderDay(event.old, event.new_);
+      emit(ReorderDayState(state.diet));
+    });
+    
+    on<DuplicateDay>((event, emit){
+      state.diet.duplicateDay(event.dayIndex);
+    });
+    
+    on<DeleteDay>((event, emit){
+      state.diet.removeDay(event.day);
+    });
+    
   }
 }

@@ -324,7 +324,7 @@ class DietDrawer extends StatelessWidget {
   }
 }
 
-final zeroNut = Nutrients.zero();
+// final zeroNut = Nutrients.zero();
 final List<Nutrient> nutList = List<Nutrient>.from(zeroNut.attributes__.values);
 
 /// Alert Dialogue to prompt user for a string
