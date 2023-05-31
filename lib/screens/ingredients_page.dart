@@ -225,7 +225,6 @@ class IngredientTile extends StatelessWidget {
 }
 
 // ListTile ingredientTile(Ingredient ingredient){
-//   // TODO CREATE WAY TO RENDER CUSTOM EMOJIS WITH BRANDON FONT
 //   // print(Ingredient.photo);
 //   return ListTile(
 //     title: Text(ingredient.name),

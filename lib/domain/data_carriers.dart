@@ -1161,14 +1161,6 @@ class DRI {
     }
   }
 
-  /// TODO: Add information about specific nutrients that may otherwise be missed,
-  /// like no UL for natty magnesium but supplements dangerous etc
-  void addNote() {
-    // switch (name){
-    //   case 'Magnesium': note = 'TODO';
-    // }
-  }
-
   factory DRI.driMacro(List<String> instantiationString,
       [AnthroMetrics? anthro]) {
     RegExpMatch? search = macroSearch.firstMatch(instantiationString[1]);
@@ -1299,9 +1291,8 @@ class DRIS {
   late DRI unsaturatedFat;
   late DRI saturatedFat;
 
-  // TODO Create desired percentages as a setter
-  // TODO CREATE MACRO SETTERS
-  // TODO Comparer to nutrients
+  // Create desired percentages as a setter?
+  // CREATE MACRO SETTERS?
   factory DRIS.fromPreparedList(List<DRI> list) {
     Map<String, DRI> map = {for (DRI dri in list) dri.name: dri};
     return DRIS.fromMap(map);
@@ -1390,13 +1381,17 @@ class DRIS {
   }
 
   static Future<DRIS> fromAPI(AnthroMetrics metrics) async {
-    String responseBody = await driCalc(metrics);
-    List<DRI> listDRIS = parseDRI(responseBody, metrics);
-    listDRIS.add(DRI.sugars(metrics));
-    DRIS value = DRIS.fromMap(prepDRIMapFromAPI(listDRIS));
-    value.calories.upperLimit = value.calories.dri;
-    value.calories.dri = value.calories.dri! * .9;
-    return value;
+    try {
+      String responseBody = await driCalc(metrics);
+      List<DRI> listDRIS = parseDRI(responseBody, metrics);
+      listDRIS.add(DRI.sugars(metrics));
+      DRIS value = DRIS.fromMap(prepDRIMapFromAPI(listDRIS));
+      value.calories.upperLimit = value.calories.dri;
+      value.calories.dri = value.calories.dri! * .9;
+      return value;
+    } on Exception catch (e) {
+      rethrow;
+    }
   }
 
   Map<String, List> comparator(Nutrients nutrients) {

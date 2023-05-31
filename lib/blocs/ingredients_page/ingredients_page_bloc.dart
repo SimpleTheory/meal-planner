@@ -19,7 +19,7 @@ class IngredientsPageBloc
                 include: toBool(include), backRef: toBool(backRef))
             : IngredientsPageState.initialMeal(app, backRef: toBool(backRef))) {
     on<IngredientsPageEvent>((event, emit) {
-      // TODO: implement event handler
+      
     });
     on<IngPageAPIErrorEvent>((event, emit) {
       emit(IngPageApiError.fromState(state, event.message));

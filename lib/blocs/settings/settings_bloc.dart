@@ -8,7 +8,6 @@ part 'settings_state.dart';
 
 class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
   SettingsBloc(Settings settings) : super(SettingsState(settings)) {
-    // TODO
     on<MeasureUpdate>((event, emit) {
       state.settings.measure = event.measure;
       emit(SettingsMeasureChange(state.settings));

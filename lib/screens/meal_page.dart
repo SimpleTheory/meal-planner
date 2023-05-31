@@ -92,7 +92,6 @@ class MealPopUpEnumHolder {
 }
 
 // ListTile mealTile(Meal meal){
-//   // TODO CREATE WAY TO RENDER CUSTOM EMOJIS WITH BRANDON FONT
 //   // print(meal.photo);
 //   return ListTile(
 //     title: Text(meal.name),

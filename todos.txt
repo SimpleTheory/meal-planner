@@ -1,7 +1,6 @@
 Make Diet Details Bloc: (Creation)
-    - everything that has to do with days
-    - shopping list
     - save local backup
+    (- get lazy/busy friends to contribute their assets)
 
 Things not working:
 -  if one more image gets a HTTP exception closed error I think I'm going to blow a casket
@@ -9,12 +8,13 @@ Things not working:
    • cache the images with https://pub.dev/packages/cached_network_image perhaps,
     According to some stack Overflow users this might deal with the exception as well
 
-QoL:
--  mmpage if serving size 1 only have total weight
-
 Questions:
--  MCTile nutrient re total or re per serving? (or toggleable)
+-  MCTile (only in mealmaker page) nutrient re total or re per serving? (or toggleable)
 
-Known things/Qs for late:
+Known things/Qs for later:
 - Overwriting
 - Saving
+
+Ideas?:
+    ing measure pref for shopping list?
+

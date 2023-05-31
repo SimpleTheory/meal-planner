@@ -9,7 +9,7 @@ part 'dri_config_state.dart';
 class DriConfigBloc extends Bloc<DriConfigEvent, DriConfigState> {
   DriConfigBloc(Diet diet) : super(DriConfigInitial.fromDiet(diet)) {
     on<DriConfigEvent>((event, emit) {
-      // TODO: implement event handler
+      
     });
     on<DRIActivation>((event, emit) {
       event.dri.tracked = event.newToggle;

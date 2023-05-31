@@ -17,8 +17,6 @@ class App {
         ...meals.values.where((element) => element.isSubRecipe)
       ];
 
-  // What can an app do?
-  // TODO: Make this actually good
   void addMeal(Meal meal) {
     meals[meal.name] = meal;
   }
@@ -224,7 +222,6 @@ class Diet {
   DRIS dris;
   late Map<String, List<MealComponent>> shoppingList;
 
-  // TODO persistent shopping list with categories
 
   Nutrients get averageNutrition {
     final trueAvg = days.where((element) => element.nutrients != zeroNut);
@@ -241,8 +238,12 @@ class Diet {
   }
 
   static Future<Diet> create(String name, Settings settings) async {
-    final dris = await DRIS.fromAPI(settings.anthroMetrics);
-    return Diet(name: name, days: <Day>[], dris: dris);
+    try {
+      final dris = await DRIS.fromAPI(settings.anthroMetrics);
+      return Diet(name: name, days: <Day>[], dris: dris);
+    } on Exception catch (e) {
+      rethrow;
+    }
 }
   // For update access by index setter days[index] = newDay;
 
@@ -292,7 +293,6 @@ class Diet {
   }
 
   void updateShoppingList() {
-    // TODO TEST
     Map<MealComponent, String> currentShoppingDummy = {};
     for (MapEntry<String, List<MealComponent>> keyList
         in shoppingList.entries) {

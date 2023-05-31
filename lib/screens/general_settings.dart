@@ -392,7 +392,6 @@ class GeneralSettingsPage extends StatelessWidget {
                         },
                         child: const Text('Factory Reset App')),
                   ),
-                  // TODO Way to factory reset app
                 ],
               ),
             ),

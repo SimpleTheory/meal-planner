@@ -56,7 +56,12 @@ class IndexPage extends StatelessWidget {
                             },
                           ));
                 }),
-                BlocBuilder<IndexBloc, IndexState>(
+                BlocConsumer<IndexBloc, IndexState>(
+                  listener: (context, state){
+                    if (state is FailedToLoadDiet){
+                      showErrorMessage(context, 'Failed to load Diet!\n${state.errMessage}');
+                    }
+                  },
                   builder: (context, state) {
                     return ReorderableListView.builder(
                       itemBuilder: (context, index) =>

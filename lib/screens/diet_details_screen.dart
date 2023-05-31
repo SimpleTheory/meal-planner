@@ -102,8 +102,6 @@ class DietPage extends StatelessWidget {
 //   );
 // }
 
-// TODO Day Bloc
-// TODO Some Kind of Meal Component Controller (maybe within day bloc)
 
 class DayTile extends StatelessWidget {
   final Day day;
@@ -146,7 +144,7 @@ class DayTile extends StatelessWidget {
         onSelected: (val) {
           switch (val.popUpOption) {
             case PopUpOptions.edit:
-              // TODO: Handle this case.
+              // Handle this case.
               break;
             case PopUpOptions.delete:
               dietBloc.add(DeleteDay(val.day));

@@ -185,7 +185,6 @@ class _DayStyleNutrientDisplayState extends State<DayStyleNutrientDisplay> {
   }
 }
 
-// TODO ADD DRIS TRACKING CAPACITY TO MEAL NUT
 Widget mealStyleNutrientDisplay(Nutrients nutrients) {
   List<Widget> nutWidgets = [];
   for (MapEntry<String, dynamic> nut in nutrients.attributes__.entries) {
@@ -227,7 +226,6 @@ class _MealStyleNutrientDisplayState extends State<MealStyleNutrientDisplay> {
 
   @override
   void initState() {
-    // TODO: implement initState
 
     for (MapEntry<String, dynamic> nut
     in widget.nutrients.attributes__.entries) {
@@ -676,7 +674,6 @@ class _MCTileState extends State<MCTile> {
           onChanged: (valString) {
             num val = fixDecimal(valString) ?? 0;
             widget.onGramsChange(widget.meal, val, servingValue);
-            // TODO update meal in bloc
             setState(() {
               // widget.meal = widget.meal.reference.toMealComponent(
               //     servingValue, val, widget.meal.reference);

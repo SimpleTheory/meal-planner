@@ -45,6 +45,9 @@
     /// unsaturatedFat
     /// saturatedFat
 
+/// TODO: Add information about specific nutrients that may otherwise be missed,
+/// like no UL for natty magnesium but supplements dangerous etc
+
 final Map<String, String> driNotes = {
 'Calcium':
 '''

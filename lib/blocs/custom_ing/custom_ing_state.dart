@@ -54,7 +54,6 @@ class CustomIngState {
   }
 
   Future<Ingredient> toIngredient() async {
-    // Todo: Save image more as file and use that as Image
     final transformedAlts = Map<String, num>.fromEntries(altMeasures
         .where((element) => element.key != '')
         .map((e) => MapEntry<String, num>(e.key, fixDecimal(e.value)!)));

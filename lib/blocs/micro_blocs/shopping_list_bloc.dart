@@ -4,7 +4,7 @@ import 'package:nutrition_app/domain.dart';
 class ShoppingListBloc extends Bloc<ShoppingListEvent, ShoppingListState> {
   ShoppingListBloc(Diet diet) : super(ShoppingListState.init(diet)) {
     on<ShoppingListEvent>((event, emit) {
-      // TODO: implement event handler
+      
     });
     on<ReIndexItem>((event, emit){
       final movedItem = state.shoppingList[event.oldListIndex].value.removeAt(event.oldItemIndex);

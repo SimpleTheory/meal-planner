@@ -54,7 +54,6 @@ AlertDialog waiverDialog(BuildContext context) => AlertDialog(
                   context,
                   MaterialPageRoute(
                       builder: (context) => const GeneralSettingsPageInit()));
-              // TODO Go to settings with null Settings
               // Make New App
             },
             child: const Text('Continue'))

@@ -13,4 +13,8 @@ class IndexState {
   }
 }
 
+class FailedToLoadDiet extends IndexState{
+  final String errMessage;
+  const FailedToLoadDiet(super.app, this.errMessage);
+}
 

@@ -8,9 +8,7 @@ part 'diet_state.dart';
 
 class DietBloc extends Bloc<DietEvent, DietState> {
   DietBloc(Diet diet) : super(DietState(diet)) {
-    on<DietEvent>((event, emit) {
-      // TODO: implement event handler
-    });
+    on<DietEvent>((event, emit) {});
     on<AddDay>((event, emit) {
       state.diet.createDay();
       emit(AddDayState(state.diet));

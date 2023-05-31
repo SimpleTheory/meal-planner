@@ -10,8 +10,6 @@ import 'package:nutrition_app/domain.dart';
 import 'package:nutrition_app/utils/local_widgets.dart';
 import 'package:nutrition_app/utils/utils.dart';
 
-// TODO: Modify CustomIngredientPage to also be Ingredient Details Page
-// TODO: Add error text
 
 class CustomIngredientPage extends StatelessWidget {
   const CustomIngredientPage({Key? key}) : super(key: key);

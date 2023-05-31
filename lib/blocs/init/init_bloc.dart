@@ -18,8 +18,6 @@ class InitBloc extends Bloc<InitEvent, InitState> {
         final text = file.readAsStringSync();
         try {
           App app = App.fromJson(text);
-          // TODO If successful load app into master bloc
-          // TODO If successful save app into hive
           emit(SuccessfulLoad(app));
         } on Exception catch (e) {
           emit(FailedLoad(basename(file.path)));

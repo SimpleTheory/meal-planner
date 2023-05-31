@@ -18,9 +18,7 @@ class CustomIngBloc extends Bloc<CustomIngEvent, CustomIngState> {
       : super(refIngredient == null
             ? CustomIngState.initial()
             : CustomIngState.fromIngredient(refIngredient)) {
-    on<CustomIngEvent>((event, emit) {
-      // TODO: implement event handler
-    });
+    on<CustomIngEvent>((event, emit) {});
     on<AddAltMeasureCI>((event, emit) {
       state.altMeasures.add(const MapEntry('', ''));
       newState(emit, state);

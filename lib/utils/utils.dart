@@ -193,7 +193,6 @@ extension RowPadding on Row{
       );
 }
 
-// TODO ADD ERRORS
 // Image getImage(Uri? uri, {double? width, double? height}){
 //   if (uri == null){
 //     return Image.asset('cache/images/null.png', width: width, height: height,);

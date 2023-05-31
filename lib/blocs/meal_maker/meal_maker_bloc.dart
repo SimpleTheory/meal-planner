@@ -8,7 +8,7 @@ part 'meal_maker_state.dart';
 class MealMakerBloc extends Bloc<MealMakerEvent, MealMakerState> {
   MealMakerBloc([Meal? ref]) : super(ref == null ? MealMakerState.fromNew() : MealMakerState.fromMeal(ref)) {
     on<MealMakerEvent>((event, emit) {
-      // TODO: implement event handler
+      
     });
     on<ChangePhoto>((event, emit){
       emit(state.copyWith(image: event.uri));

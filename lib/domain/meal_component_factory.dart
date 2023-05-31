@@ -90,8 +90,9 @@ class Ingredient extends MealComponentFactory {
         ? null
         : responseBody['nf_metric_uom'];
     final baseNutrient = BaseNutrients(
-        // TODO ADD CASE WHERE SERVING WEIGHT GRAMS IS NULL DEFAULT TO SERVING UNIT
+        // ADD CASE WHERE SERVING WEIGHT GRAMS IS NULL DEFAULT TO SERVING UNIT
         // BREAK CASE GF SOY SAUCE
+        // (Currently fixed but will be on the look out for more break cases)
         grams: responseBody['serving_weight_grams'] ??
             responseBody['nf_metric_qty'],
         nutrients: Nutrients.fromResponseBody(responseBody));
