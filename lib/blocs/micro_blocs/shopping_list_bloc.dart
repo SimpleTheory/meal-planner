@@ -55,9 +55,7 @@ class ShoppingListState {
   ShoppingListState(this.diet, {required this.shoppingList});
 
   factory ShoppingListState.init(Diet diet){
-    print(diet.shoppingList.keys.toList());
     diet.updateShoppingList();
-    print(diet.shoppingList.keys.toList());
     final shoppingList = diet.shoppingList.entries.toList();
     return ShoppingListState(diet, shoppingList: shoppingList);
   }

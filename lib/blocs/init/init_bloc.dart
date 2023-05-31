@@ -19,6 +19,7 @@ class InitBloc extends Bloc<InitEvent, InitState> {
         try {
           App app = App.fromJson(text);
           emit(SuccessfulLoad(app));
+          saveApp(app);
         } on Exception catch (e) {
           emit(FailedLoad(basename(file.path)));
         }

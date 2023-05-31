@@ -306,17 +306,17 @@ class Diet {
     shoppingList = shoppingList.map((key, value) => MapEntry(key, <MealComponent>[]));
 
     for (MealComponent mealComponent in initShoppingList()) {
-      final String? itemWithChangedWeightCategory = shoppingDummyForNames[mealComponent.name];
+      final String? itemCategory = shoppingDummyForNames[mealComponent.name];
 
       // Weight is the same
       if (currentShoppingDummy.keys.contains(mealComponent)) {
-        shoppingList[currentShoppingDummy[mealComponent]]?.add(mealComponent);
-        // continue;
+        shoppingList[itemCategory!]!.add(mealComponent);
+        // continue; flutter is lit broken maps lit dont work
       }
 
       // Item is there but the weight changed
-      else if (itemWithChangedWeightCategory != null) {
-        shoppingList[itemWithChangedWeightCategory]?.add(mealComponent);
+      else if (itemCategory != null) {
+        shoppingList[itemCategory]!.add(mealComponent);
         // final temp = currentShoppingDummy[namesDummy[mealComponent.name]];
         // currentShoppingDummy.remove(namesDummy[mealComponent.name]);
         // currentShoppingDummy[mealComponent] = temp!;
@@ -324,7 +324,7 @@ class Diet {
 
       // Item didn't exist before
       else {
-        shoppingList['Good']?.add(mealComponent);
+        shoppingList['Good']!.add(mealComponent);
         // currentShoppingDummy[mealComponent] = 'Good';
       }
     }
