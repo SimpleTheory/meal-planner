@@ -2,6 +2,7 @@ Creation:
     (- get lazy/busy friends to contribute their assets)
 
 Questions:
+COMPLETELY FAILED
 -  MCTile (only in mealmaker page) nutrient re total or re per serving? (or toggleable)
 
 Known things/Qs for later:
