@@ -62,5 +62,6 @@ class UpdateNotes extends MealMakerEvent{
   final String notes;
   UpdateNotes(this.notes);
 }
+class ChangeNutDisplayEvent extends MealMakerEvent{}
 // class ChangePhoto extends MealMakerEvent{}
 // class ChangePhoto extends MealMakerEvent{}

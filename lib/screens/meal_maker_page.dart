@@ -42,14 +42,15 @@ class MealMakerPage extends StatelessWidget {
               child: GestureDetector(onTap: () {
                 showDialog(
                     context: context,
-                    builder: (_) => BlocProvider.value(
+                    builder: (_) =>
+                        BlocProvider.value(
                           value: mmbloc,
                           child: BlocListener<MealMakerBloc, MealMakerState>(
                             listener: (context, state) {
                               Navigator.pop(context);
                             },
                             listenWhen: (previous, current) =>
-                                previous.image != current.image,
+                            previous.image != current.image,
                             child: AlertDialog(
                               content: PaddedColumn(
                                 mainAxisSize: MainAxisSize.min,
@@ -59,7 +60,7 @@ class MealMakerPage extends StatelessWidget {
                                       onPressed: () async {
                                         final img = await ImagePicker()
                                             .pickImage(
-                                                source: ImageSource.camera);
+                                            source: ImageSource.camera);
                                         if (img == null) {
                                           return;
                                         }
@@ -72,7 +73,7 @@ class MealMakerPage extends StatelessWidget {
                                       onPressed: () async {
                                         final img = await ImagePicker()
                                             .pickImage(
-                                                source: ImageSource.gallery);
+                                            source: ImageSource.gallery);
                                         if (img == null) {
                                           return;
                                         }
@@ -109,7 +110,7 @@ class MealMakerPage extends StatelessWidget {
                       decoration: InputDecoration(
                           labelText: 'name',
                           contentPadding:
-                              const EdgeInsets.fromLTRB(10, 0, 0, 0),
+                          const EdgeInsets.fromLTRB(10, 0, 0, 0),
                           errorText: state.name.isEmpty && state.showErrors
                               ? "Required Field"
                               : null),
@@ -134,7 +135,7 @@ class MealMakerPage extends StatelessWidget {
                                 : null,
                             labelText: 'Servings',
                             contentPadding:
-                                const EdgeInsets.fromLTRB(10, 0, 0, 0)),
+                            const EdgeInsets.fromLTRB(10, 0, 0, 0)),
                         inputFormatters: <TextInputFormatter>[
                           FilteringTextInputFormatter.digitsOnly
                         ],
@@ -152,13 +153,14 @@ class MealMakerPage extends StatelessWidget {
                           style: servingWeightTextStyle),
                       if (state.validServing() && int.parse(state.servings) > 1)
                         Text(
-                            'Serving weight: ${roundDecimal(state.servingGrams, 1)}',
+                            'Serving weight: ${roundDecimal(
+                                state.servingGrams, 1)}',
                             style: servingWeightTextStyle),
                     ],
                   );
                 },
                 buildWhen: (pre, curr) =>
-                    pre.servingGrams != curr.servingGrams ||
+                pre.servingGrams != curr.servingGrams ||
                     pre.totalGrams != curr.totalGrams ||
                     curr is MMChangeGrams),
             BlocConsumer<MealMakerBloc, MealMakerState>(
@@ -173,46 +175,74 @@ class MealMakerPage extends StatelessWidget {
               },
               builder: (context, state) {
                 return ListView(
-                  physics: const NeverScrollableScrollPhysics(),
+                  physics: const ClampingScrollPhysics(),
                   shrinkWrap: true,
                   children: [
-                    BlocBuilder<MealMakerBloc, MealMakerState>(
-                      builder: (context, state) {
-                        return mealStyleNutrientDisplay(state.nutrients);
+                    GestureDetector(
+                      onTap: () {
+                        mmbloc.add(ChangeNutDisplayEvent());
                       },
+                      child: BlocConsumer<MealMakerBloc, MealMakerState>(
+                        listener: (context, state) {
+                          if (state.nutPerServing) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(content: Text(
+                                    'Nutrients are now per serving'))
+                            );
+                          }
+                          else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(content: Text(
+                                    'Nutrients are now the sum of all the ingredients')));
+                          }
+                        },
+                        listenWhen: (pre, curr) => curr is ChangeNutDisplay && pre is! ChangeNutDisplay,
+                        builder: (context, state) {
+                          return mealStyleNutrientDisplay(state.nutrients);
+                        },
+                      ),
                     ),
                     PlusSignTile((_) async {
                       final result = await Navigator.push(
                           context,
                           MaterialPageRoute(
                               settings:
-                                  const RouteSettings(name: "/IngredientsPage"),
-                              builder: (_) => BlocProvider(
-                                  create: (context) => IngredientsPageBloc(
-                                      context.read<InitBloc>().state.app!,
-                                      MCFTypes.ingredient,
-                                      include: true,
-                                      backRef: true),
-                                  child: IngredientPage())));
+                              const RouteSettings(name: "/IngredientsPage"),
+                              builder: (_) =>
+                                  BlocProvider(
+                                      create: (context) =>
+                                          IngredientsPageBloc(
+                                              context
+                                                  .read<InitBloc>()
+                                                  .state
+                                                  .app!,
+                                              MCFTypes.ingredient,
+                                              include: true,
+                                              backRef: true),
+                                      child: IngredientPage())));
                       if (result is MealComponentFactory) {
                         final serving = result.toServing();
                         mmbloc.add(AddMC(serving));
                       }
                     }),
                     ReorderableListView.builder(
-                      itemBuilder: (context, index) => MCTile(
-                        state.mealComponents[index],
-                        onGramsChange:
-                            (MealComponent meal, num grams, String serving) {
-                          mmbloc.add(UpdateGramsMC(meal, grams, serving));
-                        },
-                        // onEdit: (MealComponent meal) {},
-                        onDelete: (MealComponent meal) {
-                          mmbloc.add(DeleteMC(meal));
-                        },
-                        key: ValueKey<MealComponent>(
-                            state.mealComponents[index]),
-                      ),
+                      itemBuilder: (context, index) =>
+                          MCTile(
+                            state.mealComponents[index],
+                            onGramsChange:
+                                (MealComponent meal, num grams,
+                                String serving) {
+                              mmbloc.add(UpdateGramsMC(meal, grams, serving));
+                            },
+                            // onEdit: (MealComponent meal) {},
+                            onDelete: (MealComponent meal) {
+                              mmbloc.add(DeleteMC(meal));
+                            },
+                            height: 75,
+                            width: 55,
+                            key: ValueKey<MealComponent>(
+                                state.mealComponents[index]),
+                          ),
                       itemCount: state.mealComponents.length,
                       shrinkWrap: true,
                       physics: const ClampingScrollPhysics(),
@@ -260,13 +290,14 @@ class MealMakerPage extends StatelessWidget {
             }),
             BlocBuilder<MealMakerBloc, MealMakerState>(
                 builder: (context, state) {
-              return ListView.builder(
-                itemBuilder: (context, index) => AltMeasureFormFieldMM(index),
-                shrinkWrap: true,
-                physics: const ClampingScrollPhysics(),
-                itemCount: state.altMeasures.length,
-              );
-            }),
+                  return ListView.builder(
+                    itemBuilder: (context, index) =>
+                        AltMeasureFormFieldMM(index),
+                    shrinkWrap: true,
+                    physics: const ClampingScrollPhysics(),
+                    itemCount: state.altMeasures.length,
+                  );
+                }),
             Container(
               decoration: const BoxDecoration(
                   border: Border(top: BorderSide(color: Colors.grey))),
@@ -316,49 +347,49 @@ class AltMeasureFormFieldMM extends StatelessWidget {
         const Text('Name: '),
         Flexible(
             child: Padding(
-          padding: const EdgeInsets.fromLTRB(10, 3, 10, 3),
-          child: TextFormField(
-              decoration: const InputDecoration(
-                  labelText: 'name',
-                  contentPadding: EdgeInsets.fromLTRB(10, 0, 0, 0)),
-              // inputFormatters: <TextInputFormatter>[
-              //   FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z \-]+'))
-              // ],
-              initialValue: mmbloc.state.altMeasures[index].key,
-              onChanged: (name) {
-                mmbloc.add(AltMeasureName(name, index));
-              }),
-        )),
+              padding: const EdgeInsets.fromLTRB(10, 3, 10, 3),
+              child: TextFormField(
+                  decoration: const InputDecoration(
+                      labelText: 'name',
+                      contentPadding: EdgeInsets.fromLTRB(10, 0, 0, 0)),
+                  // inputFormatters: <TextInputFormatter>[
+                  //   FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z \-]+'))
+                  // ],
+                  initialValue: mmbloc.state.altMeasures[index].key,
+                  onChanged: (name) {
+                    mmbloc.add(AltMeasureName(name, index));
+                  }),
+            )),
         const Text('Grams: '),
         Flexible(
             child: Padding(
-          padding: const EdgeInsets.fromLTRB(10, 3, 10, 3),
-          child: BlocBuilder<MealMakerBloc, MealMakerState>(
-            builder: (context, state) {
-              return TextFormField(
-                  decoration: InputDecoration(
-                    contentPadding: const EdgeInsets.fromLTRB(10, 0, 0, 0),
-                    labelText: 'grams',
-                    errorMaxLines: 4,
-                    // invalid value and there is name and is error state
-                    errorText: state.altMeasures[index].value.isEmpty &&
+              padding: const EdgeInsets.fromLTRB(10, 3, 10, 3),
+              child: BlocBuilder<MealMakerBloc, MealMakerState>(
+                builder: (context, state) {
+                  return TextFormField(
+                      decoration: InputDecoration(
+                        contentPadding: const EdgeInsets.fromLTRB(10, 0, 0, 0),
+                        labelText: 'grams',
+                        errorMaxLines: 4,
+                        // invalid value and there is name and is error state
+                        errorText: state.altMeasures[index].value.isEmpty &&
                             state.altMeasures[index].key.isNotEmpty &&
                             state.showErrors
-                        ? 'Required (delete name to ignore)'
-                        : null,
-                  ),
-                  inputFormatters: <TextInputFormatter>[
-                    FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*'))
-                  ],
-                  keyboardType:
+                            ? 'Required (delete name to ignore)'
+                            : null,
+                      ),
+                      inputFormatters: <TextInputFormatter>[
+                        FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*'))
+                      ],
+                      keyboardType:
                       const TextInputType.numberWithOptions(decimal: true),
-                  initialValue: state.altMeasures[index].value,
-                  onChanged: (val) {
-                    mmbloc.add(AltMeasureValue(val, index));
-                  });
-            },
-          ),
-        )),
+                      initialValue: state.altMeasures[index].value,
+                      onChanged: (val) {
+                        mmbloc.add(AltMeasureValue(val, index));
+                      });
+                },
+              ),
+            )),
       ],
     );
   }

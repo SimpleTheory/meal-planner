@@ -10,6 +10,7 @@ class MealMakerState {
   Uri? image;
   Meal? refIngredient;
   bool showErrors;
+  bool nutPerServing;
 
   num get totalGrams => mealComponents.isEmpty
       ? 0
@@ -21,9 +22,11 @@ class MealMakerState {
   num get servingGrams =>
       !validServing() ? 0 : totalGrams / int.parse(servings);
 
+  int get servingsInt => validServing() && nutPerServing ? int.parse(servings) : 1;
+
   Nutrients get nutrients =>
       Nutrients.sum(mealComponents.map((e) => e.nutrients)) /
-      (validServing() ? int.parse(servings) : 1);
+      (validServing() && nutPerServing ? int.parse(servings) : 1);
 
   bool validServing() => servings.isNotEmpty && int.parse(servings) > 0;
 
@@ -35,6 +38,7 @@ class MealMakerState {
       required this.notes,
       required this.subRecipe,
       required this.mealComponents,
+      required this.nutPerServing,
       this.image,
       this.refIngredient,
       this.showErrors = false});
@@ -45,6 +49,7 @@ class MealMakerState {
         name: '',
         altMeasures: {'': ''}.entries.toList(),
         notes: '',
+        nutPerServing: false,
         subRecipe: false,
         mealComponents: <MealComponent>[]);
   }
@@ -53,6 +58,7 @@ class MealMakerState {
     return MealMakerState(
         servings: ref.servings.toString(),
         name: ref.name,
+        nutPerServing: false,
         altMeasures: ref.altMeasures2grams
             .map((key, value) => MapEntry(key, value.toString()))
             .entries
@@ -72,6 +78,7 @@ class MealMakerState {
       bool? subRecipe,
       List<MealComponent>? mealComponents,
       Uri? image,
+      bool? nutPerServing,
       Meal? refIngredient,
       bool? showErrors}) {
     return MealMakerState(
@@ -83,6 +90,7 @@ class MealMakerState {
         mealComponents: mealComponents ?? List.from(this.mealComponents),
         image: image ?? this.image,
         refIngredient: refIngredient ?? this.refIngredient,
+        nutPerServing: nutPerServing ?? this.nutPerServing,
         showErrors: showErrors ?? this.showErrors);
   }
 
@@ -128,6 +136,7 @@ class MMError extends MealMakerState {
       required super.mealComponents,
       super.image,
       super.refIngredient,
+      required super.nutPerServing,
       super.showErrors = true});
 
   MMError copyWithMMError(
@@ -139,6 +148,7 @@ class MMError extends MealMakerState {
       List<MealComponent>? mealComponents,
       Uri? image,
       Meal? refIngredient,
+      bool? nutPerServing,
       bool? showErrors}) {
     return MMError(
         servings: servings ?? this.servings,
@@ -149,6 +159,7 @@ class MMError extends MealMakerState {
         mealComponents: mealComponents ?? List.from(this.mealComponents),
         image: image ?? this.image,
         refIngredient: refIngredient ?? this.refIngredient,
+        nutPerServing: nutPerServing ?? this.nutPerServing,
         showErrors: showErrors ?? this.showErrors);
   }
 
@@ -161,6 +172,7 @@ class MMError extends MealMakerState {
       mealComponents: state.mealComponents,
       showErrors: true,
       refIngredient: state.refIngredient,
+      nutPerServing: state.nutPerServing,
       image: state.image);
 }
 
@@ -174,6 +186,7 @@ class MMChangeGrams extends MealMakerState {
       required super.mealComponents,
       super.image,
       super.refIngredient,
+      required super.nutPerServing,
       super.showErrors = false});
 
   MMChangeGrams copyWithMMChangeGrams(
@@ -185,6 +198,7 @@ class MMChangeGrams extends MealMakerState {
       List<MealComponent>? mealComponents,
       Uri? image,
       Meal? refIngredient,
+      bool? nutPerServing,
       bool? showErrors}) {
     return MMChangeGrams(
         servings: servings ?? this.servings,
@@ -195,7 +209,9 @@ class MMChangeGrams extends MealMakerState {
         mealComponents: mealComponents ?? List.from(this.mealComponents),
         image: image ?? this.image,
         refIngredient: refIngredient ?? this.refIngredient,
-        showErrors: showErrors ?? this.showErrors);
+        showErrors: showErrors ?? this.showErrors,
+        nutPerServing: nutPerServing ?? this.nutPerServing
+    );
   }
 
   factory MMChangeGrams.fromState(MealMakerState state) => MMChangeGrams(
@@ -207,6 +223,7 @@ class MMChangeGrams extends MealMakerState {
       mealComponents: state.mealComponents,
       showErrors: state.showErrors,
       refIngredient: state.refIngredient,
+      nutPerServing: state.nutPerServing,
       image: state.image);
 }
 
@@ -223,6 +240,7 @@ class MMSuccess extends MealMakerState {
       required super.mealComponents,
       super.image,
       super.refIngredient,
+      required super.nutPerServing,
       super.showErrors = false});
 
   factory MMSuccess.fromState(MealMakerState state, Meal meal) => MMSuccess(
@@ -234,7 +252,35 @@ class MMSuccess extends MealMakerState {
       subRecipe: state.subRecipe,
       mealComponents: state.mealComponents,
       refIngredient: state.refIngredient,
-      image: state.image);
+      image: state.image,
+      nutPerServing: state.nutPerServing
+  );
+}
+class ChangeNutDisplay extends MealMakerState {
+
+  ChangeNutDisplay(
+      {required super.servings,
+      required super.name,
+      required super.altMeasures,
+      required super.notes,
+      required super.subRecipe,
+      required super.mealComponents,
+      super.image,
+      super.refIngredient,
+      required super.nutPerServing,
+      super.showErrors = false});
+
+  factory ChangeNutDisplay.fromState(MealMakerState state) => ChangeNutDisplay(
+      servings: state.servings,
+      name: state.name,
+      altMeasures: state.altMeasures,
+      notes: state.notes,
+      subRecipe: state.subRecipe,
+      mealComponents: state.mealComponents,
+      refIngredient: state.refIngredient,
+      image: state.image,
+      nutPerServing: state.nutPerServing
+  );
 }
 
 // class MealMakerInitial extends MealMakerState {}

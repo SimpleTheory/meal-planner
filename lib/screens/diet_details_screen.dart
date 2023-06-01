@@ -205,6 +205,8 @@ class DayTile extends StatelessWidget {
                 key: KeyHolder<Day, int, void, void, void, void>(
                         value1: day, value2: index)
                     .key(),
+                height: 75,
+                width: 63,
               ),
               itemCount: day.meals.length,
               shrinkWrap: true,

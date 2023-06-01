@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nutrition_app/domain.dart';
@@ -6,6 +8,7 @@ part 'meal_maker_event.dart';
 part 'meal_maker_state.dart';
 
 class MealMakerBloc extends Bloc<MealMakerEvent, MealMakerState> {
+
   MealMakerBloc([Meal? ref]) : super(ref == null ? MealMakerState.fromNew() : MealMakerState.fromMeal(ref)) {
     on<MealMakerEvent>((event, emit) {
       
@@ -81,6 +84,12 @@ class MealMakerBloc extends Bloc<MealMakerEvent, MealMakerState> {
       }
       final result = await state.toMeal();
       emit(MMSuccess.fromState(state, result));
+    });
+    on<ChangeNutDisplayEvent>((event, emit){
+      final newState = ChangeNutDisplay.fromState(state);
+      newState.nutPerServing = !state.nutPerServing;
+      if (newState.nutPerServing && state.validServing()){}
+      emit(newState);
     });
   }
 }

@@ -1,4 +1,5 @@
 import 'package:ari_utils/ari_utils.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -521,11 +522,15 @@ class MCTile extends StatefulWidget {
   final Function(MealComponent meal)? onEdit;
   final Function(MealComponent meal) onDelete;
   final Function(MealComponent meal)? onDuplicate;
+  final double? height;
+  final double? width;
   final MealComponent meal;
   final expansionController = ExpansionTileController();
 
   MCTile(this.meal,
       {Key? key,
+        this.height,
+        this.width,
         required this.onGramsChange,
         this.onEdit,
         required this.onDelete,
@@ -629,7 +634,10 @@ class _MCTileState extends State<MCTile> {
       //     ]
       //   )
       // ),
-      leading: GetImage(widget.meal.reference.photo),
+      leading: GetImage(
+        widget.meal.reference.photo,
+        height: widget.height ?? 75,
+        width: widget.width ?? 50,),
       title: Text(widget.meal.name),
       expandedCrossAxisAlignment: CrossAxisAlignment.center,
       onExpansionChanged: (newExpState) {
@@ -696,7 +704,7 @@ class _MCTileState extends State<MCTile> {
                     : roundDecimal(ratio.toDouble(), 3).toString();
                 servingValue = newAltMeasure;
               });
-            })
+            }),
       ],
     );
   }
