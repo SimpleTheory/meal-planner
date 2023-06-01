@@ -21,7 +21,7 @@ class IngredientPage extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Ingredients'),
         actions: [
-          const Center(child: Text('Sub-Recipes', style: TextStyle(fontSize: 12, fontStyle: FontStyle.italic, color: Color.fromRGBO(125, 125, 125, 1)))),
+          const Center(child: Text('Sub-Recipes', style: TextStyle(fontSize: 12, fontStyle: FontStyle.italic))),
           BlocBuilder<IngredientsPageBloc, IngredientsPageState>(
               builder: (context, state) => Switch(
                     onChanged: (toggle) => context
@@ -157,6 +157,7 @@ class IngredientTile extends StatelessWidget {
       subtitle: NutrientText(
         nutrients: ingredient.baseNutrient.nutrients,
         grams: ingredient is Ingredient ? ingredient.baseNutrient.grams : null,
+        baseUnit: ingredient is Ingredient ? ingredient.unit : null,
       ),
       // subtitle: Text(
       //     'Serving (${ingredient.baseNutrient.grams}g):  '
@@ -408,7 +409,9 @@ AlertDialog confirmIngredient(Ingredient ingredient, BuildContext context,
             )),
             NutrientText(
                 nutrients: ingredient.baseNutrient.nutrients,
-                grams: ingredient.baseNutrient.grams),
+                grams: ingredient.baseNutrient.grams,
+                baseUnit: ingredient.unit,
+            ),
             // Text(
             //     'Serving (${ingredient.baseNutrient.grams}g):  '
             //         "${ingredient.baseNutrient.nutrients.calories.value.round()}\u{1F525}  "

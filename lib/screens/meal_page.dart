@@ -19,7 +19,9 @@ class MealPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Meals'),
-        actions: [BlocBuilder<IngredientsPageBloc, IngredientsPageState>(
+        actions: [
+          const Center(child: Text('Sub-Recipes', style: TextStyle(fontSize: 12, fontStyle: FontStyle.italic))),
+          BlocBuilder<IngredientsPageBloc, IngredientsPageState>(
           builder: (context, state) {
             return Switch(
                 value: state.includeSubRecipes,

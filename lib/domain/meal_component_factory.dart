@@ -86,7 +86,7 @@ class Ingredient extends MealComponentFactory {
     /// assert serving_qty == 1
     /// serving_unit
     // Ingredient(name: name, baseNutrient: baseNutrient, altMeasures2grams: altMeasures2grams, source: source, sourceMetadata: )
-    final String? baseUnit = responseBody['serving_weight_grams'] == null
+    final String? baseUnit = responseBody['serving_weight_grams'] != null
         ? null
         : responseBody['nf_metric_uom'];
     final baseNutrient = BaseNutrients(

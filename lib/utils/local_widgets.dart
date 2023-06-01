@@ -71,16 +71,22 @@ class PlusSignTile extends StatelessWidget {
 class NutrientText extends StatelessWidget {
   final Nutrients nutrients;
   final num? grams;
+  final String? baseUnit;
   late final String? initText;
   final TextStyle? style;
 
   NutrientText({required this.nutrients,
     this.grams,
     String? initText,
+    this.baseUnit,
     this.style,
     Key? key})
       : super(key: key) {
-    final serving = grams == null ? '' : ' (${grams}g)';
+    String unit = 'g';
+    if (toBool(baseUnit) && !baseUnit!.startsWith('gram')){
+      unit = baseUnit!;
+    }
+    final serving = grams == null ? '' : ' ($grams$unit)';
     this.initText = initText ?? 'Serving$serving:  ';
   }
 
