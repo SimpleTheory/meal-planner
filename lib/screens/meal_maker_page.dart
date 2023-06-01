@@ -180,6 +180,7 @@ class MealMakerPage extends StatelessWidget {
                   children: [
                     GestureDetector(
                       onTap: () {
+                        if (!state.validServing() || state.servings == '1'){return;}
                         mmbloc.add(ChangeNutDisplayEvent());
                       },
                       child: BlocConsumer<MealMakerBloc, MealMakerState>(
