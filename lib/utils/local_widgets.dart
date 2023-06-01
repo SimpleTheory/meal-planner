@@ -552,7 +552,7 @@ class MCTile extends StatefulWidget {
 class _MCTileState extends State<MCTile> {
   final textController = TextEditingController();
   bool _isExpanded = false;
-  String servingValue = 'grams';
+  late String servingValue = widget.meal.reference.unit;
 
   // late Nutrients _nutrientDisplay;
   _getAltMeasure(String alt) => widget.meal.reference.altMeasures2grams[alt]!;
