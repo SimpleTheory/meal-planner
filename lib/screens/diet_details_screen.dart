@@ -175,7 +175,7 @@ class DayTile extends StatelessWidget {
                         create: (context) => IngredientsPageBloc(
                             context.read<InitBloc>().state.app!, MCFTypes.meal,
                             include: true, backRef: true),
-                        child: const MealPage())));
+                        child: MealPage())));
             if (result is Meal) {
               // final serving = result.toServing();
               dietBloc.add(AddMealToDay(result, day));

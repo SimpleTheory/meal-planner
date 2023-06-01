@@ -101,16 +101,21 @@ class MealMakerState {
       !validServing() ||
       nutrients == zeroNut ||
       containsSelf();
+  bool _saveFile(){
+    // if (image == null){return false;}
+    if (image == null){return false;}
+    if (refIngredient?.photo == image){return false;}
+    if (image!.scheme == 'file'){return true;}
+    return false;
+
+  }
 
   Future<Meal> toMeal() async {
     final transformedAlts = Map<String, num>.fromEntries(altMeasures
         .where((element) => element.key != '')
         .map((e) => MapEntry<String, num>(e.key, fixDecimal(e.value)!)));
     Uri? finalImage;
-    if (image == null){
-      // pass (needed to not trigger next else if)
-    }
-    else if (image!.scheme == 'file') {
+    if (_saveFile()) {
       finalImage = await saveImage(image!.path);
     } else {
       finalImage = image;

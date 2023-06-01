@@ -58,8 +58,11 @@ class IngredientPage extends StatelessWidget {
                   }),
                   BlocConsumer<IngredientsPageBloc, IngredientsPageState>(
                     listener: (context, state){
-                      if (state.backReference && state is IngPageSuccessfulCreation){
-                        Navigator.pop(context, state.ingredient);
+                      if (state is IngPageSuccessfulCreation) {
+                        searchController.text = '';
+                        if (state.backReference){
+                          Navigator.pop(context, state.ingredient);
+                        }
                       }
                     },
                     builder: (context, state) {

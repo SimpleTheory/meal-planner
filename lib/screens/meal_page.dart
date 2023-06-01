@@ -11,7 +11,8 @@ import 'meal_maker_page.dart';
 
 
 class MealPage extends StatelessWidget {
-  const MealPage({Key? key}) : super(key: key);
+  MealPage({Key? key}) : super(key: key);
+  final searchController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +22,15 @@ class MealPage extends StatelessWidget {
         title: const Text('Meals'),
         actions: [
           const Center(child: Text('Sub-Recipes', style: TextStyle(fontSize: 12, fontStyle: FontStyle.italic))),
-          BlocBuilder<IngredientsPageBloc, IngredientsPageState>(
+          BlocConsumer<IngredientsPageBloc, IngredientsPageState>(
+          listener: (context, state){
+              if (state is IngPageSuccessfulCreation) {
+                searchController.text = '';
+                if (state.backReference){
+                  Navigator.pop(context, state.ingredient);
+                }
+              }
+            },
           builder: (context, state) {
             return Switch(
                 value: state.includeSubRecipes,

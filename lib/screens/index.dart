@@ -88,7 +88,7 @@ class IndexPage extends StatelessWidget {
                               create: (context) => IngredientsPageBloc(
                                   context.read<InitBloc>().state.app!,
                                   MCFTypes.meal),
-                              child: const MealPage(),
+                              child: MealPage(),
                             )));
               },
               child: const Text('Meals'),
