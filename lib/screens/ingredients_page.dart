@@ -187,7 +187,7 @@ class IngredientTile extends StatelessWidget {
       //     ]
       //   )
       // ),
-      leading: GetImage(ingredient.photo),
+      leading: GetImage(ingredient.photo, width: 75),
       onTap: () {
         if (ingPgBloc.state.backReference){
           Navigator.pop(context, ingredient);
@@ -400,7 +400,7 @@ AlertDialog confirmIngredient(Ingredient ingredient, BuildContext context,
         child: PaddedColumn(
           edgeInsets: const EdgeInsets.all(12),
           children: [
-            Center(child: GetImage(ingredient.photo, width: 200, height: 200)),
+            Center(child: GetImage(ingredient.photo, width: 200, height: 200, cache: false,)),
             Center(
                 child: Text(
               ingredient.name,

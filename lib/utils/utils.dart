@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_emoji/flutter_emoji.dart';
 import 'package:path/path.dart';
@@ -215,7 +216,8 @@ class GetImage extends StatefulWidget {
   final Uri? uri;
   final double? width;
   final double? height;
-  const GetImage(this.uri, {Key? key, this.width, this.height}) : super(key: key);
+  final bool cache;
+  const GetImage(this.uri, {Key? key, this.width, this.height, this.cache = true}) : super(key: key);
 
   @override
   State<GetImage> createState() => _GetImageState();
@@ -225,19 +227,34 @@ class _GetImageState extends State<GetImage> {
   @override
   Widget build(BuildContext context) {
     if (widget.uri == null){
-      return Image.asset('cache/images/null.png', width: widget.width, height: widget.height,);
+      return Image.asset('cache/images/null.png',
+        width: widget.width,
+        height: widget.height,);
     }
     try{
       if (widget.uri!.scheme == 'file'){
-        return Image.file(File(widget.uri!.path), width: widget.width, height: widget.height,);
+        return ExtendedImage.file(
+          File(widget.uri!.path),
+          width: widget.width, //?? 75,
+          height: widget.height ?? 120,
+        );
       }
       else{
-        return Image.network(widget.uri.toString(), width: widget.width, height: widget.height,);
+        return ExtendedImage.network(
+          widget.uri.toString(),
+          width: widget.width, // ?? 75,
+          height: widget.height ?? 120,
+          cache: widget.cache,
+          retries: 6,
+
+        );
       }
     }
     catch (e){
       // Maybe add snackbar or alt image for no internet
-      return Image.asset('cache/images/null.png', width: widget.width, height: widget.height,);
+      return Image.asset('cache/images/null.png',
+        width: widget.width,
+        height: widget.height,);
     }
   }
   }
