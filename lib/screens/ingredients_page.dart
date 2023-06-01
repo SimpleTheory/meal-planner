@@ -21,7 +21,7 @@ class IngredientPage extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Ingredients'),
         actions: [
-          const Center(child: Text('Include Sub-Recipes')),
+          const Center(child: Text('Sub-Recipes', style: TextStyle(fontSize: 12, fontStyle: FontStyle.italic, color: Color.fromRGBO(125, 125, 125, 1)))),
           BlocBuilder<IngredientsPageBloc, IngredientsPageState>(
               builder: (context, state) => Switch(
                     onChanged: (toggle) => context
