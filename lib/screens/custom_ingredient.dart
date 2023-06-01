@@ -25,7 +25,7 @@ class CustomIngredientPage extends StatelessWidget {
                 .popUntil(ModalRoute.withName('/IngredientsPage'));
             context
                 .read<IngredientsPageBloc>()
-                .add(OnSubmitSolo(state.ingredient));
+                .add(OnSubmitSolo(state.ingredient, ingToReplace: state.refIngredient));
           }
         },
         builder: (context, state) {

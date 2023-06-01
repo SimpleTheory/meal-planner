@@ -28,6 +28,7 @@ class CustomIngState {
         nutrientFields: Map<String, String>.fromEntries(
             reNutList.map((value) =>
                 MapEntry<String, String>(value.name, value.value.toString()))),
+        refIngredient: ref,
         image: ref.photo);
   }
 
