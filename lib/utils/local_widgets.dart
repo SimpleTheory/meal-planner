@@ -531,9 +531,8 @@ class MCTile extends StatefulWidget {
   final double? height;
   final double? width;
   final MealComponent meal;
-  final expansionController = ExpansionTileController();
 
-  MCTile(this.meal,
+  const MCTile(this.meal,
       {Key? key,
         this.height,
         this.width,
@@ -609,16 +608,7 @@ class _MCTileState extends State<MCTile> {
             }
           },
         ),
-        ExpandIcon(
-            isExpanded: _isExpanded,
-            onPressed: (bool currentExpansion) {
-              !currentExpansion
-                  ? widget.expansionController.expand()
-                  : widget.expansionController.collapse();
-              setState(() {
-                _isExpanded = !currentExpansion;
-              });
-            })
+        Transform.flip(flipY: _isExpanded, child: const Icon(Icons.expand_more)),
       ]),
       // subtitle: nutrientText(nutrients: widget.meal.nutrients, grams: widget.meal.grams.round()),
       // subtitle: RichText(
@@ -651,7 +641,6 @@ class _MCTileState extends State<MCTile> {
           _isExpanded = newExpState;
         });
       },
-      controller: widget.expansionController,
       // childrenPadding: const EdgeInsets.fromLTRB(40, 0, 0, 5),
       children: [
         Padding(
@@ -717,9 +706,9 @@ class _MCTileState extends State<MCTile> {
 
   @override
   void initState() {
+    super.initState();
     textController.text = widget.meal.grams.isInt
         ? widget.meal.grams.toInt().toString()
         : roundDecimal(widget.meal.grams.toDouble(), 3).toString();
-    super.initState();
   }
 }

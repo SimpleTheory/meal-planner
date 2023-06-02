@@ -365,6 +365,9 @@ class GeneralSettingsPage extends StatelessWidget {
                                 context: context,
                                 builder: (context) => nameAThing(context,
                                     title: 'Back Up Name (w/o extension)'));
+                            if (fname == null){
+                              return;
+                            }
                             try {
                               saveAppBackupMobile(app: app, fileName: fname);
                               settingsBloc.add(BackupSuccess());

@@ -93,7 +93,7 @@ class IngredientsPageBloc
             .copyWithIngredient(name: duplicateNamer(state.app.baseIngredients.values, event.ingredient)));
       } else {
         app.addMeal((event.ingredient as Meal)
-            .copyWithMeal(name: duplicateNamer(state.app.baseIngredients.values, event.ingredient)));
+            .copyWithMeal(name: duplicateNamer(state.app.meals.values, event.ingredient)));
       }
       add(UpdateSearchIng(state.currentText));
     });

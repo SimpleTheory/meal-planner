@@ -97,9 +97,10 @@ class Ingredient extends MealComponentFactory {
             responseBody['nf_metric_qty'],
         nutrients: Nutrients.fromResponseBody(responseBody));
     Map<String, num> altMeasures2grams;
+    const default_serving_name = 'serving size';
     if (responseBody['alt_measures'] != null) {
       altMeasures2grams = {
-        responseBody['serving_unit']: responseBody['serving_weight_grams'] ??
+        default_serving_name: responseBody['serving_weight_grams'] ??
             responseBody['nf_metric_qty'],
         ...{
           for (Map alt in responseBody['alt_measures'])
@@ -108,7 +109,7 @@ class Ingredient extends MealComponentFactory {
       };
     } else {
       altMeasures2grams = {
-        responseBody['serving_unit']: responseBody['serving_weight_grams'] ??
+        default_serving_name: responseBody['serving_weight_grams'] ??
             responseBody['nf_metric_qty'],
       };
     }
