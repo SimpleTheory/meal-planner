@@ -100,7 +100,7 @@ class Ingredient extends MealComponentFactory {
     const default_serving_name = 'serving size';
     if (responseBody['alt_measures'] != null) {
       altMeasures2grams = {
-        default_serving_name: responseBody['serving_weight_grams'] ??
+        if (source == IngredientSource.upc) default_serving_name: responseBody['serving_weight_grams'] ??
             responseBody['nf_metric_qty'],
         ...{
           for (Map alt in responseBody['alt_measures'])
