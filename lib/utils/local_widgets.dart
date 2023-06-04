@@ -106,39 +106,39 @@ class NutrientText extends StatelessWidget {
   }
 }
 
-// Widget dayStyleNutrientDisplay(Nutrients nutrients, DRIS dris){
-//   final trackedNuts = dris.comparator(nutrients);
-//   List<Widget> nutWidgets = [];
-//   for (MapEntry<String, List> nut in trackedNuts.entries){
-//     final color = nut.value[2].startsWith(RegExp(r'[+-]')) ? Colors.red : Colors.green;
-//     nutWidgets.add(
-//       Padding(
-//         padding: const EdgeInsets.fromLTRB(16, 0, 0, 0),
-//         child: Column(
-//             children: [
-//               Text(DRIS.representor[nut.key] ?? replaceTextForForm(nut.key)),
-//               Text(nut.value[2], style: TextStyle(color: color))
-//             ]
-//         ),
-//       )
-//     );
-//   }
-//   return Container(
-//     height: 50,
-//     width: double.infinity,
-//     // child: ListView(
-//     //   scrollDirection: Axis.horizontal,
-//     //   shrinkWrap: true,
-//     //   children: nutWidgets,
-//     // ),
-//     child: ListView.builder(
-//       scrollDirection: Axis.horizontal,
-//       shrinkWrap: true,
-//       itemBuilder: (BuildContext context, int index) => nutWidgets[index],
-//       itemCount: nutWidgets.length,
-//     ),
-//   );
-// }
+Widget dayStyleNutrientDisplay(Nutrients nutrients, DRIS dris){
+  final trackedNuts = dris.comparator(nutrients);
+  List<Widget> nutWidgets = [];
+  for (MapEntry<String, List> nut in trackedNuts.entries){
+    final color = nut.value[2].startsWith(RegExp(r'[+-]')) ? Colors.red : Colors.green;
+    nutWidgets.add(
+      Padding(
+        padding: const EdgeInsets.fromLTRB(16, 0, 0, 0),
+        child: Column(
+            children: [
+              Text(DRIS.representor[nut.key] ?? replaceTextForForm(nut.key)),
+              Text(nut.value[2], style: TextStyle(color: color))
+            ]
+        ),
+      )
+    );
+  }
+  return Container(
+    height: 50,
+    width: double.infinity,
+    // child: ListView(
+    //   scrollDirection: Axis.horizontal,
+    //   shrinkWrap: true,
+    //   children: nutWidgets,
+    // ),
+    child: ListView.builder(
+      scrollDirection: Axis.horizontal,
+      shrinkWrap: true,
+      itemBuilder: (BuildContext context, int index) => nutWidgets[index],
+      itemCount: nutWidgets.length,
+    ),
+  );
+}
 
 class DayStyleNutrientDisplay extends StatefulWidget {
   final Nutrients nutrients;

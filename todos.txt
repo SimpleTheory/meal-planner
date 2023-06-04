@@ -1,5 +1,11 @@
 Creation:
-    (- get lazy/busy friends to contribute their assets)
+    (- get lazy/busy friends to contribute their assets)(1/2 done)
+
+Potential Save Points:
+    on any diet drawer nav
+    on ingbloc submit
+    on local backup save
+    on add mc to day
 
 Questions:
 COMPLETELY FAILED

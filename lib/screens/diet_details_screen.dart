@@ -38,7 +38,7 @@ class DietPage extends StatelessWidget {
                     ),
                     BlocBuilder<DietBloc, DietState>(
                       builder: (context, state) {
-                        return DayStyleNutrientDisplay(
+                        return dayStyleNutrientDisplay(
                             state.diet.averageNutrition, state.diet.dris);
                       },
                       buildWhen: (pre, curr) {
@@ -158,7 +158,7 @@ class DayTile extends StatelessWidget {
       children: [
         BlocBuilder<DietBloc, DietState>(
           builder: (context, state) {
-            return DayStyleNutrientDisplay(
+            return dayStyleNutrientDisplay(
                 day.nutrients, dietBloc.state.diet.dris);
           },
           buildWhen: (pre, curr) =>
