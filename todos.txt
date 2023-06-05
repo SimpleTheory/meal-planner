@@ -8,8 +8,6 @@ Potential Save Points:
     on add mc to day
 
 Questions:
-COMPLETELY FAILED
--  MCTile (only in mealmaker page) nutrient re total or re per serving? (or toggleable)
 
 Known things/Qs for later:
 - Overwriting
@@ -20,6 +18,7 @@ Known things/Qs for later:
     • find what other plugins may inhibit this and refactor
 - QoL:
     - Plus sign doesn't disappear behind search when searching
+    - days didnt update when showing rahawa but cant replicate bug
 Ideas?:
     summon api directly from searchbar (in ingpage)?
     ing measure pref for shopping list?

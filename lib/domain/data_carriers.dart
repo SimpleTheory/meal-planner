@@ -1153,9 +1153,30 @@ class DRI {
     if (name == 'Choline') {
       if (upperLimit != null) {
         upperLimit = upperLimit! * 1000;
+        if (upperLimit!.isInt){
+          upperLimit = upperLimit!.toInt();
+        }
       }
       if (dri != null) {
         dri = dri! * 1000;
+        if (dri!.isInt){
+          dri = dri!.toInt();
+        }
+      }
+      unit = 'mg';
+    }
+    if (name == 'Phosphorus') {
+      if (upperLimit != null) {
+        upperLimit = upperLimit! * 1000;
+        if (upperLimit!.isInt){
+          upperLimit = upperLimit!.toInt();
+        }
+      }
+      if (dri != null) {
+        dri = dri! * 1000;
+        if (dri!.isInt){
+          dri = dri!.toInt();
+        }
       }
       unit = 'mg';
     }
@@ -1389,7 +1410,7 @@ class DRIS {
       value.calories.upperLimit = value.calories.dri;
       value.calories.dri = value.calories.dri! * .9;
       return value;
-    } on Exception catch (e) {
+    } on Exception catch (_) {
       rethrow;
     }
   }

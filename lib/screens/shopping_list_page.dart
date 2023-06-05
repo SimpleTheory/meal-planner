@@ -240,7 +240,6 @@ class _StfulAttemptState extends State<StfulAttempt> {
   }
 }
 
-
 class ShoppingListPage extends StatelessWidget {
   const ShoppingListPage({Key? key}) : super(key: key);
 
@@ -253,7 +252,6 @@ class ShoppingListPage extends StatelessWidget {
       drawer: DietDrawer(context.read<ShoppingListBloc>().state.diet),
       body: BlocBuilder<ShoppingListBloc, ShoppingListState>(
         builder: (context, state) {
-          print('rebuild');
           return DragAndDropLists(
             children: state.shoppingList
                 .map((entry) => entryList(entry, context))
@@ -384,21 +382,22 @@ DragAndDropList entryList(
 }
 
 DragAndDropItem buildItem(MealComponent data) => DragAndDropItem(
-        child: ListTile(
-      title: Text(data.name),
-      subtitle: Text(
-        '${data.grams}g',
-        style: const TextStyle(fontStyle: FontStyle.italic),
-      ),
-      leading: GetImage(data.reference.photo),
+  child: ListTile(
+    title: Text(data.name),
+    subtitle: Text(
+      '${data.grams}g',
+      style: const TextStyle(fontStyle: FontStyle.italic),
+    ),
+    leading: GetImage(data.reference.photo, height: 100),
 
-      // shape: const BeveledRectangleBorder(
-      //     side: BorderSide(
-      //         color: Color.fromRGBO(150, 150, 150, 80),
-      //         width: 1
-      //     )
-      // ),
-    ));
+// shape: const BeveledRectangleBorder(
+//     side: BorderSide(
+//         color: Color.fromRGBO(150, 150, 150, 80),
+//         width: 1
+//     )
+// ),
+)
+);
 // </editor-fold>
 
 /// DragAndDropLists
