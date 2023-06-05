@@ -164,8 +164,8 @@ class _StfulAttemptState extends State<StfulAttempt> {
       drawer: DietDrawer(context.read<ShoppingListBloc>().state.diet),
       body: BlocBuilder<ShoppingListBloc, ShoppingListState>(
         builder: (context, state) {
-          print('rebuild');
-          print(state.shoppingList);
+          // print('rebuild');
+          // print(state.shoppingList);
           return DragAndDropLists(
             children: state.shoppingList
                 .map((entry) => entryList(entry, context))

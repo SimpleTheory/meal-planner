@@ -55,10 +55,13 @@ class MyApp extends StatelessWidget {
                         .light,
                     theme: ThemeData(
                       primarySwatch: Colors.green,
+                      // useMaterial3: true
                     ),
                     darkTheme: ThemeData(
                         brightness: Brightness.dark,
-                        primarySwatch: Colors.green),
+                        primarySwatch: Colors.green,
+                        // useMaterial3: true
+                    ),
                     home: const IndexPage(),
                     debugShowCheckedModeBanner: false,
                   );

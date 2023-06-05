@@ -531,6 +531,7 @@ class MCTile extends StatefulWidget {
   final double? height;
   final double? width;
   final MealComponent meal;
+  final int? servingSize;
 
   const MCTile(this.meal,
       {Key? key,
@@ -539,7 +540,9 @@ class MCTile extends StatefulWidget {
         required this.onGramsChange,
         this.onEdit,
         required this.onDelete,
-        this.onDuplicate})
+        this.onDuplicate,
+        this.servingSize
+      })
       : super(key: key);
 
   // String servingValue = 'grams';
@@ -646,7 +649,7 @@ class _MCTileState extends State<MCTile> {
         Padding(
           padding: const EdgeInsets.fromLTRB(0, 10, 0, 2),
           // child: MealStyleNutrientDisplay(widget.meal.nutrients),
-          child: mealStyleNutrientDisplay(widget.meal.nutrients),
+          child: mealStyleNutrientDisplay(widget.meal.nutrients / (widget.servingSize ?? 1)),
         ),
         const Text(
           'Serving Size',
