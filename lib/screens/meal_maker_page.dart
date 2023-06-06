@@ -176,20 +176,26 @@ class MealMakerPage extends StatelessWidget {
                   physics: const ClampingScrollPhysics(),
                   shrinkWrap: true,
                   children: [
-                    GestureDetector(
-                      onTap: () {
-                        if (!state.validServing() || state.servings == '1') {
-                          return;
-                        }
-                        mmbloc.add(ChangeNutDisplayEvent());
+                    BlocConsumer<MealMakerBloc, MealMakerState>(
+                      builder: (context, state) {
+                        return GestureDetector(
+                          onTap: () {
+                            if (!state.validServing() ||
+                                state.servings == '1') {
+                              return;
+                            }
+                            mmbloc.add(ChangeNutDisplayEvent());
+                          },
+                          child: mealStyleNutrientDisplay(state.nutrients),
+                        );
                       },
-                      child: BlocConsumer<MealMakerBloc, MealMakerState>(
-                        listener: (context, state) {
+                      buildWhen: (pre, curr) => pre.nutrients != curr.nutrients || pre.servings != curr.servings,
+                      listener: (context, state) {
                           if (state.nutPerServing) {
                             ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
-                                    content:
-                                        Text('Nutrients are now per serving')));
+                                    content: Text(
+                                        'Nutrients are now per serving')));
                           } else {
                             ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
@@ -197,13 +203,10 @@ class MealMakerPage extends StatelessWidget {
                                         'Nutrients are now the sum of all the ingredients')));
                           }
                         },
-                        listenWhen: (pre, curr) =>
-                            curr is ChangeNutDisplay &&
-                            pre is! ChangeNutDisplay,
-                        builder: (context, state) {
-                          return mealStyleNutrientDisplay(state.nutrients);
-                        },
-                      ),
+                      listenWhen: (pre, curr) =>
+                        curr is ChangeNutDisplay &&
+                            pre is! ChangeNutDisplay
+
                     ),
                     PlusSignTile((_) async {
                       final result = await Navigator.push(
@@ -250,9 +253,10 @@ class MealMakerPage extends StatelessWidget {
                             mmbloc.add(ReorderMC(oldIndex, newIndex));
                           },
                         );
-                      },
-                      buildWhen: (pre, curr) => pre.nutPerServing != curr.nutPerServing,
-                    )
+                      },)
+                    //   buildWhen: (pre, curr) =>
+                    //       pre.nutPerServing != curr.nutPerServing || curr.nutrients != pre.nutrients,
+                    // )
                     // ...state.mealComponents.map((e) => MCTile(
                     //       e,
                     //       onGramsChange: (MealComponent meal, num grams)
