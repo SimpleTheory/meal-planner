@@ -189,7 +189,7 @@ class MealMakerPage extends StatelessWidget {
                           child: mealStyleNutrientDisplay(state.nutrients),
                         );
                       },
-                      buildWhen: (pre, curr) => pre.nutrients != curr.nutrients || pre.servings != curr.servings,
+                      buildWhen: (pre, curr) => pre.nutrients != curr.nutrients || pre.servings != curr.servings || curr is MMChangeGrams,
                       listener: (context, state) {
                           if (state.nutPerServing) {
                             ScaffoldMessenger.of(context).showSnackBar(
