@@ -147,6 +147,7 @@ import 'package:nutrition_app/domain.dart';
 
 // <editor-fold desc="Attempt">
 
+// <editor-fold desc="Horribly Horribleness">
 class StfulAttempt extends StatefulWidget {
   const StfulAttempt({Key? key}) : super(key: key);
 
@@ -239,6 +240,7 @@ class _StfulAttemptState extends State<StfulAttempt> {
     );
   }
 }
+// </editor-fold>
 
 class ShoppingListPage extends StatelessWidget {
   const ShoppingListPage({Key? key}) : super(key: key);
@@ -250,6 +252,10 @@ class ShoppingListPage extends StatelessWidget {
         title: const Text('Shopping List'),
       ),
       drawer: DietDrawer(context.read<ShoppingListBloc>().state.diet),
+      bottomSheet: context.read<ShoppingListBloc>().state.selected.isEmpty ? null
+          :
+      const SendToBottomSheet()
+      ,
       body: BlocBuilder<ShoppingListBloc, ShoppingListState>(
         builder: (context, state) {
           return DragAndDropLists(
@@ -377,27 +383,52 @@ DragAndDropList entryList(
       height: 1.5,
       thickness: 1.5,
     ),
-    children: entry.value.map((e) => buildItem(e)).toList(),
+    children: entry.value.map((e) => buildItem(e, context)).toList(),
   );
 }
 
-DragAndDropItem buildItem(MealComponent data) => DragAndDropItem(
+DragAndDropItem buildItem(MealComponent data, BuildContext context) => DragAndDropItem(
   child: ListTile(
     title: Text(data.name),
     subtitle: Text(
       '${data.grams}g',
       style: const TextStyle(fontStyle: FontStyle.italic),
     ),
-    leading: GetImage(data.reference.photo, height: 100),
-
+    leading: GetImage(data.reference.photo, height: 100, width: 65),
+    selected: context.read<ShoppingListBloc>().state.selected.contains(data),
+    onTap: (){context.read<ShoppingListBloc>().add(SelectItem(data));},
 // shape: const BeveledRectangleBorder(
 //     side: BorderSide(
 //         color: Color.fromRGBO(150, 150, 150, 80),
 //         width: 1
 //     )
 // ),
-)
+  )
 );
+
+
+class SendToBottomSheet extends StatelessWidget {
+  const SendToBottomSheet({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final bloc = context.read<ShoppingListBloc>();
+    return SizedBox(height: 75,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          IconButton(onPressed: (){bloc.add(SendSelectedItems('Good'));}, icon: const Icon(Icons.check)),
+          IconButton(onPressed: (){bloc.add(SendSelectedItems('Running Low'));}, icon: const Icon(Icons.directions_run)),
+          IconButton(onPressed: (){bloc.add(SendSelectedItems('Out of Stock'));}, icon: const Icon(Icons.shopping_cart),),
+          IconButton(onPressed: (){bloc.add(SendSelectedItems('On the Way'));}, icon: const Icon(Icons.airplane_ticket_outlined)),
+          IconButton(onPressed: (){bloc.add(ClearSelectedItems());}, icon: const Icon(Icons.clear_all)),
+        ],
+      ),
+    );
+  }
+}
+
+
 // </editor-fold>
 
 /// DragAndDropLists
