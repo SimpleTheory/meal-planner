@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nutrition_app/blocs/ingredients_page/ingredients_page_bloc.dart';
-import 'package:nutrition_app/screens/ingredients_page.dart';
 import 'package:nutrition_app/utils.dart';
 import 'package:nutrition_app/domain.dart';
 

@@ -1108,6 +1108,12 @@ class DRI {
       dri: dri == null ? null : dri! / num,
       upperLimit: upperLimit == null ? null : upperLimit! / num);
 
+  void convertUnit(num multiplier, String unit){
+    this.unit = unit;
+    upperLimit = convertUnitNum(upperLimit, multiplier);
+    dri = convertUnitNum(dri, multiplier);
+  }
+
   // <editor-fold desc="Dataclass Objects">
   DRI(this.name,
       {this.dri,
@@ -1151,34 +1157,13 @@ class DRI {
       upperLimit = null;
     }
     if (name == 'Choline') {
-      if (upperLimit != null) {
-        upperLimit = upperLimit! * 1000;
-        if (upperLimit!.isInt){
-          upperLimit = upperLimit!.toInt();
-        }
-      }
-      if (dri != null) {
-        dri = dri! * 1000;
-        if (dri!.isInt){
-          dri = dri!.toInt();
-        }
-      }
-      unit = 'mg';
+      convertUnit(1000, 'mg');
     }
     if (name == 'Phosphorus') {
-      if (upperLimit != null) {
-        upperLimit = upperLimit! * 1000;
-        if (upperLimit!.isInt){
-          upperLimit = upperLimit!.toInt();
-        }
-      }
-      if (dri != null) {
-        dri = dri! * 1000;
-        if (dri!.isInt){
-          dri = dri!.toInt();
-        }
-      }
-      unit = 'mg';
+      convertUnit(1000, 'mg');
+    }
+    if (name == 'Copper') {
+      convertUnit(1/1000, 'mg');
     }
   }
 
@@ -1269,6 +1254,15 @@ class DRI {
       unit: unit,
       tracked: tracked);
 //</editor-fold>
+}
+
+num? convertUnitNum(num? number, num multiplier){
+  if (number == null){return null;}
+  number *= multiplier;
+  if (number.isInt){
+    return number.toInt();
+  }
+  return number;
 }
 
 @Dataclass(constructor: false)

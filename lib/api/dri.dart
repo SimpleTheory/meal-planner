@@ -177,9 +177,9 @@ int toInches(int feet, int inches){
 // }
 
 List<DRI> extraDRIS = [
-  DRI('EPA', dri: 200, upperLimit: 1800, unit: 'mg'),
-  DRI('DHA', dri: 200, upperLimit: 1800, unit: 'mg'),
-  DRI('DPA', dri: 50, unit: 'mg'),
+  DRI('EPA', dri: .2, upperLimit: 1.8, unit: 'g'),
+  DRI('DHA', dri: .2, upperLimit: 1.8, unit: 'g'),
+  DRI('DPA', dri: .05, unit: 'g'),
   DRI('Trans Fat', unit: 'g', upperLimit: 1),
   DRI('Cholesterol', unit: 'mg', upperLimit: 300),
 ];
