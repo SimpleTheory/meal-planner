@@ -114,6 +114,7 @@ const Map<int, NutrientConstructor> apiId2nutrient = {
     306: Nutrient.Potassium,
     307: Nutrient.Sodium,
     203: Nutrient.Protein,
+    // TODO: this actually refers to added sugars now so refactor accordingly
     539: Nutrient.Sugars,
     421: Nutrient.Choline,
     312: Nutrient.Copper,

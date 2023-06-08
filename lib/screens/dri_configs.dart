@@ -207,7 +207,7 @@ class DriForm extends StatelessWidget {
 // }
 
 AlertDialog driInformation(String driName, BuildContext context) => AlertDialog(
-      title: Text('${replaceTextForForm(driName)}:'),
+      title: Text('${replaceTextForForm(driName)}'),
       content: Text(driNotes[driName]!),
       actions: [
         TextButton(
