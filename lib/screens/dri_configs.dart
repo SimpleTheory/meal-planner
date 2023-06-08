@@ -5,7 +5,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nutrition_app/blocs/dri_config/dri_config_bloc.dart';
 import 'package:nutrition_app/domain.dart';
 import 'package:nutrition_app/domain/dri_notes.dart';
-import 'package:nutrition_app/screens/custom_ingredient.dart';
 import 'package:nutrition_app/utils/local_widgets.dart';
 
 class DRIConfigPage extends StatelessWidget {
@@ -137,7 +136,7 @@ class DriForm extends StatelessWidget {
                     .read<DriConfigBloc>()
                     .add(DRIUpdate(dft: DFT.ul, dri: dri, newVal: val));
               },
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 // errorText: toBool(state.driErrors[dri])
                 //     ? 'UL (${dri.upperLimit}) Must Be Higher than the DRI (${dri.dri})!'
                 //     : null,
@@ -207,7 +206,7 @@ class DriForm extends StatelessWidget {
 // }
 
 AlertDialog driInformation(String driName, BuildContext context) => AlertDialog(
-      title: Text('${replaceTextForForm(driName)}'),
+      title: Text(replaceTextForForm(driName)),
       content: Text(driNotes[driName]!),
       actions: [
         TextButton(

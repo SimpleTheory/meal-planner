@@ -1165,6 +1165,9 @@ class DRI {
     if (name == 'Copper') {
       convertUnit(1/1000, 'mg');
     }
+    if (name == 'Linoleic Acid'){
+      tracked = false;
+    }
   }
 
   factory DRI.driMacro(List<String> instantiationString,
