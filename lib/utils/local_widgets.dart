@@ -25,9 +25,10 @@ import '../screens/dri_configs.dart';
 
 class PlusSignTile extends StatelessWidget {
   final void Function(BuildContext context) onTap;
+  final void Function()? onLongPress;
   final EdgeInsets? padding;
 
-  const PlusSignTile(this.onTap, {this.padding, Key? key}) : super(key: key);
+  const PlusSignTile(this.onTap, {this.padding, this.onLongPress, Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -37,6 +38,7 @@ class PlusSignTile extends StatelessWidget {
         onTap: () {
           onTap(context);
         },
+        onLongPress: onLongPress,
         title: const Center(
           child: Icon(Icons.add),
         ),

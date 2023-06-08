@@ -17,6 +17,10 @@ class DietBloc extends Bloc<DietEvent, DietState> {
       event.day.addDayMeal(event.meal);
       emit(AddMealToDayState(state.diet, event.day));
     });
+    on<AddIngredientToDay>((event, emit){
+      event.day.addDayMealFromIng(event.ingredient);
+      emit(AddMealToDayState(state.diet, event.day));
+    });
     
     on<MealUpdateGrams>((event, emit){
       event.day.updateMealServingSize(event.index, event.serving, event.value);

@@ -241,7 +241,7 @@ class Diet {
     try {
       final dris = await DRIS.fromAPI(settings.anthroMetrics);
       return Diet(name: name, days: <Day>[], dris: dris);
-    } on Exception catch (e) {
+    } on Exception catch (_) {
       rethrow;
     }
 }
@@ -432,6 +432,10 @@ class Day {
 
   void addDayMeal(Meal meal) {
     meals.add(meal.toMealComponent('serving', 1, meal));
+  }
+
+  void addDayMealFromIng(Ingredient ing){
+    meals.add(ing.toMealComponent('grams', ing.baseNutrient.grams, ing));
   }
 
   void deleteDayMeal(int index) {

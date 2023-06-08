@@ -6,6 +6,7 @@ import 'package:nutrition_app/utils/local_widgets.dart';
 import 'package:nutrition_app/utils/utils.dart';
 import '../blocs/ingredients_page/ingredients_page_bloc.dart';
 import '../blocs/init/init_bloc.dart';
+import 'ingredients_page.dart';
 import 'meal_page.dart';
 
 class DietPage extends StatelessWidget {
@@ -170,7 +171,6 @@ class DayTile extends StatelessWidget {
             final result = await Navigator.push(
                 context,
                 MaterialPageRoute(
-                    settings: const RouteSettings(name: "/IngredientsPage"),
                     builder: (_) => BlocProvider(
                         create: (context) => IngredientsPageBloc(
                             context.read<InitBloc>().state.app!, MCFTypes.meal,
@@ -180,7 +180,23 @@ class DayTile extends StatelessWidget {
               // final serving = result.toServing();
               dietBloc.add(AddMealToDay(result, day));
             }
-          }),
+           },
+            onLongPress: ()async{
+              final result = await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      settings: const RouteSettings(name: "/IngredientsPage"),
+                      builder: (_) => BlocProvider(
+                          create: (context) => IngredientsPageBloc(
+                              context.read<InitBloc>().state.app!, MCFTypes.ingredient,
+                              include: false, backRef: true),
+                          child: IngredientPage())));
+              if (result is Ingredient) {
+                // final serving = result.toServing();
+                dietBloc.add(AddIngredientToDay(result, day));
+              }
+            },
+          ),
         ),
         BlocBuilder<DietBloc, DietState>(
           builder: (context, state) {
