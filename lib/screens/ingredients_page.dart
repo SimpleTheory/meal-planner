@@ -64,7 +64,7 @@ class IngredientPage extends StatelessWidget {
                       // Maybe add something for if its empty
                       return ListView.builder(
                         itemBuilder: (context, index) =>
-                            IngredientTile(state.searchResults[index]),
+                            MCFactoryTile(state.searchResults[index]),
                         itemCount: state.searchResults.length,
                         shrinkWrap: true,
                         physics: const ClampingScrollPhysics(),
@@ -78,101 +78,6 @@ class IngredientPage extends StatelessWidget {
           )
         ],
       ),
-    );
-  }
-}
-
-class IngredientPopUpEnumHolder {
-  final MealComponentFactory ingredient;
-  final PopUpOptions option;
-
-  const IngredientPopUpEnumHolder(this.ingredient, this.option);
-}
-
-class IngredientTile extends StatelessWidget {
-  final MealComponentFactory ingredient;
-
-  const IngredientTile(this.ingredient, {Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    final ingPgBloc = context.read<IngredientsPageBloc>();
-    return ListTile(
-      title: Text(ingredient.name),
-      trailing: PopupMenuButton(
-        itemBuilder: (BuildContext context) => [
-          PopupMenuItem(
-            value: IngredientPopUpEnumHolder(ingredient, PopUpOptions.edit),
-            child: const Text('Edit'),
-          ),
-          PopupMenuItem(
-              value: IngredientPopUpEnumHolder(ingredient, PopUpOptions.delete),
-              child: const Text('Delete')),
-          PopupMenuItem(
-            value:
-                IngredientPopUpEnumHolder(ingredient, PopUpOptions.duplicate),
-            child: const Text('Duplicate'),
-          ),
-        ],
-        onSelected: (IngredientPopUpEnumHolder ing) async {
-          switch (ing.option) {
-            case PopUpOptions.edit:
-              editIng(context, ingPgBloc, ref: ing.ingredient);
-              break;
-            case PopUpOptions.delete:
-              ingPgBloc.add(IngDelete(ingredient));
-              break;
-            case PopUpOptions.duplicate:
-              ingPgBloc.add(IngDuplicate(ingredient));
-              break;
-          }
-        },
-      ),
-      subtitle: NutrientText(
-        nutrients: ingredient.baseNutrient.nutrients,
-        grams: ingredient is Ingredient ? ingredient.baseNutrient.grams : null,
-        baseUnit: ingredient is Ingredient ? ingredient.unit : null,
-      ),
-      // subtitle: Text(
-      //     'Serving (${ingredient.baseNutrient.grams}g):  '
-      //         "${ingredient.baseNutrient.nutrients.calories.value.round()}\u{1F525}  "
-      //         '${ingredient.baseNutrient.nutrients.carbohydrate.value.round()}\u{1F35E}   '
-      //         '${ingredient.baseNutrient.nutrients.protein.value.round()}\u{1F969}   '
-      //     // '${Ingredient.baseNutrient.nutrients.unsaturatedFat.value.round()}\u{1FAD2}  '
-      //         '${ingredient.baseNutrient.nutrients.unsaturatedFat.value.round()}$olive   '
-      //     // '${Ingredient.baseNutrient.nutrients.saturatedFat.value.round()}\u{1F9C8}',
-      //         '${ingredient.baseNutrient.nutrients.saturatedFat.value.round()}$butter'
-      // ),
-      // subtitle: RichText(
-      //   text: TextSpan(
-      //     children:[
-      //       TextSpan(text: 'Serving:  '),
-      //       TextSpan(text: "${Ingredient.baseNutrient.nutrients.calories.value.round()}\u{1F525}  "),
-      //       TextSpan(text: '\u{1F525}  ', style: TextStyle(fontFamily: 'EmojiOne')),
-      //       TextSpan(text: '${Ingredient.baseNutrient.nutrients.carbohydrate.value.round()}\u{1F35E}  '),
-      //       TextSpan(text: '\u{1F35E}  ', style: TextStyle(fontFamily: 'EmojiOne')),
-      //       TextSpan(text: '${Ingredient.baseNutrient.nutrients.protein.value.round()}\u{1F969}  '),
-      //       TextSpan(text: '\u{1F969}  ', style: TextStyle(fontFamily: 'EmojiOne')),
-      //       // '${Ingredient.baseNutrient.nutrients.unsaturatedFat.value.round()}\u{1FAD2}  '
-      //       TextSpan(text: '${Ingredient.baseNutrient.nutrients.unsaturatedFat.value.round()}$olive  '),
-      //       TextSpan(text: '$olive  ', style: GoogleFonts.notoColorEmoji()),
-      //       // '${Ingredient.baseNutrient.nutrients.saturatedFat.value.round()}\u{1F9C8}',
-      //       TextSpan(text: '${Ingredient.baseNutrient.nutrients.saturatedFat.value.round()}$butter'),
-      //       TextSpan(text: '$butter  ', style: GoogleFonts.notoColorEmoji()),
-      //     ]
-      //   )
-      // ),
-      leading: GetImage(ingredient.photo, width: 75),
-      onTap: () {
-        if (ingPgBloc.state.backReference){
-          Navigator.pop(context, ingredient);
-        }
-        //else if (){}
-        //else if (){}
-        else{
-          editIng(context, ingPgBloc, ref: ingredient);
-        }
-        }
     );
   }
 }

@@ -65,7 +65,7 @@ class MealPage extends StatelessWidget {
                     builder: (context, state) {
                       return ListView.builder(
                         itemBuilder: (context, index) =>
-                            IngredientTile(state.searchResults[index]),
+                            MCFactoryTile(state.searchResults[index]),
                         itemCount: state.searchResults.length,
                         shrinkWrap: true,
                         physics: const ClampingScrollPhysics(),
