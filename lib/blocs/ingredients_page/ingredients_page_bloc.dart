@@ -34,21 +34,15 @@ class IngredientsPageBloc
                 .where((element) => !element.isSubRecipe)
                 .toList();
       }
-      List<MealComponentFactory> result = base
-          .where((element) => element.name
-              .toLowerCase()
-              .startsWith(event.searchVal.toLowerCase()))
-          .toList();
-      if (result.isNotEmpty) {
-        emit(state.copyWith(searchResults_: result));
-        return;
-      }
-      result = base
-          .where((element) => element.name
-              .toLowerCase()
-              .contains(event.searchVal.toLowerCase()))
-          .toList();
-      emit(state.copyWith(searchResults_: result));
+      final first = base.where((element) =>
+          element.name.toLowerCase().startsWith(event.searchVal.toLowerCase())
+      );
+      final second = base.where((element) =>
+          element.name.toLowerCase().contains(event.searchVal.toLowerCase()) &&
+          !(element.name.toLowerCase().startsWith(event.searchVal.toLowerCase()))
+      );
+
+      emit(state.copyWith(searchResults_: [...first, ...second]));
     });
     on<OnSubmitSolo>((event, emit) {
       if (event.ingredient is Ingredient) {
