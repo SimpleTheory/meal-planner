@@ -7,3 +7,4 @@ library util;
 export 'package:nutrition_app/utils/utils.dart';
 export 'package:nutrition_app/utils/local_widgets.dart';
 export 'package:nutrition_app/utils/storage.dart';
+export 'package:nutrition_app/utils/shared_functionalities.dart';

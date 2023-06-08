@@ -1,11 +1,9 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:nutrition_app/blocs/custom_ing/custom_ing_bloc.dart';
-import 'package:nutrition_app/blocs/ingredients_page/ingredients_page_bloc.dart';
 import 'package:nutrition_app/domain.dart';
 import 'package:nutrition_app/utils/local_widgets.dart';
 import 'package:nutrition_app/utils/utils.dart';
@@ -21,11 +19,12 @@ class CustomIngredientPage extends StatelessWidget {
           title: BlocConsumer<CustomIngBloc, CustomIngState>(
         listener: (context, state) {
           if (state is CustomIngSuccess) {
-            Navigator.of(context)
-                .popUntil(ModalRoute.withName('/IngredientsPage'));
-            context
-                .read<IngredientsPageBloc>()
-                .add(OnSubmitSolo(state.ingredient, ingToReplace: state.refIngredient));
+            Navigator.pop(context, state.ingredient);
+
+                // .popUntil(ModalRoute.withName('/IngredientsPage'), state.ingredient);
+            // context
+            //     .read<IngredientsPageBloc>()
+            //     .add(OnSubmitSolo(state.ingredient, ingToReplace: state.refIngredient));
           }
         },
         builder: (context, state) {

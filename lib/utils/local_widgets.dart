@@ -1,5 +1,4 @@
 import 'package:ari_utils/ari_utils.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -8,7 +7,6 @@ import 'package:nutrition_app/domain.dart';
 import 'package:nutrition_app/screens/diet_details_screen.dart';
 import 'package:nutrition_app/screens/shopping_list_page.dart';
 import 'package:nutrition_app/utils/utils.dart';
-
 import '../screens/dri_configs.dart';
 
 // Widget plusSignTile(void Function()? onTap, {EdgeInsets? padding}) =>

@@ -1,13 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:nutrition_app/blocs/custom_ing/custom_ing_bloc.dart';
-import 'package:nutrition_app/blocs/meal_maker/meal_maker_bloc.dart';
 import 'package:nutrition_app/screens/barcode_scan.dart';
-import 'package:nutrition_app/screens/custom_ingredient.dart';
-import 'package:nutrition_app/screens/meal_maker_page.dart';
-import 'package:nutrition_app/utils/local_widgets.dart';
-import 'package:nutrition_app/utils/utils.dart';
+import 'package:nutrition_app/utils.dart';
 import 'package:nutrition_app/domain.dart';
 import '../blocs/ingredients_page/ingredients_page_bloc.dart';
 
@@ -119,34 +114,10 @@ class IngredientTile extends StatelessWidget {
             child: const Text('Duplicate'),
           ),
         ],
-        onSelected: (IngredientPopUpEnumHolder ing) {
+        onSelected: (IngredientPopUpEnumHolder ing) async {
           switch (ing.option) {
             case PopUpOptions.edit:
-              if (ing.ingredient is Ingredient) {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => MultiBlocProvider(providers: [
-                              BlocProvider<CustomIngBloc>(
-                                  create: (context) => CustomIngBloc(
-                                      ing.ingredient as Ingredient)),
-                              BlocProvider<IngredientsPageBloc>.value(
-                                  value: ingPgBloc)
-                            ], child: const CustomIngredientPage())));
-              }
-              else if (ing.ingredient is Meal){
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => MultiBlocProvider(providers: [
-                          BlocProvider<MealMakerBloc>(
-                              create: (context) => MealMakerBloc(
-                                  ing.ingredient as Meal)),
-                          BlocProvider<IngredientsPageBloc>.value(
-                              value: ingPgBloc)
-                        ],
-                            child: const MealMakerPage())));
-              }
+              editIng(context, ingPgBloc, ref: ing.ingredient);
               break;
             case PopUpOptions.delete:
               ingPgBloc.add(IngDelete(ingredient));
@@ -198,31 +169,9 @@ class IngredientTile extends StatelessWidget {
         }
         //else if (){}
         //else if (){}
-        else if (ingredient is Meal){
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => MultiBlocProvider(providers: [
-                    BlocProvider<MealMakerBloc>(
-                        create: (context) => MealMakerBloc(
-                            ingredient as Meal)),
-                    BlocProvider<IngredientsPageBloc>.value(
-                        value: ingPgBloc)
-                  ],
-                      child: const MealMakerPage())));
+        else{
+          editIng(context, ingPgBloc, ref: ingredient);
         }
-        else if (ingredient is Ingredient){
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => MultiBlocProvider(providers: [
-                      BlocProvider(
-                          create: (context) => CustomIngBloc(
-                              ingredient as Ingredient)),
-                      BlocProvider.value(
-                          value: ingPgBloc)
-                    ], child: const CustomIngredientPage())));
-          }
         }
     );
   }
@@ -328,20 +277,9 @@ void openAddNewIngredientPopUp(BuildContext context) {
                                 child: const Text('Scan UPC')),
                             ElevatedButton(
                                 onPressed: () {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              MultiBlocProvider(
-                                                  providers: [
-                                                    BlocProvider(
-                                                        create: (context) =>
-                                                            CustomIngBloc()),
-                                                    BlocProvider.value(
-                                                        value: ingPgBloc)
-                                                  ],
-                                                  child:
-                                                      const CustomIngredientPage())));
+                                  addIng(context, ingPgBloc, pageIsIng: true).whenComplete(
+                                          () => Navigator.of(context).popUntil(ModalRoute.withName('/IngredientsPage'))
+                                  );
                                 },
                                 child: const Text('Create Custom Ingredient')),
                           ],

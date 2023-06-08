@@ -1,13 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nutrition_app/blocs/ingredients_page/ingredients_page_bloc.dart';
-import 'package:nutrition_app/blocs/meal_maker/meal_maker_bloc.dart';
 import 'package:nutrition_app/screens/ingredients_page.dart';
-import 'package:nutrition_app/utils/local_widgets.dart';
-import 'package:nutrition_app/utils/utils.dart';
+import 'package:nutrition_app/utils.dart';
 import 'package:nutrition_app/domain.dart';
-import 'meal_maker_page.dart';
 
 
 class MealPage extends StatelessWidget {
@@ -63,19 +59,7 @@ class MealPage extends StatelessWidget {
               child: ListView(
                 children: [
                   PlusSignTile((_) {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) =>
-                                MultiBlocProvider(
-                                  providers: [
-                                    BlocProvider(create: (context) => MealMakerBloc()),
-                                    BlocProvider.value(value: ingPgBloc)
-                                  ],
-                                  child: const MealMakerPage(),
-                                )
-                        )
-                    );
+                    addIng(context, ingPgBloc, pageIsIng: false);
                   }),
                   BlocBuilder<IngredientsPageBloc, IngredientsPageState>(
                     builder: (context, state) {

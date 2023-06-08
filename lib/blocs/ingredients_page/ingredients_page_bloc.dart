@@ -1,5 +1,4 @@
 import 'package:ari_utils/ari_utils.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nutrition_app/api/exceptions.dart';
 import 'package:nutrition_app/domain.dart';
@@ -9,7 +8,6 @@ part 'ingredients_page_event.dart';
 
 part 'ingredients_page_state.dart';
 
-enum MCFTypes { meal, ingredient }
 
 class IngredientsPageBloc
     extends Bloc<IngredientsPageEvent, IngredientsPageState> {

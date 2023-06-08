@@ -24,9 +24,7 @@ class MealMakerPage extends StatelessWidget {
         title: BlocConsumer<MealMakerBloc, MealMakerState>(
           listener: (context, state) {
             if (state is MMSuccess) {
-              Navigator.pop(context);
-              context.read<IngredientsPageBloc>().add(
-                  OnSubmitSolo(state.meal, ingToReplace: state.refIngredient));
+              Navigator.pop(context, state.meal);
             }
           },
           builder: (context, state) {
@@ -214,7 +212,7 @@ class MealMakerPage extends StatelessWidget {
                           MaterialPageRoute(
                               settings:
                                   const RouteSettings(name: "/IngredientsPage"),
-                              builder: (_) => BlocProvider(
+                              builder: (_) => BlocProvider<IngredientsPageBloc>(
                                   create: (context) => IngredientsPageBloc(
                                       context.read<InitBloc>().state.app!,
                                       MCFTypes.ingredient,

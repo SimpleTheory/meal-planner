@@ -1,6 +1,6 @@
 /// Relevant Enums
 enum Sex { M, F }
-
+enum MCFTypes { meal, ingredient }
 enum Activity {
   Sedentary, Low_Active, Active, Very_Active;
 
@@ -17,12 +17,10 @@ enum Activity {
     }
   }
 }
-
 enum IngredientSource{
   string, upc, custom
 }
 enum PopUpOptions{
   edit, delete, duplicate
 }
-
 enum Measure{metric, imperial}
