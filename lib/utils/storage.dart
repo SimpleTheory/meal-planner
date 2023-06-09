@@ -147,9 +147,9 @@ void saveAppWithIsolate(App app) async {
     Hive.init(path);
     saveApp(app);
     fracturedSaveAll(app);
-    // print('saved app');
+    print('saved app');
   }, app);
-  dietIsos.add(iso);
+  appIsos.add(iso);
 }
 
 void saveDiet(Diet diet) async {
