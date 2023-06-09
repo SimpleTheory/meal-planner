@@ -301,6 +301,12 @@ class KeyHolder<T1, T2, T3, T4, T5, T6>{
   ValueKey<KeyHolder<T1,T2,T3,T4,T5,T6>> key() => ValueKey(this);
 }
 
+List<T>sorter<T>(List<T> list, Comparable Function(T) key){
+  final copy = List.from(list);
+  copy.sort((a, b) => key(a).compareTo(b.name));
+  return List<T>.from(copy);
+}
+
 
 final emoji = EmojiParser();
 final olive = emoji.get('olive').code;
