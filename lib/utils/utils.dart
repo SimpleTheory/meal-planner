@@ -301,9 +301,10 @@ class KeyHolder<T1, T2, T3, T4, T5, T6>{
   ValueKey<KeyHolder<T1,T2,T3,T4,T5,T6>> key() => ValueKey(this);
 }
 
-List<T>sorter<T>(List<T> list, Comparable Function(T) key){
+List<T>sorter<T>(List<T> list, Function(T)? key){
+  key ??= (T obj) => obj;
   final copy = List.from(list);
-  copy.sort((a, b) => key(a).compareTo(b.name));
+  copy.sort((a, b) => key!(a).compareTo(key(b)));
   return List<T>.from(copy);
 }
 

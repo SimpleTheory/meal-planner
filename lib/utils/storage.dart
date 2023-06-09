@@ -206,7 +206,7 @@ Map<String, K> mapName<K>(Iterable<K> list) =>
     {for (dynamic k in list) k.name: k as K};
 
 Map<String, T> instantiateAllDCMap<T>(Box box) {
-  return mapName<T>(sorter(instantiateAllDCFromBox<T>(box), (T thing){dynamic temp = thing; return temp.name;}));
+  return mapName<T>(sorter(instantiateAllDCFromBox<T>(box), (T thing){dynamic temp = thing; return (temp.name as String).toLowerCase();}));
 }
 
 List<String> boxNames = ['master', 'meals', 'diets', 'ingredients'];
