@@ -50,8 +50,7 @@ class IngredientsPageBloc
           state.app.updateBaseIngredient(
               event.ingToReplace as Ingredient, event.ingredient as Ingredient);
         } else {
-          state.app.baseIngredients[event.ingredient.name] =
-              event.ingredient as Ingredient;
+          state.app.addBaseIngredient(event.ingredient as Ingredient);
         }
       }
       // Else is Meal
@@ -60,7 +59,7 @@ class IngredientsPageBloc
           state.app
               .updateMeal(event.ingToReplace as Meal, event.ingredient as Meal);
         } else {
-          state.app.meals[event.ingredient.name] = event.ingredient as Meal;
+          state.app.addMeal(event.ingredient as Meal);
         }
       }
 
