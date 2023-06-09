@@ -203,3 +203,4 @@ Map<String, T> instantiateAllDCMap<T>(Box box) {
 }
 
 List<String> boxNames = ['master', 'meals', 'diets', 'ingredients'];
+List<String> masterBoxValues = ['diets order', 'settings', 'app'];
