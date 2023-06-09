@@ -96,7 +96,7 @@ void saveMeal(Meal meal) async {
   box.put(meal.name, meal.toJson());
 }
 
-void deleteMeal(Meal meal) async {
+void deleteMealFromSave(Meal meal) async {
   final box = await Hive.openBox('meals');
   box.delete(meal.name);
 }
@@ -106,8 +106,8 @@ void saveIngredient(Ingredient ingredient) async {
   box.put(ingredient.name, ingredient.toJson());
 }
 
-void deleteIngredient(Ingredient ingredient) async {
-  final box = await Hive.openBox('meals');
+void deleteIngredientFromSave(Ingredient ingredient) async {
+  final box = await Hive.openBox('ingredients');
   box.delete(ingredient.name);
 }
 
@@ -115,9 +115,10 @@ List<Isolate> dietIsos = [];
 void saveDietWithIsolate(Diet diet) async {
   RootIsolateToken rootIsolateToken = RootIsolateToken.instance!;
   if (dietIsos.isNotEmpty){
-    dietIsos.forEach((element) {element.kill();});
+    for (Isolate element in dietIsos) {element.kill();}
     dietIsos = [];
   }
+  ReceivePort receivePort = ReceivePort('diet recieve');
   final iso = await Isolate.spawn<Diet>((Diet diet)async{
     BackgroundIsolateBinaryMessenger.ensureInitialized(rootIsolateToken);
     // Get the path to the application documents directory
@@ -126,19 +127,22 @@ void saveDietWithIsolate(Diet diet) async {
     // Initialize Hive in the spawned isolate
     Hive.init(path);
     saveDiet(diet);
-    // print('saved ${diet.name}');
   }, diet);
+  iso.addOnExitListener(receivePort.sendPort, response: diet.name);
   dietIsos.add(iso);
+  receivePort.listen((message) {print('Saved Diet: $message');});
 }
 
 List<Isolate> appIsos = [];
-void saveAppWithIsolate(App app) async {
+void saveAppWithIsolate(App app, {ReceivePort? receivePort}) async {
   RootIsolateToken rootIsolateToken = RootIsolateToken.instance!;
   if (appIsos.isNotEmpty){
     for (Isolate element in appIsos) {element.kill();}
     appIsos = [];
   }
+  // ReceivePort receivePort = ReceivePort('app port');
   final iso = await Isolate.spawn<App>((App app)async{
+
     BackgroundIsolateBinaryMessenger.ensureInitialized(rootIsolateToken);
     // Get the path to the application documents directory
     final appDocumentDir = await getApplicationDocumentsDirectory();
@@ -147,9 +151,12 @@ void saveAppWithIsolate(App app) async {
     Hive.init(path);
     saveApp(app);
     fracturedSaveAll(app);
-    print('saved app');
   }, app);
+  if (receivePort != null) {
+    iso.addOnExitListener(receivePort.sendPort, response: 'complete');
+  }
   appIsos.add(iso);
+  // receivePort.listen((message) {print(message);});
 }
 
 void saveDiet(Diet diet) async {
@@ -157,8 +164,8 @@ void saveDiet(Diet diet) async {
   box.put(diet.name, diet.toJson());
 }
 
-void deleteDiet(Diet diet) async {
-  final box = await Hive.openBox('meals');
+void deleteDietFromSave(Diet diet) async {
+  final box = await Hive.openBox('diets');
   box.delete(diet.name);
 }
 

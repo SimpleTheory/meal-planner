@@ -1,3 +1,4 @@
+import 'dart:isolate';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -114,11 +115,16 @@ class IndexPage extends StatelessWidget {
             ),
             ElevatedButton(
                 onPressed: () {
-                  saveAppWithIsolate(context.read<InitBloc>().state.app!);
-                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                    content: Text('The app has been saved!'),
-                    backgroundColor: Colors.green,
-                  ));
+                  ReceivePort re = ReceivePort();
+                  saveAppWithIsolate(context.read<InitBloc>().state.app!, receivePort: re);
+                  re.listen((message) {
+                    print(message);
+                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                      content: Text('The app has been saved!'),
+                      backgroundColor: Colors.green,
+                    ));
+                  });
+
                 },
                 child: const Text('Save'))
             // const Text('DEBUG NAVIGATIONS'),

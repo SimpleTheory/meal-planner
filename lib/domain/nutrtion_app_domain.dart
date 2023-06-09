@@ -46,15 +46,15 @@ class App {
   // Delete: meal, ingredient, diet
   void deleteMeal(Meal meal) {
     meals.remove(meal.name);
-    deleteMeal(meal);
+    deleteMealFromSave(meal);
   }
   void deleteBaseIngredient(Ingredient ingredient) {
     baseIngredients.remove(ingredient.name);
-    deleteIngredient(ingredient);
+    deleteIngredientFromSave(ingredient);
   }
   void deleteDiet(Diet diet) {
     diets.remove(diet.name);
-    deleteDiet(diet);
+    deleteDietFromSave(diet);
   }
 
   factory App.newApp(Settings settings) =>
