@@ -342,9 +342,21 @@ DragAndDropList entryList(
               color: Colors.green,
             ),
             padding: const EdgeInsets.all(10),
-            child: Text(
-              entry.key,
-              style: Theme.of(context).primaryTextTheme.titleLarge,
+            child: Row(
+              children: [
+                Text(
+                  entry.key,
+                  style: Theme.of(context).primaryTextTheme.titleLarge,
+                ),
+                const Padding(
+                  padding: EdgeInsets.fromLTRB(10, 0, 0, 0),
+                  child: Text(' - '),
+                ),
+                Padding(
+                    padding: const EdgeInsets.fromLTRB(10, 0, 0, 0),
+                    child: MatchingIcon(entry.key),
+                )
+              ],
             ),
           ),
         ),
@@ -405,6 +417,21 @@ DragAndDropItem buildItem(MealComponent data, BuildContext context) => DragAndDr
 // ),
   )
 );
+
+class MatchingIcon extends StatelessWidget {
+  final String text;
+  const MatchingIcon(this.text, {super.key});
+  @override
+  Widget build(BuildContext context) {
+    switch (text){
+      case 'Good': return const Icon(Icons.check);
+      case 'Running Low': return const Icon(Icons.directions_run);
+      case 'Out of Stock': return const Icon(Icons.shopping_cart);
+      case 'On the Way': return const Icon(Icons.airplane_ticket_outlined);
+      default: return const Icon(Icons.safety_check);
+    }
+  }
+}
 
 
 class SendToBottomSheet extends StatelessWidget {
