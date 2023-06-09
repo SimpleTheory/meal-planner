@@ -45,7 +45,25 @@ class MealMakerBloc extends Bloc<MealMakerEvent, MealMakerState> {
       // copy[index] = event.mc.copyWithMealComponent(grams: event.grams);
       emit(MMChangeGrams.fromState(state));
     });
-    // on<EditMC>((event, emit){});
+    on<EditMC>((event, emit){
+      if (event.factory is Meal){
+        event.app.updateMeal(event.mc.reference as Meal, event.factory as Meal);
+      }
+      else if (event.factory is Ingredient){
+        event.app.updateBaseIngredient(event.mc.reference as Ingredient, event.factory as Ingredient);
+      }
+      final newMc = event.factory.toMealComponent('grams', event.mc.grams, event.factory);
+      final copy = List<MealComponent>.from(state.mealComponents);
+      copy.remove(event.mc);
+      // <editor-fold desc="Add or Insert newMC">
+      try {
+        copy.insert(event.index, newMc);
+      }catch(_){
+        copy.add(newMc);
+      }
+// </editor-fold>
+      emit(state.copyWith(mealComponents: copy));
+    });
     on<ReorderMC>((event, emit){
       final copy = List<MealComponent>.from(state.mealComponents);
       final item = copy[event.oldIndex];

@@ -12,6 +12,21 @@ class AddMealToDay extends DietEvent{
 
   AddMealToDay(this.meal, this.day);
 }
+class EditMealInDay extends DietEvent{
+  final int index;
+  final Day day;
+  final MealComponent mc;
+  final MealComponentFactory factory;
+  final App app;
+
+  EditMealInDay({
+    required this.index,
+    required this.mc,
+    required this.factory,
+    required this.app,
+    required this.day
+  });
+}
 
 class AddIngredientToDay extends DietEvent{
   final Ingredient ingredient;

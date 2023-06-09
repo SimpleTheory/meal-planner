@@ -7,9 +7,11 @@ import 'dart:io';
 import 'package:nutrition_app/utils/local_widgets.dart';
 import 'package:nutrition_app/utils/utils.dart';
 import 'package:nutrition_app/domain.dart';
+import '../blocs/custom_ing/custom_ing_bloc.dart';
 import '../blocs/ingredients_page/ingredients_page_bloc.dart';
 import '../blocs/init/init_bloc.dart';
 import '../blocs/meal_maker/meal_maker_bloc.dart';
+import 'custom_ingredient.dart';
 import 'ingredients_page.dart';
 import 'package:dataclasses/dataclasses.dart' as data;
 
@@ -175,25 +177,28 @@ class MealMakerPage extends StatelessWidget {
                   shrinkWrap: true,
                   children: [
                     BlocConsumer<MealMakerBloc, MealMakerState>(
-                      builder: (context, state) {
-                        return GestureDetector(
-                          onTap: () {
-                            if (!state.validServing() ||
-                                state.servings == '1') {
-                              return;
-                            }
-                            mmbloc.add(ChangeNutDisplayEvent());
-                          },
-                          child: mealStyleNutrientDisplay(state.nutrients),
-                        );
-                      },
-                      buildWhen: (pre, curr) => pre.nutrients != curr.nutrients || pre.servings != curr.servings || curr is MMChangeGrams,
-                      listener: (context, state) {
+                        builder: (context, state) {
+                          return GestureDetector(
+                            onTap: () {
+                              if (!state.validServing() ||
+                                  state.servings == '1') {
+                                return;
+                              }
+                              mmbloc.add(ChangeNutDisplayEvent());
+                            },
+                            child: mealStyleNutrientDisplay(state.nutrients),
+                          );
+                        },
+                        buildWhen: (pre, curr) =>
+                            pre.nutrients != curr.nutrients ||
+                            pre.servings != curr.servings ||
+                            curr is MMChangeGrams,
+                        listener: (context, state) {
                           if (state.nutPerServing) {
                             ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
-                                    content: Text(
-                                        'Nutrients are now per serving')));
+                                    content:
+                                        Text('Nutrients are now per serving')));
                           } else {
                             ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
@@ -201,11 +206,9 @@ class MealMakerPage extends StatelessWidget {
                                         'Nutrients are now the sum of all the ingredients')));
                           }
                         },
-                      listenWhen: (pre, curr) =>
-                        curr is ChangeNutDisplay &&
-                            pre is! ChangeNutDisplay
-
-                    ),
+                        listenWhen: (pre, curr) =>
+                            curr is ChangeNutDisplay &&
+                            pre is! ChangeNutDisplay),
                     PlusSignTile((_) async {
                       final result = await Navigator.push(
                           context,
@@ -226,6 +229,7 @@ class MealMakerPage extends StatelessWidget {
                     }),
                     BlocBuilder<MealMakerBloc, MealMakerState>(
                       builder: (context, state) {
+                        App app = context.read<InitBloc>().state.app!;
                         return ReorderableListView.builder(
                           itemBuilder: (context, index) => MCTile(
                             state.mealComponents[index],
@@ -235,9 +239,43 @@ class MealMakerPage extends StatelessWidget {
                                 String serving) {
                               mmbloc.add(UpdateGramsMC(meal, grams, serving));
                             },
-                            // onEdit: (MealComponent meal) {},
                             onDelete: (MealComponent meal) {
                               mmbloc.add(DeleteMC(meal));
+                            },
+                            onEdit: (MealComponent meal) async {
+                              if (meal.reference is Ingredient) {
+                                var thing = await Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => MultiBlocProvider(
+                                                providers: [
+                                                  BlocProvider<CustomIngBloc>(
+                                                      create: (context) =>
+                                                          CustomIngBloc(meal
+                                                                  .reference
+                                                              as Ingredient)),
+                                                ],
+                                                child:
+                                                    const CustomIngredientPage())));
+                                if (thing is Ingredient) {
+                                  mmbloc.add(EditMC(index: index, mc: meal, factory: thing, app: app));
+                                }
+                              }
+                              else if (meal.reference is Meal) {
+                                var thing = await Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            MultiBlocProvider(providers: [
+                                              BlocProvider<MealMakerBloc>(
+                                                  create: (context) =>
+                                                      MealMakerBloc(meal
+                                                          .reference as Meal)),
+                                            ], child: const MealMakerPage())));
+                                if (thing is Meal) {
+                                  mmbloc.add(EditMC(index: index, mc: meal, factory: thing, app: app));
+                                }
+                              }
                             },
                             height: 75,
                             width: 55,
@@ -251,17 +289,8 @@ class MealMakerPage extends StatelessWidget {
                             mmbloc.add(ReorderMC(oldIndex, newIndex));
                           },
                         );
-                      },)
-                    //   buildWhen: (pre, curr) =>
-                    //       pre.nutPerServing != curr.nutPerServing || curr.nutrients != pre.nutrients,
-                    // )
-                    // ...state.mealComponents.map((e) => MCTile(
-                    //       e,
-                    //       onGramsChange: (MealComponent meal, num grams)
-                    //         {mmbloc.add(UpdateGramsMC(meal, grams));},
-                    //       onEdit: (MealComponent meal) {},
-                    //       onDelete: (MealComponent meal) {DeleteMC(meal);},
-                    //     )),
+                      },
+                    )
                   ],
                 );
               },

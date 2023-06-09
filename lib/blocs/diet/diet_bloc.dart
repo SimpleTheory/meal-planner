@@ -17,6 +17,26 @@ class DietBloc extends Bloc<DietEvent, DietState> {
       event.day.addDayMeal(event.meal);
       emit(AddMealToDayState(state.diet, event.day));
     });
+    on<EditMealInDay>((event, emit){
+      if (event.factory is Meal){
+        event.app.updateMeal(event.mc.reference as Meal, event.factory as Meal);
+      }
+      else if (event.factory is Ingredient){
+        event.app.updateBaseIngredient(event.mc.reference as Ingredient, event.factory as Ingredient);
+      }
+      final newMc = event.factory.toMealComponent('grams', event.mc.grams, event.factory);
+      final copy = List<MealComponent>.from(event.day.meals);
+      copy.remove(event.mc);
+      // <editor-fold desc="Add or Insert newMC">
+      try {
+        copy.insert(event.index, newMc);
+      }catch(_){
+        copy.add(newMc);
+      }
+// </editor-fold>
+      event.day.meals = copy;
+      emit(AddMealToDayState(state.diet, event.day));
+    });
     on<AddIngredientToDay>((event, emit){
       event.day.addDayMealFromIng(event.ingredient);
       emit(AddMealToDayState(state.diet, event.day));

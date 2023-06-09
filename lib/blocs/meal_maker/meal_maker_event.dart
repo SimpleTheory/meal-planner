@@ -31,9 +31,19 @@ class UpdateGramsMC extends MealMakerEvent{
 
   UpdateGramsMC(this.mc, this.grams, this.serving);
 }
-// class EditMC extends MealMakerEvent{
-//   final MealComponent mc;
-// }
+class EditMC extends MealMakerEvent{
+  final int index;
+  final MealComponent mc;
+  final MealComponentFactory factory;
+  final App app;
+
+  EditMC({
+    required this.index,
+    required this.mc,
+    required this.factory,
+    required this.app,
+  });
+}
 class ReorderMC extends MealMakerEvent{
   final int oldIndex;
   final int newIndex;

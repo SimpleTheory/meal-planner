@@ -4,9 +4,13 @@ import 'package:nutrition_app/blocs/diet/diet_bloc.dart';
 import 'package:nutrition_app/domain.dart';
 import 'package:nutrition_app/utils/local_widgets.dart';
 import 'package:nutrition_app/utils/utils.dart';
+import '../blocs/custom_ing/custom_ing_bloc.dart';
 import '../blocs/ingredients_page/ingredients_page_bloc.dart';
 import '../blocs/init/init_bloc.dart';
+import '../blocs/meal_maker/meal_maker_bloc.dart';
+import 'custom_ingredient.dart';
 import 'ingredients_page.dart';
+import 'meal_maker_page.dart';
 import 'meal_page.dart';
 
 class DietPage extends StatelessWidget {
@@ -200,6 +204,7 @@ class DayTile extends StatelessWidget {
         ),
         BlocBuilder<DietBloc, DietState>(
           builder: (context, state) {
+            App app = context.read<InitBloc>().state.app!;
             return ReorderableListView.builder(
               itemBuilder: (BuildContext context, int index) => MCTile(
                 day.meals[index],
@@ -217,6 +222,41 @@ class DayTile extends StatelessWidget {
                 },
                 onDuplicate: (MealComponent meal){
                   dietBloc.add(DuplicateMealInDay(meal, day));
+                },
+                onEdit: (MealComponent meal) async {
+                  if (meal.reference is Ingredient) {
+                    var thing = await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => MultiBlocProvider(
+                                providers: [
+                                  BlocProvider<CustomIngBloc>(
+                                      create: (context) =>
+                                          CustomIngBloc(meal
+                                              .reference
+                                          as Ingredient)),
+                                ],
+                                child:
+                                const CustomIngredientPage())));
+                    if (thing is Ingredient) {
+                      dietBloc.add(EditMealInDay(index: index, mc: meal, factory: thing, app: app, day: day));
+                    }
+                  }
+                  else if (meal.reference is Meal) {
+                    var thing = await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                MultiBlocProvider(providers: [
+                                  BlocProvider<MealMakerBloc>(
+                                      create: (context) =>
+                                          MealMakerBloc(meal
+                                              .reference as Meal)),
+                                ], child: const MealMakerPage())));
+                    if (thing is Meal) {
+                      dietBloc.add(EditMealInDay(index: index, mc: meal, factory: thing, app: app, day: day));
+                    }
+                  }
                 },
                 key: KeyHolder<Day, int, void, void, void, void>(
                         value1: day, value2: index)
