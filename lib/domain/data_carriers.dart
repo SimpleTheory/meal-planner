@@ -437,7 +437,7 @@ class Nutrients {
       potassium: apiId2nutrient[306]!(nut[306] ?? 0),
       sodium: apiId2nutrient[307]!(nut[307] ?? 0),
       protein: apiId2nutrient[203]!(nut[203] ?? 0),
-      sugars: apiId2nutrient[269]!(nut[269] ?? 0),
+      sugars: apiId2nutrient[539]!(nut[539] ?? 0),
       choline: apiId2nutrient[421]!(nut[421] ?? 0),
       copper: apiId2nutrient[312]!(nut[312] ?? 0),
       ala: apiId2nutrient[851]!(nut[851] ?? 0),
