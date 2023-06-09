@@ -114,7 +114,7 @@ class IndexPage extends StatelessWidget {
             ),
             ElevatedButton(
                 onPressed: () {
-                  saveApp(context.read<InitBloc>().state.app!);
+                  saveAppWithIsolate(context.read<InitBloc>().state.app!);
                   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                     content: Text('The app has been saved!'),
                     backgroundColor: Colors.green,

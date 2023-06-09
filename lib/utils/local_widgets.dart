@@ -6,6 +6,7 @@ import 'package:nutrition_app/blocs/micro_blocs/shopping_list_bloc.dart';
 import 'package:nutrition_app/domain.dart';
 import 'package:nutrition_app/screens/diet_details_screen.dart';
 import 'package:nutrition_app/screens/shopping_list_page.dart';
+import 'package:nutrition_app/utils/storage.dart';
 import 'package:nutrition_app/utils/utils.dart';
 import '../screens/dri_configs.dart';
 
@@ -297,6 +298,7 @@ class DietDrawer extends StatelessWidget {
           ListTile(
             title: const Text('Days'),
             onTap: () {
+              saveDietWithIsolate(diet);
               Navigator.pushReplacement(context,
                   MaterialPageRoute(builder: (context) => DietPage(diet)));
             },
@@ -305,6 +307,7 @@ class DietDrawer extends StatelessWidget {
             title: const Text('Shopping List'),
             onTap: () {
               // diet.updateShoppingList();
+              saveDietWithIsolate(diet);
               Navigator.pushReplacement(context,
                   MaterialPageRoute(builder: (context) {
                     return BlocProvider(
@@ -317,6 +320,7 @@ class DietDrawer extends StatelessWidget {
           ListTile(
             title: const Text('DRI Configuration'),
             onTap: () {
+              saveDietWithIsolate(diet);
               Navigator.pushReplacement(context,
                   MaterialPageRoute(builder: (context) => DRIConfigPage(diet)));
             },
@@ -324,6 +328,7 @@ class DietDrawer extends StatelessWidget {
           ListTile(
             title: const Text('Return to Home Page'),
             onTap: () {
+              saveDietWithIsolate(diet);
               Navigator.pop(context);
               Navigator.pop(context);
             },
@@ -713,5 +718,15 @@ class _MCTileState extends State<MCTile> {
     textController.text = widget.meal.grams.isInt
         ? widget.meal.grams.toInt().toString()
         : roundDecimal(widget.meal.grams.toDouble(), 3).toString();
+  }
+}
+
+class SaveDietButton extends StatelessWidget {
+  final Diet diet;
+  const SaveDietButton(this.diet, {super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return IconButton(onPressed: (){saveDietWithIsolate(diet);}, icon: const Icon(Icons.sync));
   }
 }

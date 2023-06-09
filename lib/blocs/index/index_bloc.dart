@@ -45,6 +45,7 @@ class IndexBloc extends Bloc<IndexEvent, IndexState> {
     on<ReorderDiet>((event, emit) async {
       state.app.diets =
           reorderMap(state.app.diets, event.oldIndex, event.newIndex);
+      saveDietsOrder(state.app.diets.values);
       emit(state.copyWith());
     });
   }

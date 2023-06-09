@@ -23,7 +23,10 @@ class DietPage extends StatelessWidget {
     return BlocProvider(
       create: (context) => DietBloc(diet),
       child: Scaffold(
-        appBar: AppBar(title: Text(diet.name)),
+        appBar: AppBar(
+            title: Text(diet.name),
+            actions: [SaveDietButton(diet)],
+        ),
         drawer: DietDrawer(diet),
         body: ListView(
           children: [

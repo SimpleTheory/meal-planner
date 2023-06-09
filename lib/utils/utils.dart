@@ -362,7 +362,16 @@ String duplicateNamer(iterWithName, thingToName){
   }
   return '$thingToName (${highestInt + 1})';
 }
+List<T> sortByOtherList<T>(List<T> objectList, List orderList, Object Function(T) key) {
+  List<T> copy = List.from(objectList);
+  copy.sort((a, b) {
+    int indexA = orderList.indexOf(key(a));
+    int indexB = orderList.indexOf(key(b));
+    return indexA.compareTo(indexB);
+  });
+  return copy;
 
+}
 
 extension ListReIndex<T> on List<T> {
   List<T> reIndex(int old, int new_, {bool safe=true, bool inPlace=false}){

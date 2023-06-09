@@ -3,6 +3,7 @@ import 'package:nutrition_app/mydataclasses/metadata.dart';
 import 'dart:convert';
 import 'package:dataclasses/dataclasses.dart';
 import 'package:nutrition_app/domain.dart';
+import 'package:nutrition_app/utils.dart';
 import 'package:nutrition_app/utils/utils.dart';
 
 /// AGG ROOT
@@ -19,12 +20,15 @@ class App {
 
   void addMeal(Meal meal) {
     meals[meal.name] = meal;
+    saveMeal(meal);
   }
   void addBaseIngredient(Ingredient ingredient) {
     baseIngredients[ingredient.name] = ingredient;
+    saveIngredient(ingredient);
   }
   void addDiet(Diet diet) {
     diets[diet.name] = diet;
+    saveDietWithIsolate(diet);
   }
 
   void updateBaseIngredient(Ingredient ingToUpdate, Ingredient replacer){
@@ -42,12 +46,15 @@ class App {
   // Delete: meal, ingredient, diet
   void deleteMeal(Meal meal) {
     meals.remove(meal.name);
+    deleteMeal(meal);
   }
   void deleteBaseIngredient(Ingredient ingredient) {
     baseIngredients.remove(ingredient.name);
+    deleteIngredient(ingredient);
   }
   void deleteDiet(Diet diet) {
     diets.remove(diet.name);
+    deleteDiet(diet);
   }
 
   factory App.newApp(Settings settings) =>

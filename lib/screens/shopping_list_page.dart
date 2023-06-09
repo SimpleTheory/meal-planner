@@ -250,6 +250,7 @@ class ShoppingListPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Shopping List'),
+        actions: [SaveDietButton(context.read<ShoppingListBloc>().state.diet)],
       ),
       drawer: DietDrawer(context.read<ShoppingListBloc>().state.diet),
       bottomSheet: context.read<ShoppingListBloc>().state.selected.isEmpty ? null

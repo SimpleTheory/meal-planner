@@ -33,7 +33,15 @@ class GeneralSettingsPage extends StatelessWidget {
     final settingsBloc = context.read<SettingsBloc>();
     // Wrap with bloc
     return Scaffold(
-        appBar: AppBar(title: const Text('General Settings')),
+        appBar: AppBar(title: const Text('General Settings'),
+          leading: IconButton(
+            onPressed: (){
+              saveSettings(app.settings);
+              Navigator.pop(context);
+            },
+            icon: const Icon(Icons.arrow_back),
+          ),
+        ),
         // resizeToAvoidBottomInset: false,
         body: BlocListener<SettingsBloc, SettingsState>(
           listener: (context, state) {

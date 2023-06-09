@@ -18,7 +18,10 @@ class DRIConfigPage extends StatelessWidget {
     return BlocProvider(
       create: (context) => DriConfigBloc(diet),
       child: Scaffold(
-        appBar: AppBar(title: Text(diet.name)),
+        appBar: AppBar(
+          title: Text(diet.name),
+          actions: [SaveDietButton(diet)],
+        ),
         drawer: DietDrawer(diet),
         // body: SingleChildScrollView(
         //   child: Column(
