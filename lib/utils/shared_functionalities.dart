@@ -117,7 +117,7 @@ class MCFactoryTile extends StatelessWidget {
           grams: ingredient is Ingredient ? ingredient.baseNutrient.grams : null,
           baseUnit: ingredient is Ingredient ? ingredient.unit : null,
         ),
-        leading: GetImage(ingredient.photo, width: 75, cache: false),
+        leading: GetImage(ingredient.photo, width: 75, cache: true),
         onTap: () {
           if (ingPgBloc.state.backReference){
             Navigator.pop(context, ingredient);
