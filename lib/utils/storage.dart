@@ -36,7 +36,7 @@ Future<App?> loadApp() async {
           baseIngredients: instantiateAllDCMap(ingredientsBox));
     } catch (e) {
       //pass
-      print(e);
+      // print(e);
     }
   }
   if (boxExists) {
@@ -88,7 +88,7 @@ Future<void> saveAppBackupMobile({String? fileName, required App app}) async {
   // Write the file
   await file.writeAsString(app.toJson());
 
-  print('File saved to ${file.path}');
+  // print('File saved to ${file.path}');
 }
 
 void saveMeal(Meal meal) async {
@@ -126,7 +126,7 @@ void saveDietWithIsolate(Diet diet) async {
     // Initialize Hive in the spawned isolate
     Hive.init(path);
     saveDiet(diet);
-    print('saved ${diet.name}');
+    // print('saved ${diet.name}');
   }, diet);
   dietIsos.add(iso);
 }
@@ -147,7 +147,7 @@ void saveAppWithIsolate(App app) async {
     Hive.init(path);
     saveApp(app);
     fracturedSaveAll(app);
-    print('saved app');
+    // print('saved app');
   }, app);
   dietIsos.add(iso);
 }

@@ -22,7 +22,7 @@ class IndexBloc extends Bloc<IndexEvent, IndexState> {
     });
     on<RenameDiet>((event, emit) async {
       // TODO Deal with overrides in general
-      state.app.diets.remove(event.diet.name);
+      state.app.deleteDiet(event.diet);
       event.diet.name = event.newName;
       state.app.diets[event.newName] = event.diet;
       emit(state.copyWith());
