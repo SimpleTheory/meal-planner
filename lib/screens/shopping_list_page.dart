@@ -407,7 +407,7 @@ DragAndDropItem buildItem(MealComponent data, BuildContext context) => DragAndDr
       '${data.grams}g',
       style: const TextStyle(fontStyle: FontStyle.italic),
     ),
-    leading: GetImage(data.reference.photo, height: 100, width: 65, cache: true,),
+    leading: GetImage(data.reference.photo, height: 100, width: 65, cW: 260, cH: 260, cache: false,),
     selected: context.read<ShoppingListBloc>().state.selected.contains(data),
     onTap: (){context.read<ShoppingListBloc>().add(SelectItem(data));},
 // shape: const BeveledRectangleBorder(

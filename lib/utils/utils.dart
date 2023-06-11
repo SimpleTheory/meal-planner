@@ -212,52 +212,102 @@ extension RowPadding on Row{
 //   }
 // }
 
-class GetImage extends StatefulWidget {
+// class GetImage extends StatefulWidget {
+//   final Uri? uri;
+//   final double? width;
+//   final double? height;
+//   final bool cache;
+//   const GetImage(this.uri, {Key? key, this.width, this.height, this.cache = true}) : super(key: key);
+//
+//   @override
+//   State<GetImage> createState() => _GetImageState();
+// }
+//
+// class _GetImageState extends State<GetImage> {
+//   @override
+//   Widget build(BuildContext context) {
+//     if (widget.uri == null){
+//       return Image.asset('cache/images/null.png',
+//         width: widget.width,
+//         height: widget.height,);
+//     }
+//     try{
+//       if (widget.uri!.scheme == 'file'){
+//         return ExtendedImage.file(
+//           File(widget.uri!.path),
+//           width: widget.width, //?? 75,
+//           height: widget.height ?? 120,
+//         );
+//       }
+//       else{
+//         return ExtendedImage.network(
+//           widget.uri.toString(),
+//           width: widget.width, // ?? 75,
+//           height: widget.height ?? 120,
+//           cache: widget.cache,
+//           retries: 6,
+//
+//         );
+//       }
+//     }
+//     catch (e){
+//       // Maybe add snackbar or alt image for no internet
+//       return Image.asset('cache/images/null.png',
+//         width: widget.width,
+//         height: widget.height,);
+//     }
+//   }
+//   }
+
+class GetImage extends StatelessWidget {
   final Uri? uri;
-  final double? width;
-  final double? height;
+  final double width;
+  final double height;
   final bool cache;
-  const GetImage(this.uri, {Key? key, this.width, this.height, this.cache = true}) : super(key: key);
+  final int? cW;
+  final int? cH;
 
-  @override
-  State<GetImage> createState() => _GetImageState();
-}
+  const GetImage(this.uri,
+      {Key? key, this.width = 100, this.height = 100, this.cache = true, this.cH, this.cW}) : super(key: key);
 
-class _GetImageState extends State<GetImage> {
   @override
   Widget build(BuildContext context) {
-    if (widget.uri == null){
+    if (uri == null) {
       return Image.asset('cache/images/null.png',
-        width: widget.width,
-        height: widget.height,);
+        width: width,
+        height: height,);
     }
-    try{
-      if (widget.uri!.scheme == 'file'){
+    try {
+      if (uri!.scheme == 'file') {
         return ExtendedImage.file(
-          File(widget.uri!.path),
-          width: widget.width, //?? 75,
-          height: widget.height ?? 120,
+          File(uri!.path),
+          width: width,
+          height: height,
+          cacheWidth: cW ?? width.round() * 4,
+          cacheHeight: cH ?? height.round() * 4,
         );
       }
       else{
         return ExtendedImage.network(
-          widget.uri.toString(),
-          width: widget.width, // ?? 75,
-          height: widget.height ?? 120,
-          cache: widget.cache,
-          retries: 6,
+          uri.toString(),
+          width: width,
+          height: height,
+          cacheHeight: cH ?? height.round() * 4,
+          cacheWidth: cW  ?? width.round() * 4,
+          // cache: cache,
+          // retries: 6,
 
         );
       }
     }
-    catch (e){
+    catch (e) {
       // Maybe add snackbar or alt image for no internet
       return Image.asset('cache/images/null.png',
-        width: widget.width,
-        height: widget.height,);
+        width: width,
+        height: height,);
     }
   }
-  }
+}
 
 @immutable
 class KeyHolder<T1, T2, T3, T4, T5, T6>{

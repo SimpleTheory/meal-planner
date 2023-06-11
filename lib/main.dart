@@ -12,6 +12,7 @@ import 'utils.dart';
 
 void main() async {
   await Hive.initFlutter();
+  // debugInvertOversizedImages = true;
   runApp(MyApp(app: await loadApp()));
 }
 
