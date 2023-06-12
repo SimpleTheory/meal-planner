@@ -92,8 +92,8 @@ class MealMakerPage extends StatelessWidget {
                     state.image,
                     width: 200,
                     height: 200,
-                    cH: 400,
-                    cW: 400,
+                    cH: 300,
+                    cW: 300,
                   );
                 },
               )),
