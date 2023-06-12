@@ -55,24 +55,7 @@ class MealPage extends StatelessWidget {
           Flexible(
             child: Padding(
               padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
-              child: ListView(
-                children: [
-                  PlusSignTile((_) {
-                    addIng(context, ingPgBloc, pageIsIng: false);
-                  }),
-                  BlocBuilder<IngredientsPageBloc, IngredientsPageState>(
-                    builder: (context, state) {
-                      return ListView.builder(
-                        itemBuilder: (context, index) =>
-                            MCFactoryTile(state.searchResults[index]),
-                        itemCount: state.searchResults.length,
-                        shrinkWrap: true,
-                        physics: const ClampingScrollPhysics(),
-                      );
-                    },
-                  )
-                ],
-              ),
+              child: MCFactoryListViewStless(searchController, pgIsIng: false,),
             ),
           )
         ],

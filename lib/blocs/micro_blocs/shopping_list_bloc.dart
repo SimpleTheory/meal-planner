@@ -18,6 +18,11 @@ class ShoppingListBloc extends Bloc<ShoppingListEvent, ShoppingListState> {
       emit(ShoppingListState.onMovement(state.diet, state.shoppingList, state.selected));
 
     });
+    on<ReorderWithinList>((event, emit){
+      final movedItem = state.shoppingList[event.listIndex].value.removeAt(event.oldIndex);
+      state.shoppingList[event.listIndex].value.insert(event.newIndex, movedItem);
+      emit(ShoppingListState.onMovement(state.diet, state.shoppingList, state.selected));
+    });
     on<SelectItem>((event, emit){
       if (state.selected.contains(event.item)){
         state.selected.remove(event.item);
@@ -52,6 +57,16 @@ class ReIndexItem extends ShoppingListEvent {
     required this.newListIndex,
   });
 }
+class ReorderWithinList extends ShoppingListEvent {
+  final int listIndex;
+  final int oldIndex;
+  final int newIndex;
+  ReorderWithinList({
+    required this.listIndex,
+    required this.oldIndex,
+    required this.newIndex,
+  });
+}
 class ReIndexList extends ShoppingListEvent {
   final int oldListIndex;
   final int newListIndex;
@@ -74,6 +89,8 @@ class ShoppingListState {
   final Diet diet;
   List<MapEntry<String, List<MealComponent>>> shoppingList;
   final List<MealComponent> selected;
+
+  Iterable<String> get categories => diet.shoppingList.keys;
   // 'Good': initShoppingList(),
   // 'Running Low': [],
   // 'Out of Stock': [],

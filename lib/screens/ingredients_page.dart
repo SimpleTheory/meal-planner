@@ -16,7 +16,9 @@ class IngredientPage extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Ingredients'),
         actions: [
-          const Center(child: Text('Sub-Recipes', style: TextStyle(fontSize: 12, fontStyle: FontStyle.italic))),
+          const Center(
+              child: Text('Sub-Recipes',
+                  style: TextStyle(fontSize: 12, fontStyle: FontStyle.italic))),
           BlocBuilder<IngredientsPageBloc, IngredientsPageState>(
               builder: (context, state) => Switch(
                     onChanged: (toggle) => context
@@ -41,39 +43,12 @@ class IngredientPage extends StatelessWidget {
                       border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(30.0)),
                       contentPadding: const EdgeInsets.all(20),
-                      suffixIcon: const Icon(Icons.search))
-              )),
+                      suffixIcon: const Icon(Icons.search)))),
           Flexible(
             child: Padding(
               padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
-              child: ListView(
-                children: [
-                  PlusSignTile((context) {
-                    openAddNewIngredientPopUp(context);
-                  }),
-                  BlocConsumer<IngredientsPageBloc, IngredientsPageState>(
-                    listener: (context, state){
-                      if (state is IngPageSuccessfulCreation) {
-                        searchController.text = '';
-                        if (state.backReference){
-                          Navigator.pop(context, state.ingredient);
-                        }
-                      }
-                    },
-                    builder: (context, state) {
-                      // Maybe add something for if its empty
-                      return ListView.builder(
-                        itemBuilder: (context, index) =>
-                            MCFactoryTile(state.searchResults[index]),
-                        itemCount: state.searchResults.length,
-                        shrinkWrap: true,
-                        physics: const ClampingScrollPhysics(),
-                      );
-                    },
-                  )
-                  // ...ingredients.map((e) => ingredientTile(e)),
-                ],
-              ),
+              child: MCFactoryListViewStless(searchController, pgIsIng: true,),
+
             ),
           )
         ],
@@ -82,50 +57,6 @@ class IngredientPage extends StatelessWidget {
   }
 }
 
-// ListTile ingredientTile(Ingredient ingredient){
-//   // print(Ingredient.photo);
-//   return ListTile(
-//     title: Text(ingredient.name),
-//     trailing: PopupMenuButton(
-//       itemBuilder: (BuildContext context) => [
-//         PopupMenuItem(value: IngredientPopUpEnumHolder(ingredient, PopUpOptions.edit),child: const Text('Edit'),),
-//         PopupMenuItem(value: IngredientPopUpEnumHolder(ingredient, PopUpOptions.delete), child: const Text('Delete')),
-//         PopupMenuItem(value: IngredientPopUpEnumHolder(ingredient, PopUpOptions.duplicate),child: const Text('Duplicate'),),
-//       ],
-//     ),
-//     subtitle: Text(
-//         'Serving (${ingredient.baseNutrient.grams}g):  '
-//             "${ingredient.baseNutrient.nutrients.calories.value.round()}\u{1F525}  "
-//             '${ingredient.baseNutrient.nutrients.carbohydrate.value.round()}\u{1F35E}   '
-//             '${ingredient.baseNutrient.nutrients.protein.value.round()}\u{1F969}   '
-//         // '${Ingredient.baseNutrient.nutrients.unsaturatedFat.value.round()}\u{1FAD2}  '
-//             '${ingredient.baseNutrient.nutrients.unsaturatedFat.value.round()}$olive   '
-//         // '${Ingredient.baseNutrient.nutrients.saturatedFat.value.round()}\u{1F9C8}',
-//             '${ingredient.baseNutrient.nutrients.saturatedFat.value.round()}$butter'
-//     ),
-//     // subtitle: RichText(
-//     //   text: TextSpan(
-//     //     children:[
-//     //       TextSpan(text: 'Serving:  '),
-//     //       TextSpan(text: "${Ingredient.baseNutrient.nutrients.calories.value.round()}\u{1F525}  "),
-//     //       TextSpan(text: '\u{1F525}  ', style: TextStyle(fontFamily: 'EmojiOne')),
-//     //       TextSpan(text: '${Ingredient.baseNutrient.nutrients.carbohydrate.value.round()}\u{1F35E}  '),
-//     //       TextSpan(text: '\u{1F35E}  ', style: TextStyle(fontFamily: 'EmojiOne')),
-//     //       TextSpan(text: '${Ingredient.baseNutrient.nutrients.protein.value.round()}\u{1F969}  '),
-//     //       TextSpan(text: '\u{1F969}  ', style: TextStyle(fontFamily: 'EmojiOne')),
-//     //       // '${Ingredient.baseNutrient.nutrients.unsaturatedFat.value.round()}\u{1FAD2}  '
-//     //       TextSpan(text: '${Ingredient.baseNutrient.nutrients.unsaturatedFat.value.round()}$olive  '),
-//     //       TextSpan(text: '$olive  ', style: GoogleFonts.notoColorEmoji()),
-//     //       // '${Ingredient.baseNutrient.nutrients.saturatedFat.value.round()}\u{1F9C8}',
-//     //       TextSpan(text: '${Ingredient.baseNutrient.nutrients.saturatedFat.value.round()}$butter'),
-//     //       TextSpan(text: '$butter  ', style: GoogleFonts.notoColorEmoji()),
-//     //     ]
-//     //   )
-//     // ),
-//     leading: GetImage(ingredient.photo),
-//     onTap: (){},
-//   );
-// }
 
 void openAddNewIngredientPopUp(BuildContext context) {
   final myController = TextEditingController();
@@ -182,9 +113,10 @@ void openAddNewIngredientPopUp(BuildContext context) {
                                 child: const Text('Scan UPC')),
                             ElevatedButton(
                                 onPressed: () {
-                                  addIng(context, ingPgBloc, pageIsIng: true).whenComplete(
-                                          () => Navigator.of(context).popUntil(ModalRoute.withName('/IngredientsPage'))
-                                  );
+                                  addIng(context, ingPgBloc, pageIsIng: true)
+                                      .whenComplete(() => Navigator.of(context)
+                                          .popUntil(ModalRoute.withName(
+                                              '/IngredientsPage')));
                                 },
                                 child: const Text('Create Custom Ingredient')),
                           ],
@@ -247,16 +179,22 @@ AlertDialog confirmIngredient(Ingredient ingredient, BuildContext context,
         child: PaddedColumn(
           edgeInsets: const EdgeInsets.all(12),
           children: [
-            Center(child: GetImage(ingredient.photo, width: 200, height: 200, cache: false,)),
+            Center(
+                child: GetImage(
+              ingredient.photo,
+              width: 200,
+              height: 200,
+              cache: false,
+            )),
             Center(
                 child: Text(
               ingredient.name,
               style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             )),
             NutrientText(
-                nutrients: ingredient.baseNutrient.nutrients,
-                grams: ingredient.baseNutrient.grams,
-                baseUnit: ingredient.unit,
+              nutrients: ingredient.baseNutrient.nutrients,
+              grams: ingredient.baseNutrient.grams,
+              baseUnit: ingredient.unit,
             ),
             // Text(
             //     'Serving (${ingredient.baseNutrient.grams}g):  '
