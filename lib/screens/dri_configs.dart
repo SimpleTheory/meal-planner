@@ -103,7 +103,7 @@ class DriForm extends StatelessWidget {
       ),
       Padding(
         padding: const EdgeInsets.fromLTRB(2, 1, 8, 1),
-        child: Text('${replaceTextForForm(dri.name)} (${dri.unit})'),
+        child: Text('${dri.name} (${dri.unit})'),
       ),
       Flexible(
         child: BlocBuilder<DriConfigBloc, DriConfigState>(
