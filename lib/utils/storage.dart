@@ -83,10 +83,14 @@ Future<void> saveAppBackupMobile({String? fileName, required App app}) async {
   //     .map((entity) => entity.path.split('/').last) // Extract file names
   //     .toList();
   // Create a File instance with the desired file name
-  File file = File('${downloadsDirectory.path}/${(fileName)}');
+  File file = File('${downloadsDirectory.path}/${(fileName)}.json');
 
   // Write the file
-  await file.writeAsString(app.toJson());
+  // final temp = Stopwatch()..start();
+  file.writeAsStringSync(app.toJson());
+  // await file.writeAsString(app.toJson());
+  // print(temp.elapsed);
+  // print('file save time');
 
   // print('File saved to ${file.path}');
 }
@@ -111,14 +115,10 @@ void deleteIngredientFromSave(Ingredient ingredient) async {
   box.delete(ingredient.name);
 }
 
-List<Isolate> dietIsos = [];
-void saveDietWithIsolate(Diet diet) async {
+// List<Isolate> dietIsos = [];
+void saveDietWithIsolate(Diet diet, {ReceivePort? receivePort}) async {
   RootIsolateToken rootIsolateToken = RootIsolateToken.instance!;
-  if (dietIsos.isNotEmpty){
-    for (Isolate element in dietIsos) {element.kill();}
-    dietIsos = [];
-  }
-  ReceivePort receivePort = ReceivePort('diet recieve');
+  receivePort ??= ReceivePort('diet recieve');
   final iso = await Isolate.spawn<Diet>((Diet diet)async{
     BackgroundIsolateBinaryMessenger.ensureInitialized(rootIsolateToken);
     // Get the path to the application documents directory
@@ -129,17 +129,11 @@ void saveDietWithIsolate(Diet diet) async {
     saveDiet(diet);
   }, diet);
   iso.addOnExitListener(receivePort.sendPort, response: diet.name);
-  dietIsos.add(iso);
   receivePort.listen((message) {print('Saved Diet: $message');});
 }
 
-List<Isolate> appIsos = [];
 void saveAppWithIsolate(App app, {ReceivePort? receivePort}) async {
   RootIsolateToken rootIsolateToken = RootIsolateToken.instance!;
-  if (appIsos.isNotEmpty){
-    for (Isolate element in appIsos) {element.kill();}
-    appIsos = [];
-  }
   // ReceivePort receivePort = ReceivePort('app port');
   final iso = await Isolate.spawn<App>((App app)async{
 
@@ -155,7 +149,6 @@ void saveAppWithIsolate(App app, {ReceivePort? receivePort}) async {
   if (receivePort != null) {
     iso.addOnExitListener(receivePort.sendPort, response: 'complete');
   }
-  appIsos.add(iso);
   // receivePort.listen((message) {print(message);});
 }
 

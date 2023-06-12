@@ -312,7 +312,7 @@ class DietDrawer extends StatelessWidget {
                   MaterialPageRoute(builder: (context) {
                     return BlocProvider(
                       create: (context) => ShoppingListBloc(diet),
-                      child: BlocBuilder<ShoppingListBloc, ShoppingListState>(builder: (context, state) => ShoppingListPage()),
+                      child: BlocBuilder<ShoppingListBloc, ShoppingListState>(builder: (context, state) => const ShoppingListPage()),
                     );
                   }));
             },
