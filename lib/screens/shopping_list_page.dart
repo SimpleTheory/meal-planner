@@ -1,5 +1,3 @@
-import 'package:ari_utils/ari_utils.dart';
-import 'package:drag_and_drop_lists/drag_and_drop_list_interface.dart';
 import 'package:drag_and_drop_lists/drag_and_drop_lists.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -249,89 +247,91 @@ class ShoppingListPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Shopping List'),
-        actions: [SaveDietButton(context.read<ShoppingListBloc>().state.diet)],
-      ),
-      drawer: DietDrawer(context.read<ShoppingListBloc>().state.diet),
-      bottomSheet: context.read<ShoppingListBloc>().state.selected.isEmpty
-          ? null
-          : const SendToBottomSheet(),
-      body: BlocBuilder<ShoppingListBloc, ShoppingListState>(
-        builder: (context, state) {
-          return CustomScrollView(slivers: [
-            DragAndDropLists(
-              children: state.shoppingList
-                  .map((entry) => entryList(entry, context))
-                  .toList(),
-              onItemReorder: (int oldItemIndex, int oldListIndex,
-                  int newItemIndex, int newListIndex) {
-                context.read<ShoppingListBloc>().add(ReIndexItem(
-                    oldItemIndex: oldItemIndex,
-                    oldListIndex: oldListIndex,
-                    newItemIndex: newItemIndex,
-                    newListIndex: newListIndex));
-              },
-              onListReorder: (int oldListIndex, int newListIndex) {
-                context
-                    .read<ShoppingListBloc>()
-                    .add(ReIndexList(oldListIndex, newListIndex));
-              },
-              // axis: Axis.horizontal,
-              listWidth: 150,
-              listDraggingWidth: 150,
-              listDecoration: BoxDecoration(
-                  color: Theme.of(context).primaryColor,
-                  borderRadius: const BorderRadius.all(Radius.circular(7.0)),
-                  boxShadow: const <BoxShadow>[
-                    BoxShadow(
-                      color: Colors.black45,
-                      spreadRadius: 3.0,
-                      blurRadius: 6.0,
-                      offset: Offset(2, 3),
-                    ),
-                  ]),
-              listPadding: const EdgeInsets.all(8.0),
-              sliverList: true,
-              scrollController: ScrollController(),
-            ),
-          ]);
-        },
-      ),
-      //   body: InteractiveViewer(
-      //     panEnabled: false,
-      //     minScale: .001,
-      //     maxScale: 2,
-      //     boundaryMargin: const EdgeInsets.all(80),
-      //     child: DragAndDropLists(
-      //       children: diet.shoppingList.entries.map((entry) => entryList(entry, context)).toList(),
-      //       onItemReorder: (int oldItemIndex, int oldListIndex, int newItemIndex, int newListIndex) {
-      //           // var movedItem = _lists[oldListIndex].children.removeAt(oldItemIndex);
-      //           // _lists[newListIndex].children.insert(newItemIndex, movedItem);
-      //       },
-      //       onListReorder: (int oldListIndex, int newListIndex) {
-      //         // var movedList = _lists.removeAt(oldListIndex);
-      //         // _lists.insert(newListIndex, movedList);
-      // },
-      //       axis: Axis.horizontal,
-      //       listWidth: 150,
-      //       listDraggingWidth: 150,
-      //       listDecoration: BoxDecoration(
-      //         color: Theme.of(context).primaryColor,
-      //         borderRadius: const BorderRadius.all(Radius.circular(7.0)),
-      //         boxShadow: const <BoxShadow>[
-      //           BoxShadow(
-      //             color: Colors.black45,
-      //             spreadRadius: 3.0,
-      //             blurRadius: 6.0,
-      //             offset: Offset(2, 3),
-      //           ),
-      //         ]
-      //       ),
-      //       listPadding: const EdgeInsets.all(8.0),
-      //     ),
-      //   )
+    return BlocBuilder<ShoppingListBloc, ShoppingListState>(
+      builder: (context, state) {
+        return Scaffold(
+          appBar: AppBar(
+            title: const Text('Shopping List'),
+            actions: [
+              SaveDietButton(context.read<ShoppingListBloc>().state.diet)
+            ],
+          ),
+          drawer: DietDrawer(context.read<ShoppingListBloc>().state.diet),
+          bottomSheet: context.read<ShoppingListBloc>().state.selected.isEmpty
+              ? null
+              : const SendToBottomSheet(),
+          body: BlocBuilder<ShoppingListBloc, ShoppingListState>(
+            builder: (context, state) {
+              return DragAndDropLists(
+                children: state.shoppingList
+                    .map((entry) => entryList(entry, context))
+                    .toList(),
+                onItemReorder: (int oldItemIndex, int oldListIndex,
+                    int newItemIndex, int newListIndex) {
+                  context.read<ShoppingListBloc>().add(ReIndexItem(
+                      oldItemIndex: oldItemIndex,
+                      oldListIndex: oldListIndex,
+                      newItemIndex: newItemIndex,
+                      newListIndex: newListIndex));
+                },
+                onListReorder: (int oldListIndex, int newListIndex) {
+                  context
+                      .read<ShoppingListBloc>()
+                      .add(ReIndexList(oldListIndex, newListIndex));
+                },
+                // axis: Axis.horizontal,
+                listWidth: 150,
+                listDraggingWidth: 150,
+                listDecoration: BoxDecoration(
+                    color: Theme.of(context).primaryColor,
+                    borderRadius: const BorderRadius.all(Radius.circular(7.0)),
+                    boxShadow: const <BoxShadow>[
+                      BoxShadow(
+                        color: Colors.black45,
+                        spreadRadius: 3.0,
+                        blurRadius: 6.0,
+                        offset: Offset(2, 3),
+                      ),
+                    ]),
+                listPadding: const EdgeInsets.all(8.0),
+              );
+            },
+          ),
+          //   body: InteractiveViewer(
+          //     panEnabled: false,
+          //     minScale: .001,
+          //     maxScale: 2,
+          //     boundaryMargin: const EdgeInsets.all(80),
+          //     child: DragAndDropLists(
+          //       children: diet.shoppingList.entries.map((entry) => entryList(entry, context)).toList(),
+          //       onItemReorder: (int oldItemIndex, int oldListIndex, int newItemIndex, int newListIndex) {
+          //           // var movedItem = _lists[oldListIndex].children.removeAt(oldItemIndex);
+          //           // _lists[newListIndex].children.insert(newItemIndex, movedItem);
+          //       },
+          //       onListReorder: (int oldListIndex, int newListIndex) {
+          //         // var movedList = _lists.removeAt(oldListIndex);
+          //         // _lists.insert(newListIndex, movedList);
+          // },
+          //       axis: Axis.horizontal,
+          //       listWidth: 150,
+          //       listDraggingWidth: 150,
+          //       listDecoration: BoxDecoration(
+          //         color: Theme.of(context).primaryColor,
+          //         borderRadius: const BorderRadius.all(Radius.circular(7.0)),
+          //         boxShadow: const <BoxShadow>[
+          //           BoxShadow(
+          //             color: Colors.black45,
+          //             spreadRadius: 3.0,
+          //             blurRadius: 6.0,
+          //             offset: Offset(2, 3),
+          //           ),
+          //         ]
+          //       ),
+          //       listPadding: const EdgeInsets.all(8.0),
+          //     ),
+          //   )
+        );
+      },
     );
   }
 }
@@ -405,35 +405,33 @@ DragAndDropList entryList(
   );
 }
 
-DragAndDropItem buildItem(MealComponent data, BuildContext context) {
-  print('building ${data.name}');
-  return DragAndDropItem(
-      child: ListTile(
-    title: Text(data.name),
-    subtitle: Text(
-      '${data.grams}g',
-      style: const TextStyle(fontStyle: FontStyle.italic),
-    ),
-    leading: GetImage(
-      data.reference.photo,
-      height: 100,
-      width: 65,
-      cW: 100,
-      cH: 100,
-      cache: true,
-    ),
-    selected: context.read<ShoppingListBloc>().state.selected.contains(data),
-    onTap: () {
-      context.read<ShoppingListBloc>().add(SelectItem(data));
-    },
-    // shape: const BeveledRectangleBorder(
-    //     side: BorderSide(
-    //         color: Color.fromRGBO(150, 150, 150, 80),
-    //         width: 1
-    //     )
-    // ),
-  ));
-}
+DragAndDropItem buildItem(MealComponent data, BuildContext context) =>
+    DragAndDropItem(
+        child: ListTile(
+      title: Text(data.name),
+      subtitle: Text(
+        '${data.grams}g',
+        style: const TextStyle(fontStyle: FontStyle.italic),
+      ),
+      leading: GetImage(
+        data.reference.photo,
+        height: 100,
+        width: 65,
+        cW: 260,
+        cH: 260,
+        cache: false,
+      ),
+      selected: context.read<ShoppingListBloc>().state.selected.contains(data),
+      onTap: () {
+        context.read<ShoppingListBloc>().add(SelectItem(data));
+      },
+// shape: const BeveledRectangleBorder(
+//     side: BorderSide(
+//         color: Color.fromRGBO(150, 150, 150, 80),
+//         width: 1
+//     )
+// ),
+    ));
 
 class MatchingIcon extends StatelessWidget {
   final String text;
@@ -498,232 +496,6 @@ class SendToBottomSheet extends StatelessWidget {
       ),
     );
   }
-}
-
-// </editor-fold>
-
-// <editor-fold desc="Redesign">
-class RedesignShoppingPage extends StatelessWidget {
-  const RedesignShoppingPage({super.key});
-
-
-  List<CategoryExpansions> _makeChildren(
-      List<MapEntry<String, List<MealComponent>>> shoppingList) {
-    List<CategoryExpansions> result = [];
-    for (EnumListItem<MapEntry<String, List<MealComponent>>> index_entry
-        in enumerateList(shoppingList)) {
-      result.add(CategoryExpansions(
-        name: index_entry.v.key,
-        items: index_entry.v.value,
-        index: index_entry.i,
-        key: Key('CategoryExpansions: ${index_entry.i}'),
-      ));
-    }
-    return result;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          title: const Text('Shopping List'),
-          actions: [
-            SaveDietButton(context.read<ShoppingListBloc>().state.diet)
-          ],
-        ),
-        drawer: DietDrawer(context.read<ShoppingListBloc>().state.diet),
-        bottomSheet: context.read<ShoppingListBloc>().state.selected.isEmpty
-            ? null
-            : const SendToBottomSheet(),
-        body: BlocBuilder<ShoppingListBloc, ShoppingListState>(
-          builder: (context, state) {
-            return CustomScrollView(
-              slivers: [SliverReorderableList(
-                onReorder: (int oldIndex, int newIndex) {
-                  context
-                      .read<ShoppingListBloc>()
-                      .add(ReIndexList(oldIndex, newIndex));
-                },
-                itemBuilder: (context, index) => CategoryExpansions(
-                  name: state.shoppingList[index].key,
-                  items: state.shoppingList[index].value,
-                  index: index,
-                  key: Key('CategoryExpansions: $index'),
-                ),
-                itemCount: state.shoppingList.length,
-              ),]
-            );
-          },
-        ));
-  }
-}
-
-class CategoryExpansions extends StatelessWidget {
-  final int index;
-  final String name;
-  final List<MealComponent> items;
-
-  @override
-  Widget build(BuildContext context) {
-    return ExpansionTile(
-      leading: MatchingIcon(name),
-      title: Center(child: Text(name)),
-      children: [
-        CustomScrollView(
-          physics: const ClampingScrollPhysics(),
-          slivers: [
-            SliverReorderableList(
-              itemBuilder: (context, index) => KeepAlive(
-                  keepAlive: true,
-                  child: ShoppingItem(
-                    items[index],
-                    key: ValueKey<MealComponent>(items[index]),
-                  )),
-              itemCount: items.length,
-              onReorder: (int oldIndex, int newIndex) {
-                context.read<ShoppingListBloc>().add(ReorderWithinList(
-                    listIndex: index, oldIndex: oldIndex, newIndex: newIndex));
-              },
-            )
-          ],
-        )
-      ],
-    );
-  }
-
-  // <editor-fold desc="Construction">
-  const CategoryExpansions(
-      {required this.name,
-      required this.items,
-      required this.index,
-      super.key});
-
-  factory CategoryExpansions.entry(
-          MapEntry<String, List<MealComponent>> entry, int index) =>
-      CategoryExpansions(name: entry.key, items: entry.value, index: index);
-// </editor-fold>
-}
-
-class CategoryExpansionsStful extends StatefulWidget {
-  final int index;
-  final String name;
-  final List<MealComponent> items;
-
-
-  // <editor-fold desc="Construction">
-  const CategoryExpansionsStful(
-      {required this.name,
-        required this.items,
-        required this.index,
-        super.key});
-
-  factory CategoryExpansionsStful.entry(
-      MapEntry<String, List<MealComponent>> entry, int index) =>
-      CategoryExpansionsStful(name: entry.key, items: entry.value, index: index);
-// </editor-fold>
-
-  @override
-  State<CategoryExpansionsStful> createState() => _CategoryExpansionsStfulState();
-}
-
-class _CategoryExpansionsStfulState extends State<CategoryExpansionsStful> with AutomaticKeepAliveClientMixin {
-  bool _isExpanded = false;
-  @override
-  Widget build(BuildContext context) {
-    super.build(context);
-    if (!_isExpanded) {
-      return ListTile(
-        leading: MatchingIcon(widget.name),
-        title: Center(child: Text(widget.name)),
-        trailing: Transform.flip(
-            flipY: _isExpanded, child: const Icon(Icons.expand_more)),
-        onTap: () {
-          setState(() {
-            _isExpanded = !_isExpanded;
-          });
-        },
-        // children: [
-        //   CustomScrollView(
-        //     physics: const ClampingScrollPhysics(),
-        //     slivers: [
-        //       SliverReorderableList(
-        //         itemBuilder: (context, index) => KeepAlive(
-        //             keepAlive: true,
-        //             child: ShoppingItem(
-        //               items[index],
-        //               key: ValueKey<MealComponent>(items[index]),
-        //             )),
-        //         itemCount: items.length,
-        //         onReorder: (int oldIndex, int newIndex) {
-        //           context.read<ShoppingListBloc>().add(ReorderWithinList(
-        //               listIndex: index, oldIndex: oldIndex, newIndex: newIndex));
-        //         },
-        //       )
-        //     ],
-        //   )
-        // ],
-      );
-    }
-    else {
-      // TODO
-      return Placeholder();
-    }
-  }
-
-  @override
-  // TODO: implement wantKeepAlive
-  bool get wantKeepAlive => true;
-}
-
-
-// class ShoppingItem extends StatelessWidget {
-//   final MealComponent mc;
-//
-//   const ShoppingItem(this.mc, {super.key});
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return const Placeholder();
-//   }
-// }
-class ShoppingItem extends StatefulWidget {
-  final MealComponent mc;
-
-  const ShoppingItem(this.mc, {super.key});
-
-  @override
-  State<StatefulWidget> createState() => _ShoppingItemState();
-}
-
-class _ShoppingItemState extends State<ShoppingItem>
-    with AutomaticKeepAliveClientMixin {
-  @override
-  Widget build(BuildContext context) {
-    super.build(context);
-    return ListTile(
-      title: Text(widget.mc.name),
-      subtitle: Text(
-        '${widget.mc.grams}g',
-        style: const TextStyle(fontStyle: FontStyle.italic),
-      ),
-      leading: GetImage(
-        widget.mc.reference.photo,
-        height: 100,
-        width: 65,
-        cW: 100,
-        cH: 100,
-        cache: true,
-      ),
-      selected:
-          context.read<ShoppingListBloc>().state.selected.contains(widget.mc),
-      onTap: () {
-        context.read<ShoppingListBloc>().add(SelectItem(widget.mc));
-      },
-    );
-  }
-
-  @override
-  bool get wantKeepAlive => true;
 }
 
 // </editor-fold>
