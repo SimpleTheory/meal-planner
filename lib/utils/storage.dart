@@ -115,8 +115,12 @@ void deleteIngredientFromSave(Ingredient ingredient) async {
   box.delete(ingredient.name);
 }
 
-// List<Isolate> dietIsos = [];
+List<Isolate> dietIsos = [];
 void saveDietWithIsolate(Diet diet, {ReceivePort? receivePort}) async {
+  if (dietIsos.isNotEmpty){
+    for (Isolate element in dietIsos) {element.kill();}
+    dietIsos = [];
+  }
   RootIsolateToken rootIsolateToken = RootIsolateToken.instance!;
   receivePort ??= ReceivePort('diet recieve');
   final iso = await Isolate.spawn<Diet>((Diet diet)async{
@@ -132,7 +136,12 @@ void saveDietWithIsolate(Diet diet, {ReceivePort? receivePort}) async {
   receivePort.listen((message) {print('Saved Diet: $message');});
 }
 
+List<Isolate> appIsos = [];
 void saveAppWithIsolate(App app, {ReceivePort? receivePort}) async {
+  if (appIsos.isNotEmpty){
+    for (Isolate element in appIsos) {element.kill();}
+    appIsos = [];
+  }
   RootIsolateToken rootIsolateToken = RootIsolateToken.instance!;
   // ReceivePort receivePort = ReceivePort('app port');
   final iso = await Isolate.spawn<App>((App app)async{
