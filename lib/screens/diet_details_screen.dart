@@ -12,6 +12,7 @@ import 'custom_ingredient.dart';
 import 'ingredients_page.dart';
 import 'meal_maker_page.dart';
 import 'meal_page.dart';
+import 'package:flutter/services.dart';
 
 class DietPage extends StatelessWidget {
   final Diet diet;
@@ -20,20 +21,32 @@ class DietPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => DietBloc(diet),
-      child: Scaffold(
-        appBar: AppBar(
-            title: Text(diet.name),
-            actions: [SaveDietButton(diet)],
-        ),
-        drawer: DietDrawer(diet),
-        body: ListView(
-          children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(4, 16, 4, 3),
-              child: Container(
-                decoration: BoxDecoration(border: Border.all()),
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(diet.name),
+        actions: [SaveDietButton(diet)],
+      ),
+      drawer: DietDrawer(diet),
+      body: ListView(
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(4, 16, 4, 3),
+            child: Container(
+              decoration: BoxDecoration(border: Border.all()),
+              child: GestureDetector(
+                onLongPress: () async {
+                  await Clipboard.setData(ClipboardData(
+                          text: dayStyleNutrientsToText(
+                              context
+                                  .read<DietBloc>()
+                                  .state
+                                  .diet
+                                  .averageNutrition,
+                              context.read<DietBloc>().state.diet.dris)))
+                      .whenComplete(() => ScaffoldMessenger.of(context)
+                          .showSnackBar(const SnackBar(
+                              content: Text('Average Day Breakdown copied'))));
+                },
                 child: Column(
                   children: [
                     const Padding(
@@ -57,32 +70,32 @@ class DietPage extends StatelessWidget {
                 ),
               ),
             ),
-            PlusSignTile((context) {
-              context.read<DietBloc>().add(AddDay());
-            }),
-            BlocBuilder<DietBloc, DietState>(
-              builder: (context, state) {
-                return ReorderableListView.builder(
-                  itemCount: state.diet.days.length,
-                  itemBuilder: (context, index) => BlocProvider.value(
-                    value: context.read<DietBloc>(),
-                    key: Key(index.toString()),
-                    child: DayTile(
-                      state.diet.days[index],
-                    ),
+          ),
+          PlusSignTile((context) {
+            context.read<DietBloc>().add(AddDay());
+          }),
+          BlocBuilder<DietBloc, DietState>(
+            builder: (context, state) {
+              return ReorderableListView.builder(
+                itemCount: state.diet.days.length,
+                itemBuilder: (context, index) => BlocProvider.value(
+                  value: context.read<DietBloc>(),
+                  key: Key(index.toString()),
+                  child: DayTile(
+                    state.diet.days[index],
                   ),
-                  physics: const ClampingScrollPhysics(),
-                  shrinkWrap: true,
-                  onReorder: (int old, int new_) {
-                    context.read<DietBloc>().add(ReorderDay(old, new_));
-                  },
-                );
-              },
-              buildWhen: (pre, curr) => curr is! DayState,
-            )
-            // ...diet.days.map((e) => DayTile(e))
-          ],
-        ),
+                ),
+                physics: const ClampingScrollPhysics(),
+                shrinkWrap: true,
+                onReorder: (int old, int new_) {
+                  context.read<DietBloc>().add(ReorderDay(old, new_));
+                },
+              );
+            },
+            buildWhen: (pre, curr) => curr is! DayState,
+          )
+          // ...diet.days.map((e) => DayTile(e))
+        ],
       ),
     );
   }
@@ -110,7 +123,6 @@ class DietPage extends StatelessWidget {
 //   );
 // }
 
-
 class DayTile extends StatelessWidget {
   final Day day;
 
@@ -120,11 +132,13 @@ class DayTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final dietBloc = context.read<DietBloc>();
     return ExpansionTile(
-      title: Center(child: BlocBuilder<DietBloc, DietState>(
+      title: Center(
+          child: BlocBuilder<DietBloc, DietState>(
         builder: (context, state) {
           return Text('Day ${day.name}');
         },
-        buildWhen: (_, state) => state is ReorderDayState || state is DeleteDayState,
+        buildWhen: (_, state) =>
+            state is ReorderDayState || state is DeleteDayState,
       )),
       controlAffinity: ListTileControlAffinity.leading,
       subtitle: BlocBuilder<DietBloc, DietState>(
@@ -174,29 +188,34 @@ class DayTile extends StatelessWidget {
         ),
         Padding(
           padding: const EdgeInsets.all(8.0),
-          child: PlusSignTile((_) async {
-            final result = await Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (_) => BlocProvider(
-                        create: (context) => IngredientsPageBloc(
-                            context.read<InitBloc>().state.app!, MCFTypes.meal,
-                            include: true, backRef: true),
-                        child: MealPage())));
-            if (result is Meal) {
-              // final serving = result.toServing();
-              dietBloc.add(AddMealToDay(result, day));
-            }
-           },
-            onLongPress: ()async{
+          child: PlusSignTile(
+            (_) async {
+              final result = await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (_) => BlocProvider(
+                          create: (context) => IngredientsPageBloc(
+                              context.read<InitBloc>().state.app!,
+                              MCFTypes.meal,
+                              include: true,
+                              backRef: true),
+                          child: MealPage())));
+              if (result is Meal) {
+                // final serving = result.toServing();
+                dietBloc.add(AddMealToDay(result, day));
+              }
+            },
+            onLongPress: () async {
               final result = await Navigator.push(
                   context,
                   MaterialPageRoute(
                       settings: const RouteSettings(name: "/IngredientsPage"),
                       builder: (_) => BlocProvider(
                           create: (context) => IngredientsPageBloc(
-                              context.read<InitBloc>().state.app!, MCFTypes.ingredient,
-                              include: false, backRef: true),
+                              context.read<InitBloc>().state.app!,
+                              MCFTypes.ingredient,
+                              include: false,
+                              backRef: true),
                           child: IngredientPage())));
               if (result is Ingredient) {
                 // final serving = result.toServing();
@@ -223,7 +242,7 @@ class DayTile extends StatelessWidget {
                 onDelete: (MealComponent meal) {
                   dietBloc.add(DeleteMealFromDay(index, day));
                 },
-                onDuplicate: (MealComponent meal){
+                onDuplicate: (MealComponent meal) {
                   dietBloc.add(DuplicateMealInDay(meal, day));
                 },
                 onEdit: (MealComponent meal) async {
@@ -231,33 +250,35 @@ class DayTile extends StatelessWidget {
                     var thing = await Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => MultiBlocProvider(
-                                providers: [
+                            builder: (context) => MultiBlocProvider(providers: [
                                   BlocProvider<CustomIngBloc>(
-                                      create: (context) =>
-                                          CustomIngBloc(meal
-                                              .reference
-                                          as Ingredient)),
-                                ],
-                                child:
-                                const CustomIngredientPage())));
+                                      create: (context) => CustomIngBloc(
+                                          meal.reference as Ingredient)),
+                                ], child: const CustomIngredientPage())));
                     if (thing is Ingredient) {
-                      dietBloc.add(EditMealInDay(index: index, mc: meal, factory: thing, app: app, day: day));
+                      dietBloc.add(EditMealInDay(
+                          index: index,
+                          mc: meal,
+                          factory: thing,
+                          app: app,
+                          day: day));
                     }
-                  }
-                  else if (meal.reference is Meal) {
+                  } else if (meal.reference is Meal) {
                     var thing = await Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) =>
-                                MultiBlocProvider(providers: [
+                            builder: (context) => MultiBlocProvider(providers: [
                                   BlocProvider<MealMakerBloc>(
-                                      create: (context) =>
-                                          MealMakerBloc(meal
-                                              .reference as Meal)),
+                                      create: (context) => MealMakerBloc(
+                                          meal.reference as Meal)),
                                 ], child: const MealMakerPage())));
                     if (thing is Meal) {
-                      dietBloc.add(EditMealInDay(index: index, mc: meal, factory: thing, app: app, day: day));
+                      dietBloc.add(EditMealInDay(
+                          index: index,
+                          mc: meal,
+                          factory: thing,
+                          app: app,
+                          day: day));
                     }
                   }
                 },

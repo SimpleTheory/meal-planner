@@ -2,6 +2,7 @@ import 'package:ari_utils/ari_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:nutrition_app/blocs/diet/diet_bloc.dart';
 import 'package:nutrition_app/blocs/micro_blocs/shopping_list_bloc.dart';
 import 'package:nutrition_app/domain.dart';
 import 'package:nutrition_app/screens/diet_details_screen.dart';
@@ -29,7 +30,8 @@ class PlusSignTile extends StatelessWidget {
   final void Function()? onLongPress;
   final EdgeInsets? padding;
 
-  const PlusSignTile(this.onTap, {this.padding, this.onLongPress, Key? key}) : super(key: key);
+  const PlusSignTile(this.onTap, {this.padding, this.onLongPress, Key? key})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -76,15 +78,16 @@ class NutrientText extends StatelessWidget {
   late final String? initText;
   final TextStyle? style;
 
-  NutrientText({required this.nutrients,
-    this.grams,
-    String? initText,
-    this.baseUnit,
-    this.style,
-    Key? key})
+  NutrientText(
+      {required this.nutrients,
+      this.grams,
+      String? initText,
+      this.baseUnit,
+      this.style,
+      Key? key})
       : super(key: key) {
     String unit = 'g';
-    if (toBool(baseUnit) && !baseUnit!.startsWith('gram')){
+    if (toBool(baseUnit) && !baseUnit!.startsWith('gram')) {
       unit = baseUnit!;
     }
     final serving = grams == null ? '' : ' ($grams$unit)';
@@ -95,34 +98,31 @@ class NutrientText extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(
       '$initText'
-          "${nutrients.calories.value.round()}\u{1F525}  "
-          '${nutrients.carbohydrate.value.round()}\u{1F35E}  '
-          '${nutrients.protein.value.round()}\u{1F969}  '
+      "${nutrients.calories.value.round()}\u{1F525}  "
+      '${nutrients.carbohydrate.value.round()}\u{1F35E}  '
+      '${nutrients.protein.value.round()}\u{1F969}  '
       // '${meal.baseNutrient.nutrients.unsaturatedFat.value.round()}\u{1FAD2}  '
-          '${nutrients.unsaturatedFat.value.round()}$olive  '
+      '${nutrients.unsaturatedFat.value.round()}$olive  '
       // '${meal.baseNutrient.nutrients.saturatedFat.value.round()}\u{1F9C8}',
-          '${nutrients.saturatedFat.value.round()}$butter',
+      '${nutrients.saturatedFat.value.round()}$butter',
       style: style,
     );
   }
 }
 
-Widget dayStyleNutrientDisplay(Nutrients nutrients, DRIS dris){
+Widget dayStyleNutrientDisplay(Nutrients nutrients, DRIS dris) {
   final trackedNuts = dris.comparator(nutrients);
   List<Widget> nutWidgets = [];
-  for (MapEntry<String, List> nut in trackedNuts.entries){
-    final color = nut.value[2].startsWith(RegExp(r'[+-]')) ? Colors.red : Colors.green;
-    nutWidgets.add(
-      Padding(
-        padding: const EdgeInsets.fromLTRB(16, 0, 0, 0),
-        child: Column(
-            children: [
-              Text(DRIS.representor[nut.key] ?? replaceTextForForm(nut.key)),
-              Text(nut.value[2], style: TextStyle(color: color))
-            ]
-        ),
-      )
-    );
+  for (MapEntry<String, List> nut in trackedNuts.entries) {
+    final color =
+        nut.value[2].startsWith(RegExp(r'[+-]')) ? Colors.red : Colors.green;
+    nutWidgets.add(Padding(
+      padding: const EdgeInsets.fromLTRB(16, 0, 0, 0),
+      child: Column(children: [
+        Text(DRIS.representor[nut.key] ?? replaceTextForForm(nut.key)),
+        Text(nut.value[2], style: TextStyle(color: color))
+      ]),
+    ));
   }
   return Container(
     height: 50,
@@ -139,6 +139,24 @@ Widget dayStyleNutrientDisplay(Nutrients nutrients, DRIS dris){
       itemCount: nutWidgets.length,
     ),
   );
+}
+
+String dayStyleNutrientsToText(Nutrients nutrients, DRIS dris) {
+  final trackedNuts = dris.comparator(nutrients);
+  String result = 'Name | Comparison | Nutrient | DRI\n'
+      '------------------------------------\n';
+  for (List nut in trackedNuts.values) {
+    String middle = (nut[2] as String).contains('+') || (nut[2] as String).contains('-')
+        ? '| ${roundDecimal((nut[1] as Nutrient).value, 2)}' : '';
+    result +=
+        '${(nut[0] as DRI).name} | ${nut[2]} $middle | ${nut[0]}';
+    if (nut[0] != trackedNuts.values.last[0]) {
+      result += '\n';
+      result += '------------------------------------';
+      result += '\n';
+    }
+  }
+  return result;
 }
 
 class DayStyleNutrientDisplay extends StatefulWidget {
@@ -161,7 +179,7 @@ class _DayStyleNutrientDisplayState extends State<DayStyleNutrientDisplay> {
     final trackedNuts = widget.dris.comparator(widget.nutrients);
     for (MapEntry<String, List> nut in trackedNuts.entries) {
       final color =
-      nut.value[2].startsWith(RegExp(r'[+-]')) ? Colors.red : Colors.green;
+          nut.value[2].startsWith(RegExp(r'[+-]')) ? Colors.red : Colors.green;
       nutWidgets.add(Padding(
         padding: const EdgeInsets.fromLTRB(16, 0, 0, 0),
         child: Column(children: [
@@ -234,9 +252,8 @@ class _MealStyleNutrientDisplayState extends State<MealStyleNutrientDisplay> {
 
   @override
   void initState() {
-
     for (MapEntry<String, dynamic> nut
-    in widget.nutrients.attributes__.entries) {
+        in widget.nutrients.attributes__.entries) {
       nutWidgets.add(Padding(
         padding: const EdgeInsets.fromLTRB(16, 0, 0, 0),
         child: Column(children: [
@@ -291,16 +308,21 @@ class DietDrawer extends StatelessWidget {
             margin: const EdgeInsets.all(0),
             child: Center(
                 child: Text(
-                  diet.name,
-                  style: const TextStyle(fontSize: 40),
-                )),
+              diet.name,
+              style: const TextStyle(fontSize: 40),
+            )),
           ),
           ListTile(
             title: const Text('Days'),
             onTap: () {
               saveDietWithIsolate(diet);
-              Navigator.pushReplacement(context,
-                  MaterialPageRoute(builder: (context) => DietPage(diet)));
+              Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => BlocProvider(
+                            create: (context) => DietBloc(diet),
+                            child: DietPage(diet),
+                          )));
             },
           ),
           ListTile(
@@ -310,11 +332,12 @@ class DietDrawer extends StatelessWidget {
               saveDietWithIsolate(diet);
               Navigator.pushReplacement(context,
                   MaterialPageRoute(builder: (context) {
-                    return BlocProvider(
-                      create: (context) => ShoppingListBloc(diet),
-                      child: BlocBuilder<ShoppingListBloc, ShoppingListState>(builder: (context, state) => const ShoppingListPage()),
-                    );
-                  }));
+                return BlocProvider(
+                  create: (context) => ShoppingListBloc(diet),
+                  child: BlocBuilder<ShoppingListBloc, ShoppingListState>(
+                      builder: (context, state) => const ShoppingListPage()),
+                );
+              }));
             },
           ),
           ListTile(
@@ -345,8 +368,7 @@ final List<Nutrient> nutList = List<Nutrient>.from(zeroNut.attributes__.values);
 
 /// Alert Dialogue to prompt user for a string
 AlertDialog nameAThing(BuildContext context,
-    {required String title,
-      String? labelText}) {
+    {required String title, String? labelText}) {
   TextEditingController controller = TextEditingController();
   return AlertDialog(
     title: Text(title),
@@ -444,8 +466,7 @@ class MealComponentTile extends StatelessWidget {
               icon: const Icon(Icons.info_outline),
             ),
         PopupMenuButton(
-          itemBuilder: (BuildContext context) =>
-          [
+          itemBuilder: (BuildContext context) => [
             PopupMenuItem(
               value: MealComponentPopUpEnumHolder(meal, PopUpOptions.edit),
               child: const Text('Edit'),
@@ -529,7 +550,7 @@ class MealComponentTile extends StatelessWidget {
 
 class MCTile extends StatefulWidget {
   final Function(MealComponent meal, num grams, String servingValue)
-  onGramsChange;
+      onGramsChange;
   final Function(MealComponent meal)? onEdit;
   final Function(MealComponent meal) onDelete;
   final Function(MealComponent meal)? onDuplicate;
@@ -540,14 +561,13 @@ class MCTile extends StatefulWidget {
 
   const MCTile(this.meal,
       {Key? key,
-        this.height,
-        this.width,
-        required this.onGramsChange,
-        this.onEdit,
-        required this.onDelete,
-        this.onDuplicate,
-        this.servingSize
-      })
+      this.height,
+      this.width,
+      required this.onGramsChange,
+      this.onEdit,
+      required this.onDelete,
+      this.onDuplicate,
+      this.servingSize})
       : super(key: key);
 
   // String servingValue = 'grams';
@@ -581,22 +601,23 @@ class _MCTileState extends State<MCTile> {
               icon: const Icon(Icons.info_outline),
             ),
         PopupMenuButton(
-          itemBuilder: (BuildContext context) =>
-          [
-            if (toBool(widget.onEdit))PopupMenuItem(
-              value:
-              MealComponentPopUpEnumHolder(widget.meal, PopUpOptions.edit),
-              child: const Text('Edit'),
-            ),
+          itemBuilder: (BuildContext context) => [
+            if (toBool(widget.onEdit))
+              PopupMenuItem(
+                value: MealComponentPopUpEnumHolder(
+                    widget.meal, PopUpOptions.edit),
+                child: const Text('Edit'),
+              ),
             PopupMenuItem(
                 value: MealComponentPopUpEnumHolder(
                     widget.meal, PopUpOptions.delete),
                 child: const Text('Delete')),
-            if (toBool(widget.onDuplicate))PopupMenuItem(
-              value: MealComponentPopUpEnumHolder(
-                  widget.meal, PopUpOptions.duplicate),
-              child: const Text('Duplicate'),
-            ),
+            if (toBool(widget.onDuplicate))
+              PopupMenuItem(
+                value: MealComponentPopUpEnumHolder(
+                    widget.meal, PopUpOptions.duplicate),
+                child: const Text('Duplicate'),
+              ),
           ],
           onSelected: (val) {
             switch (val.popUpOption) {
@@ -616,7 +637,8 @@ class _MCTileState extends State<MCTile> {
             }
           },
         ),
-        Transform.flip(flipY: _isExpanded, child: const Icon(Icons.expand_more)),
+        Transform.flip(
+            flipY: _isExpanded, child: const Icon(Icons.expand_more)),
       ]),
       // subtitle: nutrientText(nutrients: widget.meal.nutrients, grams: widget.meal.grams.round()),
       // subtitle: RichText(
@@ -641,7 +663,8 @@ class _MCTileState extends State<MCTile> {
       leading: GetImage(
         widget.meal.reference.photo,
         height: widget.height ?? 75,
-        width: widget.width ?? 50,),
+        width: widget.width ?? 50,
+      ),
       title: Text(widget.meal.name),
       expandedCrossAxisAlignment: CrossAxisAlignment.center,
       onExpansionChanged: (newExpState) {
@@ -654,7 +677,8 @@ class _MCTileState extends State<MCTile> {
         Padding(
           padding: const EdgeInsets.fromLTRB(0, 10, 0, 2),
           // child: MealStyleNutrientDisplay(widget.meal.nutrients),
-          child: mealStyleNutrientDisplay(widget.meal.nutrients / (widget.servingSize ?? 1)),
+          child: mealStyleNutrientDisplay(
+              widget.meal.nutrients / (widget.servingSize ?? 1)),
         ),
         const Text(
           'Serving Size',
@@ -677,8 +701,7 @@ class _MCTileState extends State<MCTile> {
           ],
           keyboardType: const TextInputType.numberWithOptions(decimal: true),
           controller: textController,
-          validator: (val) =>
-          val == null || val.isEmpty || val == '.'
+          validator: (val) => val == null || val.isEmpty || val == '.'
               ? 'Required Field'
               : null,
           onChanged: (valString) {
@@ -723,10 +746,15 @@ class _MCTileState extends State<MCTile> {
 
 class SaveDietButton extends StatelessWidget {
   final Diet diet;
+
   const SaveDietButton(this.diet, {super.key});
 
   @override
   Widget build(BuildContext context) {
-    return IconButton(onPressed: (){saveDietWithIsolate(diet);}, icon: const Icon(Icons.sync));
+    return IconButton(
+        onPressed: () {
+          saveDietWithIsolate(diet);
+        },
+        icon: const Icon(Icons.sync));
   }
 }

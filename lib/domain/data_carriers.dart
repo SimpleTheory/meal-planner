@@ -1412,8 +1412,10 @@ class DRIS {
     }
   }
 
+  /// Returns Map
+  ///   key = DRIS attribute name of DRI (for ex: vitaminB6) with
+  ///   value = [dri, nutrient, comparison as String]
   Map<String, List> comparator(Nutrients nutrients) {
-    // throw UnimplementedError();
     Map<String, List> result = {};
     for (String strNutrient in attributes__.keys) {
       DRI dri = attributes__[strNutrient];

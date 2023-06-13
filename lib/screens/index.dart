@@ -2,6 +2,7 @@ import 'dart:isolate';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:nutrition_app/blocs/diet/diet_bloc.dart';
 import 'package:nutrition_app/blocs/ingredients_page/ingredients_page_bloc.dart';
 import 'package:nutrition_app/blocs/settings/settings_bloc.dart';
 import 'package:nutrition_app/screens/diet_details_screen.dart';
@@ -116,7 +117,8 @@ class IndexPage extends StatelessWidget {
             ElevatedButton(
                 onPressed: () {
                   ReceivePort re = ReceivePort();
-                  saveAppWithIsolate(context.read<InitBloc>().state.app!, receivePort: re);
+                  saveAppWithIsolate(context.read<InitBloc>().state.app!,
+                      receivePort: re);
                   re.listen((message) {
                     print(message);
                     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
@@ -124,7 +126,6 @@ class IndexPage extends StatelessWidget {
                       backgroundColor: Colors.green,
                     ));
                   });
-
                 },
                 child: const Text('Save'))
             // const Text('DEBUG NAVIGATIONS'),
@@ -195,7 +196,12 @@ class DietTile extends StatelessWidget {
         title: Text(diet.name),
         onTap: () {
           Navigator.push(
-              context, MaterialPageRoute(builder: (context) => DietPage(diet)));
+              context,
+              MaterialPageRoute(
+                  builder: (context) => BlocProvider(
+                        create: (context) => DietBloc(diet),
+                        child: DietPage(diet),
+                      )));
         },
         trailing: PopupMenuButton(
           onSelected: (DietPopUpEnumHolder dietPopUpSelection) async {
