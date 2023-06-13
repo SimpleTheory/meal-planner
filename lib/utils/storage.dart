@@ -1,21 +1,53 @@
+import 'dart:async';
 import 'dart:io';
-import 'dart:isolate';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:hive/hive.dart';
+import 'package:nutrition_app/blocs/micro_blocs/saver.dart';
 import 'package:nutrition_app/domain.dart';
 import 'package:lecle_downloads_path_provider/lecle_downloads_path_provider.dart';
 import 'package:nutrition_app/mydataclasses/metadata.dart';
 import 'package:nutrition_app/utils.dart';
 import 'package:path_provider/path_provider.dart';
 
-void saveApp(App app) async {
+Future<File> dataFile() async {
+  final appDocumentDir = await getApplicationDocumentsDirectory();
+  final path = appDocumentDir.path;
+  return File('$path/data.json');
+}
+
+
+
+Future<void> saveApp(App app) async {
   final box = await Hive.openBox('master');
   // Perform read/write operations on the box
   box.put('app', app.toJson());
   // await box.close();
 }
 
+Future<void> wasThereEverHive(List thing) async {
+  BackgroundIsolateBinaryMessenger.ensureInitialized(thing[1]);
+
+
+  final file = await dataFile();
+  if (file.existsSync()){
+    file.deleteSync();
+  }
+  file.writeAsStringSync(thing[0].toJson());
+
+}
+
 Future<App?> loadApp() async {
+  final file = await dataFile();
+  if (file.existsSync()){
+    try {
+      final json = file.readAsStringSync();
+      return App.fromJson(json);
+    } on Exception catch (_) {
+      print('why');
+      // pass
+    }
+  }
   final boxExists = await Hive.boxExists('master');
   final facturedLoading = await Hive.boxExists('ingredients') ||
       await Hive.boxExists('meals') ||
@@ -55,6 +87,9 @@ Future<App?> loadApp() async {
   }
 }
 
+// Future<App?> atoningForMyMistakes(){}
+// void deletingMyMistakes(){}
+
 void factoryResetApp() async {
   final box = await Hive.openBox('master');
   final box1 = await Hive.openBox('meals');
@@ -64,6 +99,8 @@ void factoryResetApp() async {
   box1.deleteFromDisk();
   box2.deleteFromDisk();
   box3.deleteFromDisk();
+  final file = await dataFile();
+  if (file.existsSync()){file.deleteSync();}
 
   // // Delete a key-value pair
   // box.delete('app');
@@ -115,53 +152,62 @@ void deleteIngredientFromSave(Ingredient ingredient) async {
   box.delete(ingredient.name);
 }
 
-List<Isolate> dietIsos = [];
-void saveDietWithIsolate(Diet diet, {ReceivePort? receivePort}) async {
-  if (dietIsos.isNotEmpty){
-    for (Isolate element in dietIsos) {element.kill();}
-    dietIsos = [];
+class Saver {
+  static Saver? _instance;
+  bool isSaving = false;
+  final SaverBloc saverBloc;
+  final RootIsolateToken root;
+
+  // Private constructor
+  Saver._(this.saverBloc, this.root);
+
+  static messageIsApp(String message) => message == 'app';
+  static messageIsDiet(String message) => message.contains(':');
+
+  factory Saver.init(SaverBloc saverBloc, RootIsolateToken root){
+    if (_instance == null) {
+      _instance = Saver._(saverBloc, root);
+      return _instance!;
+    }
+    throw Exception('Saver instance already initialized');
   }
-  RootIsolateToken rootIsolateToken = RootIsolateToken.instance!;
-  receivePort ??= ReceivePort('diet recieve');
-  final iso = await Isolate.spawn<Diet>((Diet diet)async{
-    BackgroundIsolateBinaryMessenger.ensureInitialized(rootIsolateToken);
-    // Get the path to the application documents directory
-    final appDocumentDir = await getApplicationDocumentsDirectory();
-    final path = appDocumentDir.path;
-    // Initialize Hive in the spawned isolate
-    Hive.init(path);
-    saveDiet(diet);
-  }, diet);
-  iso.addOnExitListener(receivePort.sendPort, response: diet.name);
-  receivePort.listen((message) {print('Saved Diet: $message');});
+
+  factory Saver() {
+    // _instance ??= Saver._();
+    return _instance!;
+  }
+  Future<bool> app(App app) async {
+    if (isSaving){return false;}
+    else{
+      isSaving = true;
+      compute(wasThereEverHive, [app, root])
+          .whenComplete((){
+        isSaving = false;
+        saverBloc.add(SavedApp());
+      });
+      // saveAppWithIsolate(app, receivePort: receivePort);
+      // receivePort.listen((message) {
+      //   print('message');
+      //   isSaving = false;
+      //   saverBloc.add(SavedApp());
+      // });
+      return true;
+    }
+  }
+  Future<bool> diet(Diet diet) async {
+    if (isSaving){return false;}
+    else{
+      isSaving = true;
+      compute(saveDiet, diet).whenComplete((){
+        isSaving = false;
+        saverBloc.add(SavedDiet('Diet: ${diet.name}'));
+      });
+      return true;
+    }
+  }
 }
 
-List<Isolate> appIsos = [];
-void saveAppWithIsolate(App app, {ReceivePort? receivePort}) async {
-  if (appIsos.isNotEmpty){
-    for (Isolate element in appIsos) {element.kill();}
-    appIsos = [];
-  }
-  RootIsolateToken rootIsolateToken = RootIsolateToken.instance!;
-  // ReceivePort receivePort = ReceivePort('app port');
-  final iso = await Isolate.spawn<App>((App app)async{
-
-    BackgroundIsolateBinaryMessenger.ensureInitialized(rootIsolateToken);
-    // Get the path to the application documents directory
-    final appDocumentDir = await getApplicationDocumentsDirectory();
-    final path = appDocumentDir.path;
-    // Initialize Hive in the spawned isolate
-    Hive.init(path);
-    saveApp(app);
-    fracturedSaveAll(app);
-  }, app);
-  if (receivePort != null) {
-    iso.addOnExitListener(receivePort.sendPort, response: 'complete');
-  }
-  // receivePort.listen((message) {print(message);});
-}
-
-void saveDiet(Diet diet) async {
+Future<void> saveDiet(Diet diet) async {
   final box = await Hive.openBox('diets');
   box.put(diet.name, diet.toJson());
 }
@@ -176,12 +222,12 @@ void saveSettings(Settings settings) async {
   box.put('settings', settings.toJson());
 }
 
-void saveDietsOrder(Iterable<Diet> diets) async {
+Future<void> saveDietsOrder(Iterable<Diet> diets) async {
   final box = await Hive.openBox('master');
   box.put('diets order', diets.map((e) => e.name).toList());
 }
 
-void fracturedSaveAll(App app) {
+Future<void> fracturedSaveAll(App app) async {
   saveDietsOrder(app.diets.values);
   saveSettings(app.settings);
   for (Ingredient ing in app.baseIngredients.values) {

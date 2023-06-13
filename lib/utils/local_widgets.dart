@@ -9,6 +9,8 @@ import 'package:nutrition_app/screens/diet_details_screen.dart';
 import 'package:nutrition_app/screens/shopping_list_page.dart';
 import 'package:nutrition_app/utils/storage.dart';
 import 'package:nutrition_app/utils/utils.dart';
+import '../blocs/init/init_bloc.dart';
+import '../blocs/micro_blocs/saver.dart';
 import '../screens/dri_configs.dart';
 
 // Widget plusSignTile(void Function()? onTap, {EdgeInsets? padding}) =>
@@ -146,10 +148,11 @@ String dayStyleNutrientsToText(Nutrients nutrients, DRIS dris) {
   String result = 'Name | Comparison | Nutrient | DRI\n'
       '------------------------------------\n';
   for (List nut in trackedNuts.values) {
-    String middle = (nut[2] as String).contains('+') || (nut[2] as String).contains('-')
-        ? '| ${roundDecimal((nut[1] as Nutrient).value, 2)}' : '';
-    result +=
-        '${(nut[0] as DRI).name} | ${nut[2]} $middle | ${nut[0]}';
+    String middle =
+        (nut[2] as String).contains('+') || (nut[2] as String).contains('-')
+            ? '| ${roundDecimal((nut[1] as Nutrient).value, 2)}'
+            : '';
+    result += '${(nut[0] as DRI).name} | ${nut[2]} $middle | ${nut[0]}';
     if (nut[0] != trackedNuts.values.last[0]) {
       result += '\n';
       result += '------------------------------------';
@@ -315,7 +318,7 @@ class DietDrawer extends StatelessWidget {
           ListTile(
             title: const Text('Days'),
             onTap: () {
-              saveDietWithIsolate(diet);
+              Saver().app(context.read<InitBloc>().state.app!);
               Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
@@ -328,8 +331,7 @@ class DietDrawer extends StatelessWidget {
           ListTile(
             title: const Text('Shopping List'),
             onTap: () {
-              // diet.updateShoppingList();
-              saveDietWithIsolate(diet);
+              Saver().app(context.read<InitBloc>().state.app!);
               Navigator.pushReplacement(context,
                   MaterialPageRoute(builder: (context) {
                 return BlocProvider(
@@ -343,7 +345,7 @@ class DietDrawer extends StatelessWidget {
           ListTile(
             title: const Text('DRI Configuration'),
             onTap: () {
-              saveDietWithIsolate(diet);
+              Saver().app(context.read<InitBloc>().state.app!);
               Navigator.pushReplacement(context,
                   MaterialPageRoute(builder: (context) => DRIConfigPage(diet)));
             },
@@ -351,7 +353,7 @@ class DietDrawer extends StatelessWidget {
           ListTile(
             title: const Text('Return to Home Page'),
             onTap: () {
-              saveDietWithIsolate(diet);
+              Saver().app(context.read<InitBloc>().state.app!);
               Navigator.pop(context);
               Navigator.pop(context);
             },
@@ -751,10 +753,33 @@ class SaveDietButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return IconButton(
-        onPressed: () {
-          saveDietWithIsolate(diet);
-        },
-        icon: const Icon(Icons.sync));
+    return BlocListener<SaverBloc, SaverState>(
+      listener: (context, state) {
+        if (Saver.messageIsDiet(state.message)) {
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+            content: Text('Diet saved!'),
+            backgroundColor: Colors.green,
+          ));
+        }
+        // else if (Saver.messageIsApp(state.message)) {
+        //   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        //     content: Text('App saved!'),
+        //     backgroundColor: Colors.green,
+        //   ));
+        // }
+      },
+      child: IconButton(
+          onPressed: () {
+            Saver().app(context.read<InitBloc>().state.app!).then((value) {
+              if (!value) {
+                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                  content: Text('A save is currently running!'),
+                  backgroundColor: Colors.orange,
+                ));
+              }
+            });
+          },
+          icon: const Icon(Icons.sync)),
+    );
   }
 }

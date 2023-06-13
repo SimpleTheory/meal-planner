@@ -20,15 +20,18 @@ class App {
 
   void addMeal(Meal meal) {
     meals[meal.name] = meal;
-    saveMeal(meal);
+    // saveMeal(meal);
+    Saver().app(this);
   }
   void addBaseIngredient(Ingredient ingredient) {
     baseIngredients[ingredient.name] = ingredient;
-    saveIngredient(ingredient);
+    // saveIngredient(ingredient);
+    Saver().app(this);
   }
   void addDiet(Diet diet) {
     diets[diet.name] = diet;
-    saveDietWithIsolate(diet);
+    // saveDietWithIsolate(diet);
+    Saver().app(this);
   }
 
   void updateBaseIngredient(Ingredient ingToUpdate, Ingredient replacer){
@@ -41,21 +44,26 @@ class App {
   }
 
 
-  // Update Meal, Diet: just access key with copyWith
-
-  // Delete: meal, ingredient, diet
   void deleteMeal(Meal meal) {
     meals.remove(meal.name);
-    deleteMealFromSave(meal);
+    // deleteMealFromSave(meal);
   }
   void deleteBaseIngredient(Ingredient ingredient) {
     baseIngredients.remove(ingredient.name);
-    deleteIngredientFromSave(ingredient);
+    // deleteIngredientFromSave(ingredient);
   }
   void deleteDiet(Diet diet) {
     diets.remove(diet.name);
-    deleteDietFromSave(diet);
+    // deleteDietFromSave(diet);
   }
+
+  void renameDiet(Diet diet){
+    // TODO Implement and call in bloc
+  }
+  void reorderDiet(Diet diet){
+    // TODO Implement and call in bloc
+  }
+
 
   factory App.newApp(Settings settings) =>
       App(settings: settings, diets: {}, meals: {}, baseIngredients: {});
@@ -454,6 +462,10 @@ class Day {
         .reference
         .toMealComponent(measure, newAmount, meals[index].reference);
     meals[index] = newMeal;
+  }
+
+  void reorderMeal(int oldIndex, int newIndex){
+    meals.reIndex(oldIndex, newIndex, inPlace: true);
   }
 
   // <editor-fold desc="Dataclass Section">

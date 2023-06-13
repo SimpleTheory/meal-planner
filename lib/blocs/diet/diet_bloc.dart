@@ -53,7 +53,7 @@ class DietBloc extends Bloc<DietEvent, DietState> {
     });
     
     on<ReorderMealInDay>((event, emit){
-      event.day.meals.reIndex(event.old, event.new_, inPlace: true);
+      event.day.reorderMeal(event.old, event.new_);
       emit(ReorderMealInDayState(state.diet, event.day));
     });
     

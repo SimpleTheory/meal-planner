@@ -1,7 +1,7 @@
 Creation:
     (- get lazy/busy friends to contribute their assets)(1/2 done)
     SHPG Lazy Load
-    Saving is f'd
+    Create a CQRS saving model
 
 Potential Save Points:
     on any diet drawer nav

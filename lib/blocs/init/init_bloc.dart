@@ -19,7 +19,7 @@ class InitBloc extends Bloc<InitEvent, InitState> {
         try {
           App app = App.fromJson(text);
           emit(SuccessfulLoad(app));
-            saveAppWithIsolate(app);
+            Saver().app(app);
         } on Exception catch (_) {
           emit(FailedLoad(basename(file.path)));
         }
@@ -30,7 +30,7 @@ class InitBloc extends Bloc<InitEvent, InitState> {
     });
     on<CreatedNewSettings>((event, emit){
       final newApp = App.newApp(event.settings);
-      saveAppWithIsolate(newApp);
+      Saver().app(newApp);
       emit(SuccessfulLoad(newApp));
     });
     /// Should only be called when previous state was SuccessfulLoad

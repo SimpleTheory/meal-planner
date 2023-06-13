@@ -1,4 +1,3 @@
-import 'dart:isolate';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -13,6 +12,7 @@ import 'package:nutrition_app/domain.dart';
 import 'package:nutrition_app/utils.dart';
 import 'package:nutrition_app/blocs/init/init_bloc.dart';
 import '../blocs/index/index_bloc.dart';
+import '../blocs/micro_blocs/saver.dart';
 
 class IndexPage extends StatelessWidget {
   const IndexPage({Key? key}) : super(key: key);
@@ -114,20 +114,31 @@ class IndexPage extends StatelessWidget {
               // children: [
               // ],
             ),
-            ElevatedButton(
-                onPressed: () {
-                  ReceivePort re = ReceivePort();
-                  saveAppWithIsolate(context.read<InitBloc>().state.app!,
-                      receivePort: re);
-                  re.listen((message) {
-                    print(message);
-                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                      content: Text('The app has been saved!'),
-                      backgroundColor: Colors.green,
-                    ));
-                  });
-                },
-                child: const Text('Save'))
+            BlocListener<SaverBloc, SaverState>(
+              listener: (context, state) {
+                if (Saver.messageIsApp(state.message)) {
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                    content: Text('The app has been saved!'),
+                    backgroundColor: Colors.green,
+                  ));
+                }
+              },
+              child: ElevatedButton(
+                  onPressed: () {
+                    Saver()
+                        .app(context.read<InitBloc>().state.app!)
+                        .then((value) {
+                      if (!value) {
+                        ScaffoldMessenger.of(context)
+                            .showSnackBar(const SnackBar(
+                          content: Text('A save is currently running!'),
+                          backgroundColor: Colors.orange,
+                        ));
+                      }
+                    });
+                  },
+                  child: const Text('Save')),
+            )
             // const Text('DEBUG NAVIGATIONS'),
             // Expanded(
             //   child: ListView(

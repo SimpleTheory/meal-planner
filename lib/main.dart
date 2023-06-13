@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive_flutter/adapters.dart';
+import 'package:nutrition_app/blocs/micro_blocs/saver.dart';
 import 'package:nutrition_app/blocs/settings/settings_bloc.dart';
 import 'package:nutrition_app/screens/index.dart';
 import 'package:nutrition_app/screens/init.dart';
@@ -27,6 +29,13 @@ class MyApp extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         // BlocProvider(create: (context) => NavigationBloc()),
+        BlocProvider(create: (context){
+          // runs async so need to call before
+          final result = SaverBloc();
+          RootIsolateToken rootIsolateToken = RootIsolateToken.instance!;
+          Saver.init(result, rootIsolateToken);
+          return result;
+        }, lazy: false,),
         BlocProvider(create: (context) {
           final result = InitBloc();
           if (app != null){
