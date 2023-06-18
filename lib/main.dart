@@ -15,6 +15,8 @@ import 'utils.dart';
 void main() async {
   await Hive.initFlutter();
   // debugInvertOversizedImages = true;
+  RootIsolateToken rootIsolateToken = RootIsolateToken.instance!;
+  Saver.init(rootIsolateToken);
   runApp(MyApp(app: await loadApp()));
 }
 
@@ -32,8 +34,7 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (context){
           // runs async so need to call before
           final result = SaverBloc();
-          RootIsolateToken rootIsolateToken = RootIsolateToken.instance!;
-          Saver.init(result, rootIsolateToken);
+          Saver().saverBloc = result;
           return result;
         }, lazy: false,),
         BlocProvider(create: (context) {

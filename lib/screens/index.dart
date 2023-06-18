@@ -125,43 +125,20 @@ class IndexPage extends StatelessWidget {
               },
               child: ElevatedButton(
                   onPressed: () {
-                    Saver()
-                        .app(context.read<InitBloc>().state.app!)
-                        .then((value) {
-                      if (!value) {
-                        ScaffoldMessenger.of(context)
-                            .showSnackBar(const SnackBar(
-                          content: Text('A save is currently running!'),
-                          backgroundColor: Colors.orange,
-                        ));
-                      }
-                    });
+                    // Saver()
+                    //     .app(context.read<InitBloc>().state.app!)
+                    //     .then((value) {
+                    //   if (!value) {
+                    //     ScaffoldMessenger.of(context)
+                    //         .showSnackBar(const SnackBar(
+                    //       content: Text('A save is currently running!'),
+                    //       backgroundColor: Colors.orange,
+                    //     ));
+                    //   }
+                    // });
                   },
                   child: const Text('Save')),
             )
-            // const Text('DEBUG NAVIGATIONS'),
-            // Expanded(
-            //   child: ListView(
-            //     children: [
-            //       // ListTile(title: Text('Confirm Ingredient Debug'), onTap: (){
-            //       //   showDialog(context: context, builder: (context)=>
-            //       //      confirmIngredient(ingredients[1], context)
-            //       //   );}, tileColor: Colors.green),
-            //       // ListTile(title: Text('Meal Maker'), onTap: (){
-            //       //   Navigator.push(context, MaterialPageRoute(builder: (context) => const MealMakerPage()));
-            //       // }, tileColor: Colors.green),
-            //       ListTile(title: Text('cancel dialog'),
-            //           onTap: (){showDialog(
-            //               context: context,
-            //               builder: (context) => deleteConfirmation(onSubmit: (){}, context: context));},
-            //           tileColor: Colors.green),
-            //       // ListTile(title: Text(''), onTap: (){}, tileColor: Colors.green),
-            //       // ListTile(title: Text(''), onTap: (){}, tileColor: Colors.green),
-            //       // ListTile(title: Text(''), onTap: (){}, tileColor: Colors.green),
-            //
-            //     ],
-            //   ),
-            // )
           ],
         ),
       ),

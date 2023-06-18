@@ -21,17 +21,20 @@ class App {
   void addMeal(Meal meal) {
     meals[meal.name] = meal;
     // saveMeal(meal);
-    Saver().app(this);
+    // Saver().app(this);
+    saveEvent([meal]);
   }
   void addBaseIngredient(Ingredient ingredient) {
     baseIngredients[ingredient.name] = ingredient;
     // saveIngredient(ingredient);
-    Saver().app(this);
+    // Saver().app(this);
+    saveEvent([ingredient]);
   }
   void addDiet(Diet diet) {
     diets[diet.name] = diet;
     // saveDietWithIsolate(diet);
-    Saver().app(this);
+    // Saver().app(this);
+    saveEvent([diet]);
   }
 
   void updateBaseIngredient(Ingredient ingToUpdate, Ingredient replacer){
@@ -43,25 +46,35 @@ class App {
     addMeal(replacer);
   }
 
-
   void deleteMeal(Meal meal) {
     meals.remove(meal.name);
+    saveEvent([meal]);
     // deleteMealFromSave(meal);
   }
   void deleteBaseIngredient(Ingredient ingredient) {
     baseIngredients.remove(ingredient.name);
+    saveEvent([ingredient]);
     // deleteIngredientFromSave(ingredient);
   }
   void deleteDiet(Diet diet) {
     diets.remove(diet.name);
+    saveEvent([diet]);
     // deleteDietFromSave(diet);
   }
 
-  void renameDiet(Diet diet){
-    // TODO Implement and call in bloc
+  void renameDiet(Diet diet, String newName){
+    deleteDiet(diet);
+    diet.name = newName;
+    addDiet(diet);
   }
-  void reorderDiet(Diet diet){
-    // TODO Implement and call in bloc
+  void reorderDiet(int oldIndex, int newIndex){
+    diets = reorderMap(diets, oldIndex, newIndex);
+    saveEvent([oldIndex, newIndex]);
+  }
+
+  void updateSettings(Settings settings){
+    this.settings = settings;
+    saveEvent([settings]);
   }
 
 
@@ -248,10 +261,6 @@ class Diet {
     return sum / trueAvg.length;
   }
 
-  void createDay() {
-    days.add(Day(name: (days.length+1).toString(), meals: []));
-  }
-
   static Future<Diet> create(String name, Settings settings) async {
     try {
       final dris = await DRIS.fromAPI(settings.anthroMetrics);
@@ -259,12 +268,18 @@ class Diet {
     } on Exception catch (_) {
       rethrow;
     }
-}
-  // For update access by index setter days[index] = newDay;
+  }
+
+  // <editor-fold desc="Day Functions">
+  void createDay() {
+    days.add(Day(name: (days.length+1).toString(), meals: []));
+    saveEvent([]);
+  }
 
   void removeDay(Day day) {
     days.remove(day);
     refreshDays();
+    saveEvent([name, day]);
   }
 
   void refreshDays(){
@@ -276,6 +291,7 @@ class Diet {
   void reorderDay(int old, int new_){
     days = days.reIndex(old, new_);
     refreshDays();
+    saveEvent([name, old, new_]);
   }
 
   void duplicateDay(int index){
@@ -287,8 +303,11 @@ class Diet {
       days.insert(index, duplicate);
     }
     refreshDays();
+    saveEvent([name, index]);
   }
+// </editor-fold>
 
+  // <editor-fold desc="Shopping List Functions">
   List<MealComponent> initShoppingList() {
     List container = [];
     for (Day day in days) {
@@ -354,6 +373,32 @@ class Diet {
     //     in currentShoppingDummy.entries) {
     //   shoppingList[entry.value]?.add(entry.key);
     // }
+  }
+
+  // TODO:
+    // on<ReIndexItem>((event, emit){
+  // final movedItem = state.shoppingList[event.oldListIndex].value.removeAt(event.oldItemIndex);
+  // state.shoppingList[event.newListIndex].value.insert(event.newItemIndex, movedItem);
+  // emit(ShoppingListState.onMovement(state.diet, state.shoppingList, state.selected));
+  // });
+  // on<ReIndexList>((event, emit){
+  // // final copy = List<MapEntry<String, List<MealComponent>>>.from(state.shoppingList);
+  // final movedList = state.shoppingList.removeAt(event.oldListIndex);
+  // state.shoppingList.insert(event.newListIndex, movedList);
+  // emit(ShoppingListState.onMovement(state.diet, state.shoppingList, state.selected));
+  //
+  // });
+  // on<ReorderWithinList>((event, emit){
+  // final movedItem = state.shoppingList[event.listIndex].value.removeAt(event.oldIndex);
+  // state.shoppingList[event.listIndex].value.insert(event.newIndex, movedItem);
+  // emit(ShoppingListState.onMovement(state.diet, state.shoppingList, state.selected));
+  // });
+
+// </editor-fold>
+
+  updateDRIS(DRIS dris){
+    this.dris = dris;
+    saveEvent([dris]);
   }
 
   // <editor-fold desc="Dataclass Section">
@@ -444,7 +489,11 @@ class Day {
   List<MealComponent> meals;
 
   Nutrients get nutrients => meals.isEmpty ? Nutrients.zero() : Nutrients.sum(meals.map((e) => e.nutrients));
-
+  
+  // Day saves are instituted in the Diet Bloc for the day events over there.
+  // Reason being is that the bloc encloses the diet which is a necessary argument
+  //  for capturing the days.
+  
   void addDayMeal(Meal meal) {
     meals.add(meal.toMealComponent('serving', 1, meal));
   }
@@ -467,6 +516,16 @@ class Day {
   void reorderMeal(int oldIndex, int newIndex){
     meals.reIndex(oldIndex, newIndex, inPlace: true);
   }
+
+  void replaceMealInDay(int index, MealComponent replacer){
+    meals.removeAt(index);
+    try {
+      meals.insert(index, replacer);
+    }catch(_){
+      meals.add(replacer);
+    }
+  }
+
 
   // <editor-fold desc="Dataclass Section">
   @Generate()

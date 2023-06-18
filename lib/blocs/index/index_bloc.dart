@@ -22,9 +22,7 @@ class IndexBloc extends Bloc<IndexEvent, IndexState> {
     });
     on<RenameDiet>((event, emit) async {
       // TODO Deal with overrides in general
-      state.app.deleteDiet(event.diet);
-      event.diet.name = event.newName;
-      state.app.diets[event.newName] = event.diet;
+      state.app.renameDiet(event.diet, event.newName);
       emit(state.copyWith());
     });
     on<DuplicateDiet>((event, emit) {
@@ -43,9 +41,8 @@ class IndexBloc extends Bloc<IndexEvent, IndexState> {
       emit(state.copyWith());
     });
     on<ReorderDiet>((event, emit) async {
-      state.app.diets =
-          reorderMap(state.app.diets, event.oldIndex, event.newIndex);
-      saveDietsOrder(state.app.diets.values);
+      state.app.reorderDiet(event.oldIndex, event.newIndex);
+      // saveDietsOrder(state.app.diets.values);
       emit(state.copyWith());
     });
   }

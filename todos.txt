@@ -3,6 +3,11 @@ Creation:
     SHPG Lazy Load
     Create a CQRS saving model
 
+CQRS:
+    ShoppingList events
+    DRI
+    Comprehensive Testing
+
 Potential Save Points:
     on any diet drawer nav
     on ingbloc submit
