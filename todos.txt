@@ -5,7 +5,7 @@ Creation:
 
 CQRS:
     ShoppingList events
-    DRI
+    DRI events
     Comprehensive Testing
 
 Potential Save Points:
