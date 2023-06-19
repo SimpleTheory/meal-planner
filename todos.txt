@@ -9,6 +9,10 @@ Potential Save Points:
     on local backup save
     on add mc to day
 
+Documentation:
+    Add gifs and more detailed guide on usage in readme
+    Add documentation in to the code and generate code docs for it
+
 Questions:
 
 Known things/Qs for later:
