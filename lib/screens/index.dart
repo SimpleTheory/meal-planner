@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hive/hive.dart';
 import 'package:nutrition_app/blocs/diet/diet_bloc.dart';
 import 'package:nutrition_app/blocs/ingredients_page/ingredients_page_bloc.dart';
 import 'package:nutrition_app/blocs/settings/settings_bloc.dart';
@@ -136,6 +137,12 @@ class IndexPage extends StatelessWidget {
                     //     ));
                     //   }
                     // });
+                    Saver().app(context.read<InitBloc>().state.app!).whenComplete(() =>
+                        Hive.openBox('tempLog').then((value) =>
+                            value.deleteFromDisk()).whenComplete(() =>
+                              Hive.openBox('tempLog')
+                        )
+                    );
                   },
                   child: const Text('Save')),
             )

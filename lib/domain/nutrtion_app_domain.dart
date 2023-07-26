@@ -18,23 +18,29 @@ class App {
         ...meals.values.where((element) => element.isSubRecipe)
       ];
 
-  void addMeal(Meal meal) {
+  void addMeal(Meal meal, {bool save=true}) {
     meals[meal.name] = meal;
     // saveMeal(meal);
     // Saver().app(this);
-    saveEvent([meal]);
+    if (save) {
+      saveEvent([meal]);
+    }
   }
-  void addBaseIngredient(Ingredient ingredient) {
+  void addBaseIngredient(Ingredient ingredient, {bool save=true}) {
     baseIngredients[ingredient.name] = ingredient;
     // saveIngredient(ingredient);
     // Saver().app(this);
-    saveEvent([ingredient]);
+    if (save) {
+      saveEvent([ingredient]);
+    }
   }
-  void addDiet(Diet diet) {
+  void addDiet(Diet diet, {bool save=true}) {
     diets[diet.name] = diet;
     // saveDietWithIsolate(diet);
     // Saver().app(this);
-    saveEvent([diet]);
+    if (save) {
+      saveEvent([diet]);
+    }
   }
 
   void updateBaseIngredient(Ingredient ingToUpdate, Ingredient replacer){
@@ -46,19 +52,25 @@ class App {
     addMeal(replacer);
   }
 
-  void deleteMeal(Meal meal) {
+  void deleteMeal(Meal meal, {bool save=true}) {
     meals.remove(meal.name);
-    saveEvent([meal]);
+    if (save) {
+      saveEvent([meal]);
+    }
     // deleteMealFromSave(meal);
   }
-  void deleteBaseIngredient(Ingredient ingredient) {
+  void deleteBaseIngredient(Ingredient ingredient, {bool save=true}) {
     baseIngredients.remove(ingredient.name);
-    saveEvent([ingredient]);
+    if (save) {
+      saveEvent([ingredient]);
+    }
     // deleteIngredientFromSave(ingredient);
   }
-  void deleteDiet(Diet diet) {
+  void deleteDiet(Diet diet, {bool save=true}) {
     diets.remove(diet.name);
-    saveEvent([diet]);
+    if (save) {
+      saveEvent([diet]);
+    }
     // deleteDietFromSave(diet);
   }
 
@@ -67,14 +79,18 @@ class App {
     diet.name = newName;
     addDiet(diet);
   }
-  void reorderDiet(int oldIndex, int newIndex){
+  void reorderDiet(int oldIndex, int newIndex, {bool save=true}){
     diets = reorderMap(diets, oldIndex, newIndex);
-    saveEvent([oldIndex, newIndex]);
+    if (save) {
+      saveEvent([oldIndex, newIndex]);
+    }
   }
 
-  void updateSettings(Settings settings){
+  void updateSettings(Settings settings, {bool save=true}){
     this.settings = settings;
-    saveEvent([settings]);
+    if (save) {
+      saveEvent([settings]);
+    }
   }
 
 
@@ -271,15 +287,19 @@ class Diet {
   }
 
   // <editor-fold desc="Day Functions">
-  void createDay() {
+  void createDay({bool save=true}) {
     days.add(Day(name: (days.length+1).toString(), meals: []));
-    saveEvent([]);
+    if (save) {
+      saveEvent([name]);
+    }
   }
 
-  void removeDay(Day day) {
+  void removeDay(Day day, {bool save=true}) {
     days.remove(day);
     refreshDays();
-    saveEvent([name, day]);
+    if (save) {
+      saveEvent([name, day]);
+    }
   }
 
   void refreshDays(){
@@ -288,13 +308,15 @@ class Diet {
     }
   }
 
-  void reorderDay(int old, int new_){
+  void reorderDay(int old, int new_, {bool save=true}){
     days = days.reIndex(old, new_);
     refreshDays();
-    saveEvent([name, old, new_]);
+    if (save) {
+      saveEvent([name, old, new_]);
+    }
   }
 
-  void duplicateDay(int index){
+  void duplicateDay(int index, {bool save=true}){
     final duplicate = days[index].copyWithDay();
     if (index >= days.length - 1){
       days.add(duplicate);
@@ -303,7 +325,9 @@ class Diet {
       days.insert(index, duplicate);
     }
     refreshDays();
-    saveEvent([name, index]);
+    if (save) {
+      saveEvent([name, index]);
+    }
   }
 // </editor-fold>
 
@@ -396,9 +420,11 @@ class Diet {
 
 // </editor-fold>
 
-  updateDRIS(DRIS dris){
+  updateDRIS(DRIS dris, {bool save=true}){
     this.dris = dris;
-    saveEvent([dris]);
+    if (save) {
+      saveEvent([name, dris]);
+    }
   }
 
   // <editor-fold desc="Dataclass Section">
@@ -487,42 +513,60 @@ class Diet {
 class Day {
   String name;
   List<MealComponent> meals;
-
+  late int id = DateTime.now().millisecondsSinceEpoch;
   Nutrients get nutrients => meals.isEmpty ? Nutrients.zero() : Nutrients.sum(meals.map((e) => e.nutrients));
   
   // Day saves are instituted in the Diet Bloc for the day events over there.
   // Reason being is that the bloc encloses the diet which is a necessary argument
   //  for capturing the days.
   
-  void addDayMeal(Meal meal) {
+  void addDayMeal(Meal meal, {bool save = true}) {
     meals.add(meal.toMealComponent('serving', 1, meal));
+    if (save){
+      saveEvent([meal]);
+    }
   }
 
-  void addDayMealFromIng(Ingredient ing){
+  void addDayMealFromIng(Ingredient ing, {bool save=true}){
     meals.add(ing.toMealComponent('grams', ing.baseNutrient.grams, ing));
+    if (save){
+      saveEvent([ing]);
+    }
   }
 
-  void deleteDayMeal(int index) {
+  void deleteDayMeal(int index, {bool save=true}) {
     meals.removeAt(index);
+    if (save) {
+      saveEvent([index]);
+    }
   }
 
-  void updateMealServingSize(int index, String measure, num newAmount) {
+  void updateMealServingSize(int index, String measure, num newAmount, {bool save=true}) {
     MealComponent newMeal = meals[index]
         .reference
         .toMealComponent(measure, newAmount, meals[index].reference);
     meals[index] = newMeal;
+    if (save){
+      saveEvent([index, measure, newAmount]);
+    }
   }
 
-  void reorderMeal(int oldIndex, int newIndex){
+  void reorderMeal(int oldIndex, int newIndex, {bool save=true}){
     meals.reIndex(oldIndex, newIndex, inPlace: true);
+    if (save){
+      saveEvent([oldIndex, newIndex]);
+    }
   }
 
-  void replaceMealInDay(int index, MealComponent replacer){
+  void replaceMealInDay(int index, MealComponent replacer, {bool save=true}){
     meals.removeAt(index);
     try {
       meals.insert(index, replacer);
     }catch(_){
       meals.add(replacer);
+    }
+    if (save){
+      saveEvent([index, replacer]);
     }
   }
 

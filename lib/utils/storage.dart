@@ -305,11 +305,9 @@ class EventLog {
   void save() async {
     Hive.openLazyBox('auditTrail').then((value){
       value.add(toMap());
-      value.close();
     });
     Hive.openBox('tempLog').then((value){
       value.add(toMap());
-      value.close();
     });
   }
 
@@ -383,39 +381,40 @@ void applyEvent(App app, EventLog event) {
   // Is currently re-saving event when applied that might have to be changed, I wish dart had decorators :(
   Diet retrieveDiet() => app.diets[event.args[0]]!;
   Day retrieveDay() => app.diets[event.args[0]]!.days[event.args[1]];
-  switch (event.name){
+  final String trueName = event.name.contains('.') ? event.name.split('.')[1] : event.name;
+  switch (trueName){
   /// args[0] first argument
   // <editor-fold desc="App">
   case "addMeal":
     // (Meal meal)
-    app.addMeal(event.args[0]);
+    app.addMeal(event.args[0], save: false);
     return;
   case "addBaseIngredient":
     // (Ingredient ingredient)
-    app.addBaseIngredient(event.args[0]);
+    app.addBaseIngredient(event.args[0], save: false);
     return;
   case "addDiet":
     // (Diet diet)
-    app.addDiet(event.args[0]);
+    app.addDiet(event.args[0], save: false);
     return;
   case "deleteMeal":
     // (Meal meal)
-    app.deleteMeal(event.args[0]);
+    app.deleteMeal(event.args[0], save: false);
     return;
   case "deleteBaseIngredient":
     // (Ingredient ingredient)
-    app.deleteBaseIngredient(event.args[0]);
+    app.deleteBaseIngredient(event.args[0], save: false);
     return;
   case "deleteDiet":
     // (Diet diet)
-    app.deleteDiet(event.args[0]);
+    app.deleteDiet(event.args[0], save: false);
     return;
   case "reorderDiet":
     // (int oldIndex, int newIndex)
-    app.reorderDiet(event.args[0], event.args[1]);
+    app.reorderDiet(event.args[0], event.args[1], save: false);
     return;
   case "updateSettings":
-    app.updateSettings(event.args[0]);
+    app.updateSettings(event.args[0], save: false);
     return;
   // </editor-fold>
 
@@ -423,23 +422,23 @@ void applyEvent(App app, EventLog event) {
   // <editor-fold desc="Diet">
   case "createDay":
     // ()
-    retrieveDiet().createDay();
+    retrieveDiet().createDay(save: false);
     return;
   case "removeDay":
     // (Day day)
-    retrieveDiet().removeDay(event.args[1]);
+    retrieveDiet().removeDay(event.args[1], save: false);
     return;
   case "reorderDay":
     // (int old, int new_)
-    retrieveDiet().reorderDay(event.args[1], event.args[2]);
+    retrieveDiet().reorderDay(event.args[1], event.args[2], save: false);
     return;
   case "duplicateDay":
     // (int index)
-    retrieveDiet().duplicateDay(event.args[1]);
+    retrieveDiet().duplicateDay(event.args[1], save: false);
     return;
 
   case "updateDRIS":
-    retrieveDiet().updateDRIS(event.args[1]);
+    retrieveDiet().updateDRIS(event.args[1], save: false);
     return;
   // </editor-fold>
 
@@ -447,37 +446,43 @@ void applyEvent(App app, EventLog event) {
   // <editor-fold desc="Day">
   case "addDayMeal":
     // (Meal meal)
-    retrieveDay().addDayMeal(event.args[2]);
+    retrieveDay().addDayMeal(event.args[2], save: false);
     return;
   case "addDayMealFromIng":
     // (Ingredient ing)
-    retrieveDay().addDayMealFromIng(event.args[2]);
+    retrieveDay().addDayMealFromIng(event.args[2], save: false);
     return;
   case "deleteDayMeal":
     // (int index)
-    retrieveDay().deleteDayMeal(event.args[2]);
+    retrieveDay().deleteDayMeal(event.args[2], save: false);
     return;
   case "updateMealServingSize":
     // (int index, String measure, num newAmount)
-    retrieveDay().updateMealServingSize(event.args[2], event.args[3], event.args[4]);
+    retrieveDay().updateMealServingSize(event.args[2], event.args[3], event.args[4], save: false);
     return;
   case "reorderMeal":
     // (int oldIndex, int newIndex)
-    retrieveDay().reorderMeal(event.args[2], event.args[3]);
+    retrieveDay().reorderMeal(event.args[2], event.args[3], save: false);
     return;
   case "replaceMealInDay":
-    retrieveDay().replaceMealInDay(event.args[2], event.args[3]);
+    retrieveDay().replaceMealInDay(event.args[2], event.args[3], save: false);
   // </editor-fold>
   }
 }
 void applyOnAppAndSave(App app) async {
   final tempLog = await Hive.openBox('tempLog');
-  Iterable<EventLog> events = tempLog.values.map((e) => EventLog.fromMap(e));
+  Iterable<EventLog> events = tempLog.values.map(
+          (e) => EventLog.fromMap(Map<String, dynamic>.from(e))
+  );
   for (EventLog event in events){
     applyEvent(app, event);
   }
-  tempLog.deleteFromDisk().whenComplete(() => Hive.openBox('tempLog').then((value) => value.close()));
-  Saver().app(app);
+  Saver().app(app).whenComplete(() =>
+    tempLog.deleteFromDisk().whenComplete(() =>
+      Hive.openBox('tempLog').then((value) => value.close())
+    )
+  );
+
 }
 String scopeName([int farBack = 1]) {
   final regex = RegExp(r'\#1\s+([a-zA-Z0-9.]+)'.replaceFirst('1', farBack.toString()));
