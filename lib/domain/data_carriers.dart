@@ -1064,11 +1064,9 @@ class DRI {
   String compare(val) {
     if (val is Nutrient) {
       val = val.value;
-    }
-    else if (val is num){
+    } else if (val is num) {
       val = val.toDouble();
-    }
-    else if (val is int){
+    } else if (val is int) {
       val = val.toDouble();
     }
     evaluate() {
@@ -1108,7 +1106,7 @@ class DRI {
       dri: dri == null ? null : dri! / num,
       upperLimit: upperLimit == null ? null : upperLimit! / num);
 
-  void convertUnit(num multiplier, String unit){
+  void convertUnit(num multiplier, String unit) {
     this.unit = unit;
     upperLimit = convertUnitNum(upperLimit, multiplier);
     dri = convertUnitNum(dri, multiplier);
@@ -1163,9 +1161,9 @@ class DRI {
       convertUnit(1000, 'mg');
     }
     if (name == 'Copper') {
-      convertUnit(1/1000, 'mg');
+      convertUnit(1 / 1000, 'mg');
     }
-    if (name == 'Linoleic Acid'){
+    if (name == 'Linoleic Acid') {
       tracked = false;
     }
   }
@@ -1259,10 +1257,12 @@ class DRI {
 //</editor-fold>
 }
 
-num? convertUnitNum(num? number, num multiplier){
-  if (number == null){return null;}
+num? convertUnitNum(num? number, num multiplier) {
+  if (number == null) {
+    return null;
+  }
   number *= multiplier;
-  if (number.isInt){
+  if (number.isInt) {
     return number.toInt();
   }
   return number;
@@ -1958,7 +1958,7 @@ class AnthroMetrics {
   int inches;
   Activity activity;
 
-  int get cm => in2cm(inches + (feet*12));
+  int get cm => in2cm(inches + (feet * 12));
   set cm(int cm) {
     final temp = ImperialHeight.fromInches(cm2in(cm));
     feet = temp.feet;

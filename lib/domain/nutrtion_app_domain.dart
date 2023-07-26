@@ -18,7 +18,7 @@ class App {
         ...meals.values.where((element) => element.isSubRecipe)
       ];
 
-  void addMeal(Meal meal, {bool save=true}) {
+  void addMeal(Meal meal, {bool save = true}) {
     meals[meal.name] = meal;
     // saveMeal(meal);
     // Saver().app(this);
@@ -26,7 +26,8 @@ class App {
       saveEvent([meal]);
     }
   }
-  void addBaseIngredient(Ingredient ingredient, {bool save=true}) {
+
+  void addBaseIngredient(Ingredient ingredient, {bool save = true}) {
     baseIngredients[ingredient.name] = ingredient;
     // saveIngredient(ingredient);
     // Saver().app(this);
@@ -34,7 +35,8 @@ class App {
       saveEvent([ingredient]);
     }
   }
-  void addDiet(Diet diet, {bool save=true}) {
+
+  void addDiet(Diet diet, {bool save = true}) {
     diets[diet.name] = diet;
     // saveDietWithIsolate(diet);
     // Saver().app(this);
@@ -43,30 +45,33 @@ class App {
     }
   }
 
-  void updateBaseIngredient(Ingredient ingToUpdate, Ingredient replacer){
+  void updateBaseIngredient(Ingredient ingToUpdate, Ingredient replacer) {
     deleteBaseIngredient(ingToUpdate);
     addBaseIngredient(replacer);
   }
-  void updateMeal(Meal mealToUpdate, Meal replacer){
+
+  void updateMeal(Meal mealToUpdate, Meal replacer) {
     deleteMeal(mealToUpdate);
     addMeal(replacer);
   }
 
-  void deleteMeal(Meal meal, {bool save=true}) {
+  void deleteMeal(Meal meal, {bool save = true}) {
     meals.remove(meal.name);
     if (save) {
       saveEvent([meal]);
     }
     // deleteMealFromSave(meal);
   }
-  void deleteBaseIngredient(Ingredient ingredient, {bool save=true}) {
+
+  void deleteBaseIngredient(Ingredient ingredient, {bool save = true}) {
     baseIngredients.remove(ingredient.name);
     if (save) {
       saveEvent([ingredient]);
     }
     // deleteIngredientFromSave(ingredient);
   }
-  void deleteDiet(Diet diet, {bool save=true}) {
+
+  void deleteDiet(Diet diet, {bool save = true}) {
     diets.remove(diet.name);
     if (save) {
       saveEvent([diet]);
@@ -74,28 +79,39 @@ class App {
     // deleteDietFromSave(diet);
   }
 
-  void renameDiet(Diet diet, String newName){
+  void renameDiet(Diet diet, String newName) {
     deleteDiet(diet);
     diet.name = newName;
     addDiet(diet);
   }
-  void reorderDiet(int oldIndex, int newIndex, {bool save=true}){
+
+  void reorderDiet(int oldIndex, int newIndex, {bool save = true}) {
     diets = reorderMap(diets, oldIndex, newIndex);
     if (save) {
       saveEvent([oldIndex, newIndex]);
     }
   }
 
-  void updateSettings(Settings settings, {bool save=true}){
+  void updateSettings(Settings settings, {bool save = true}) {
     this.settings = settings;
     if (save) {
       saveEvent([settings]);
     }
   }
 
-
   factory App.newApp(Settings settings) =>
       App(settings: settings, diets: {}, meals: {}, baseIngredients: {});
+
+  Day dayFromId(int id){
+    for (Diet diet in diets.values){
+      for (Day day in diet.days){
+        if (day.id == id){
+          return day;
+        }
+      }
+    }
+    throw ArgumentError('Day does not exist with id: $id');
+  }
 
   // <editor-fold desc="Dataclass Section">
 
@@ -266,10 +282,9 @@ class Diet {
   DRIS dris;
   late Map<String, List<MealComponent>> shoppingList;
 
-
   Nutrients get averageNutrition {
     final trueAvg = days.where((element) => element.nutrients != zeroNut);
-    if (trueAvg.isEmpty){
+    if (trueAvg.isEmpty) {
       return Nutrients.zero();
     }
     final dayNut = trueAvg.map((e) => e.nutrients);
@@ -287,14 +302,14 @@ class Diet {
   }
 
   // <editor-fold desc="Day Functions">
-  void createDay({bool save=true}) {
-    days.add(Day(name: (days.length+1).toString(), meals: []));
+  void createDay({bool save = true}) {
+    days.add(Day(name: (days.length + 1).toString(), meals: []));
     if (save) {
       saveEvent([name]);
     }
   }
 
-  void removeDay(Day day, {bool save=true}) {
+  void removeDay(Day day, {bool save = true}) {
     days.remove(day);
     refreshDays();
     if (save) {
@@ -302,13 +317,13 @@ class Diet {
     }
   }
 
-  void refreshDays(){
-    for (int i in ari.range(days.length)){
+  void refreshDays() {
+    for (int i in ari.range(days.length)) {
       days[i].name = (i + 1).toString();
     }
   }
 
-  void reorderDay(int old, int new_, {bool save=true}){
+  void reorderDay(int old, int new_, {bool save = true}) {
     days = days.reIndex(old, new_);
     refreshDays();
     if (save) {
@@ -316,12 +331,11 @@ class Diet {
     }
   }
 
-  void duplicateDay(int index, {bool save=true}){
+  void duplicateDay(int index, {bool save = true}) {
     final duplicate = days[index].copyWithDay();
-    if (index >= days.length - 1){
+    if (index >= days.length - 1) {
       days.add(duplicate);
-    }
-    else{
+    } else {
       days.insert(index, duplicate);
     }
     refreshDays();
@@ -357,11 +371,13 @@ class Diet {
       currentShoppingDummy
           .addAll({for (MealComponent ing in keyList.value) ing: keyList.key});
     }
-    final shoppingDummyForNames = currentShoppingDummy.map((key, value) => MapEntry(key.name, value));
+    final shoppingDummyForNames =
+        currentShoppingDummy.map((key, value) => MapEntry(key.name, value));
     // Map<String, MealComponent> namesDummy = {
     //   for (MealComponent meal in currentShoppingDummy.keys) meal.name: meal
     // };
-    shoppingList = shoppingList.map((key, value) => MapEntry(key, <MealComponent>[]));
+    shoppingList =
+        shoppingList.map((key, value) => MapEntry(key, <MealComponent>[]));
 
     for (MealComponent mealComponent in initShoppingList()) {
       final String? itemCategory = shoppingDummyForNames[mealComponent.name];
@@ -400,7 +416,7 @@ class Diet {
   }
 
   // TODO:
-    // on<ReIndexItem>((event, emit){
+  // on<ReIndexItem>((event, emit){
   // final movedItem = state.shoppingList[event.oldListIndex].value.removeAt(event.oldItemIndex);
   // state.shoppingList[event.newListIndex].value.insert(event.newItemIndex, movedItem);
   // emit(ShoppingListState.onMovement(state.diet, state.shoppingList, state.selected));
@@ -420,7 +436,7 @@ class Diet {
 
 // </editor-fold>
 
-  updateDRIS(DRIS dris, {bool save=true}){
+  updateDRIS(DRIS dris, {bool save = true}) {
     this.dris = dris;
     if (save) {
       saveEvent([name, dris]);
@@ -444,13 +460,11 @@ class Diet {
 
   // <Dataclass>
 
-  factory Diet.staticConstructor({
-    required name,
-    required days,
-    required dris,
-    Map<String, List<MealComponent>>? shoppingList
-
-  }) =>
+  factory Diet.staticConstructor(
+          {required name,
+          required days,
+          required dris,
+          Map<String, List<MealComponent>>? shoppingList}) =>
       Diet(name: name, days: days, dris: dris, shoppingList: shoppingList);
 
   Map<String, dynamic> get attributes__ =>
@@ -474,12 +488,16 @@ class Diet {
   String toString() =>
       'Diet(name: $name, days: $days, dris: $dris, shoppingList: $shoppingList)';
 
-  Diet copyWithDiet({String? name, List<Day>? days, DRIS? dris, Map<String, List<MealComponent>>? shoppingList}) => Diet(
-      name: name ?? this.name,
-      days: days ?? this.days,
-      dris: dris ?? this.dris,
-      shoppingList: shoppingList ?? this.shoppingList
-  );
+  Diet copyWithDiet(
+          {String? name,
+          List<Day>? days,
+          DRIS? dris,
+          Map<String, List<MealComponent>>? shoppingList}) =>
+      Diet(
+          name: name ?? this.name,
+          days: days ?? this.days,
+          dris: dris ?? this.dris,
+          shoppingList: shoppingList ?? this.shoppingList);
 
   String toJson() => jsonEncode(toMap());
   Map<String, dynamic> toMap() =>
@@ -495,12 +513,8 @@ class Diet {
 
     List<Day> days = List<Day>.from(daysTemp);
     Map<String, List<MealComponent>> shoppingList =
-      Map<String, List<MealComponent>>.from(
-          shoppingTemp.map((key, value) => MapEntry(key,
-              List<MealComponent>.from(value)
-            )
-          )
-      );
+        Map<String, List<MealComponent>>.from(shoppingTemp.map(
+            (key, value) => MapEntry(key, List<MealComponent>.from(value))));
 
     return Diet(name: name, days: days, dris: dris, shoppingList: shoppingList);
   }
@@ -514,79 +528,85 @@ class Day {
   String name;
   List<MealComponent> meals;
   late int id = DateTime.now().millisecondsSinceEpoch;
-  Nutrients get nutrients => meals.isEmpty ? Nutrients.zero() : Nutrients.sum(meals.map((e) => e.nutrients));
-  
+  Nutrients get nutrients => meals.isEmpty
+      ? Nutrients.zero()
+      : Nutrients.sum(meals.map((e) => e.nutrients));
+
   // Day saves are instituted in the Diet Bloc for the day events over there.
   // Reason being is that the bloc encloses the diet which is a necessary argument
   //  for capturing the days.
-  
+
   void addDayMeal(Meal meal, {bool save = true}) {
     meals.add(meal.toMealComponent('serving', 1, meal));
-    if (save){
-      saveEvent([meal]);
+    if (save) {
+      saveEvent([id, meal]);
     }
   }
 
-  void addDayMealFromIng(Ingredient ing, {bool save=true}){
+  void addDayMealFromIng(Ingredient ing, {bool save = true}) {
     meals.add(ing.toMealComponent('grams', ing.baseNutrient.grams, ing));
-    if (save){
-      saveEvent([ing]);
+    if (save) {
+      saveEvent([id, ing]);
     }
   }
 
-  void deleteDayMeal(int index, {bool save=true}) {
+  void deleteDayMeal(int index, {bool save = true}) {
     meals.removeAt(index);
     if (save) {
-      saveEvent([index]);
+      saveEvent([id, index]);
     }
   }
 
-  void updateMealServingSize(int index, String measure, num newAmount, {bool save=true}) {
+  void updateMealServingSize(int index, String measure, num newAmount,
+      {bool save = true}) {
     MealComponent newMeal = meals[index]
         .reference
         .toMealComponent(measure, newAmount, meals[index].reference);
     meals[index] = newMeal;
-    if (save){
-      saveEvent([index, measure, newAmount]);
+    if (save) {
+      saveEvent([id, index, measure, newAmount]);
     }
   }
 
-  void reorderMeal(int oldIndex, int newIndex, {bool save=true}){
+  void reorderMeal(int oldIndex, int newIndex, {bool save = true}) {
     meals.reIndex(oldIndex, newIndex, inPlace: true);
-    if (save){
-      saveEvent([oldIndex, newIndex]);
+    if (save) {
+      saveEvent([id, oldIndex, newIndex]);
     }
   }
 
-  void replaceMealInDay(int index, MealComponent replacer, {bool save=true}){
+  void replaceMealInDay(int index, MealComponent replacer, {bool save = true}) {
     meals.removeAt(index);
     try {
       meals.insert(index, replacer);
-    }catch(_){
+    } catch (_) {
       meals.add(replacer);
     }
-    if (save){
-      saveEvent([index, replacer]);
+    if (save) {
+      saveEvent([id, index, replacer]);
     }
   }
 
-
   // <editor-fold desc="Dataclass Section">
-  @Generate()
+  //@Generate()
   // <Dataclass>
 
   Day({
     required this.name,
     required this.meals,
-  });
+    int? id
+  }){if (id != null){
+      this.id = id;
+    }}
 
   factory Day.staticConstructor({
     required name,
     required meals,
+    int? id
   }) =>
       Day(name: name, meals: meals);
 
-  Map<String, dynamic> get attributes__ => {"name": name, "meals": meals};
+  Map<String, dynamic> get attributes__ => {"name": name, "meals": meals, "id": id};
 
   @override
   bool operator ==(Object other) =>
@@ -600,10 +620,10 @@ class Day {
   int get hashCode => name.hashCode ^ meals.hashCode;
 
   @override
-  String toString() => 'Day(name: $name, meals: $meals)';
+  String toString() => 'Day(name: $name, meals: $meals, id: $id)';
 
   Day copyWithDay({String? name, List<MealComponent>? meals}) =>
-      Day(name: name ?? this.name, meals: meals ?? this.meals);
+      Day(name: name ?? this.name, meals: List.from(meals ?? this.meals));
 
   String toJson() => jsonEncode(toMap());
   Map<String, dynamic> toMap() =>
@@ -614,10 +634,11 @@ class Day {
   factory Day.fromMap(Map map) {
     String name = map['name'];
     List mealsTemp = dejsonify(map['meals']);
+    int? id = map['id'];
 
     List<MealComponent> meals = List<MealComponent>.from(mealsTemp);
 
-    return Day(name: name, meals: meals);
+    return Day(name: name, meals: meals, id: id);
   }
   // </Dataclass>
 
@@ -704,6 +725,5 @@ class MealComponent {
 
 // </editor-fold>
 }
-
 
 final zeroNut = Nutrients.zero();

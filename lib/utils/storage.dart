@@ -380,7 +380,7 @@ class EventLog {
 void applyEvent(App app, EventLog event) {
   // Is currently re-saving event when applied that might have to be changed, I wish dart had decorators :(
   Diet retrieveDiet() => app.diets[event.args[0]]!;
-  Day retrieveDay() => app.diets[event.args[0]]!.days[event.args[1]];
+  Day retrieveDay() => app.dayFromId(event.args[0]);
   final String trueName = event.name.contains('.') ? event.name.split('.')[1] : event.name;
   switch (trueName){
   /// args[0] first argument
@@ -442,30 +442,30 @@ void applyEvent(App app, EventLog event) {
     return;
   // </editor-fold>
 
-  /// Args[0] diet name, Args[1] day int, Args[2] first argument
+  /// Args[0] day id, Args[1] first argument
   // <editor-fold desc="Day">
   case "addDayMeal":
     // (Meal meal)
-    retrieveDay().addDayMeal(event.args[2], save: false);
+    retrieveDay().addDayMeal(event.args[1], save: false);
     return;
   case "addDayMealFromIng":
     // (Ingredient ing)
-    retrieveDay().addDayMealFromIng(event.args[2], save: false);
+    retrieveDay().addDayMealFromIng(event.args[1], save: false);
     return;
   case "deleteDayMeal":
     // (int index)
-    retrieveDay().deleteDayMeal(event.args[2], save: false);
+    retrieveDay().deleteDayMeal(event.args[1], save: false);
     return;
   case "updateMealServingSize":
     // (int index, String measure, num newAmount)
-    retrieveDay().updateMealServingSize(event.args[2], event.args[3], event.args[4], save: false);
+    retrieveDay().updateMealServingSize(event.args[1], event.args[2], event.args[3], save: false);
     return;
   case "reorderMeal":
     // (int oldIndex, int newIndex)
-    retrieveDay().reorderMeal(event.args[2], event.args[3], save: false);
+    retrieveDay().reorderMeal(event.args[1], event.args[2], save: false);
     return;
   case "replaceMealInDay":
-    retrieveDay().replaceMealInDay(event.args[2], event.args[3], save: false);
+    retrieveDay().replaceMealInDay(event.args[1], event.args[2], save: false);
   // </editor-fold>
   }
 }

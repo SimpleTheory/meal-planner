@@ -29,7 +29,8 @@ abstract class MealComponentFactory {
 
   baseIngredients(); // MealComponent | List<MealComponent>
 
-  MealComponent toServing() => MealComponent(reference: this, grams: baseNutrient.grams);
+  MealComponent toServing() =>
+      MealComponent(reference: this, grams: baseNutrient.grams);
 }
 
 /// Meal Component Implementation
@@ -100,8 +101,9 @@ class Ingredient extends MealComponentFactory {
     const default_serving_name = 'serving size';
     if (responseBody['alt_measures'] != null) {
       altMeasures2grams = {
-        if (source == IngredientSource.upc) default_serving_name: responseBody['serving_weight_grams'] ??
-            responseBody['nf_metric_qty'],
+        if (source == IngredientSource.upc)
+          default_serving_name: responseBody['serving_weight_grams'] ??
+              responseBody['nf_metric_qty'],
         ...{
           for (Map alt in responseBody['alt_measures'])
             alt['measure']: alt['serving_weight']
@@ -289,13 +291,12 @@ class Meal extends MealComponentFactory {
                         ingredients.map((e) => e.nutrients).toList()) /
                     servings),
             alt2grams ?? {},
-            name)
-  {
-      altMeasures2grams['serving'] = (ingredients
-          .map((e) => e.grams)
-          .toList()
-          .reduce((previous, current) => previous + current)) /
-          servings;
+            name) {
+    altMeasures2grams['serving'] = (ingredients
+            .map((e) => e.grams)
+            .toList()
+            .reduce((previous, current) => previous + current)) /
+        servings;
   }
 
   Map<String, dynamic> get attributes__ => {
@@ -319,15 +320,15 @@ class Meal extends MealComponentFactory {
           required isSubRecipe,
           photo,
           notes,
-          alt2grams
-          }) =>
+          alt2grams}) =>
       Meal(
           name: name,
           ingredients: ingredients,
           servings: servings,
           isSubRecipe: isSubRecipe,
           photo: photo,
-          notes: notes, alt2grams: alt2grams);
+          notes: notes,
+          alt2grams: alt2grams);
 
   @override
   bool operator ==(Object other) =>
@@ -340,8 +341,7 @@ class Meal extends MealComponentFactory {
           equals(isSubRecipe, other.isSubRecipe) &&
           equals(notes, other.notes) &&
           equals(photo, other.photo) &&
-          equals(altMeasures2grams, other.altMeasures2grams)
-      );
+          equals(altMeasures2grams, other.altMeasures2grams));
 
   @override
   int get hashCode =>
@@ -351,8 +351,7 @@ class Meal extends MealComponentFactory {
       isSubRecipe.hashCode ^
       photo.hashCode ^
       notes.hashCode ^
-      altMeasures2grams.hashCode
-  ;
+      altMeasures2grams.hashCode;
 
   @override
   String toString() =>
@@ -365,8 +364,7 @@ class Meal extends MealComponentFactory {
           bool? isSubRecipe,
           String? notes,
           Uri? photo,
-          Map<String, num>? alt2grams
-          }) =>
+          Map<String, num>? alt2grams}) =>
       Meal(
           name: name ?? this.name,
           ingredients: ingredients ?? this.ingredients,
@@ -374,8 +372,7 @@ class Meal extends MealComponentFactory {
           isSubRecipe: isSubRecipe ?? this.isSubRecipe,
           notes: notes ?? this.notes,
           photo: photo ?? this.photo,
-          alt2grams: alt2grams ?? altMeasures2grams
-      );
+          alt2grams: alt2grams ?? altMeasures2grams);
 
   String toJson() => jsonEncode(toMap());
 

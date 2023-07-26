@@ -14,7 +14,7 @@ class DietBloc extends Bloc<DietEvent, DietState> {
     });
     on<AddMealToDay>((event, emit){
       event.day.addDayMeal(event.meal);
-      EventLog.dayLog(name: 'addDayMeal', args: [event.meal], diet: state.diet, day: event.day).save();
+      // EventLog.dayLog(name: 'addDayMeal', args: [event.meal], diet: state.diet, day: event.day).save();
       emit(AddMealToDayState(state.diet, event.day));
     });
     on<EditMealInDay>((event, emit){
@@ -26,30 +26,31 @@ class DietBloc extends Bloc<DietEvent, DietState> {
       }
       final newMc = event.factory.toMealComponent('grams', event.mc.grams, event.factory);
       event.day.replaceMealInDay(event.index, newMc);
-      EventLog.dayLog(name: 'replaceMealInDay', diet: state.diet, day: event.day, args: [event.index, newMc]);
+      // EventLog.dayLog(name: 'replaceMealInDay', diet: state.diet, day: event.day, args: [event.index, newMc]);
       emit(AddMealToDayState(state.diet, event.day));
     });
     on<AddIngredientToDay>((event, emit){
       event.day.addDayMealFromIng(event.ingredient);
-      EventLog.dayLog(name: 'addDayMealFromIng', args: [event.ingredient], diet: state.diet, day: event.day).save();
+      // EventLog.dayLog(name: 'addDayMealFromIng', args: [event.ingredient], diet: state.diet, day: event.day).save();
       emit(AddMealToDayState(state.diet, event.day));
     });
     
     on<MealUpdateGrams>((event, emit){
       event.day.updateMealServingSize(event.index, event.serving, event.value);
-      EventLog.dayLog(name: 'updateMealServingSize', diet: state.diet, day: event.day, args: [event.index, event.serving, event.value]).save();
+      // EventLog.dayLog(name: 'updateMealServingSize', diet: state.diet, day: event.day, args: [event.index, event.serving, event.value]).save();
       emit(MealUpdateGramsState(state.diet, event.day));
     });
     
     on<DeleteMealFromDay>((event, emit){
       event.day.deleteDayMeal(event.index);
-      EventLog.dayLog(name: 'deleteDayMeal', args: [event.index], diet: state.diet, day: event.day).save();
+      // EventLog.dayLog(name: 'deleteDayMeal', args: [event.index], diet: state.diet, day: event.day).save();
       emit(DeleteMealFromDayState(state.diet, event.day));
+
     });
     
     on<ReorderMealInDay>((event, emit){
       event.day.reorderMeal(event.old, event.new_);
-      EventLog.dayLog(name: 'reorderMeal', args: [event.old, event.new_], diet: state.diet, day: event.day).save();
+      // EventLog.dayLog(name: 'reorderMeal', args: [event.old, event.new_], diet: state.diet, day: event.day).save();
       emit(ReorderMealInDayState(state.diet, event.day));
     });
     
@@ -65,6 +66,9 @@ class DietBloc extends Bloc<DietEvent, DietState> {
     
     on<DeleteDay>((event, emit){
       state.diet.removeDay(event.day);
+      if (state.diet.days.isEmpty){
+        state.diet.createDay();
+      }
       emit(DeleteDayState(state.diet));
     });
     on<DuplicateMealInDay>((event, emit){
