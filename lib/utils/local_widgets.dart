@@ -337,7 +337,7 @@ class DietDrawer extends StatelessWidget {
                 return BlocProvider(
                   create: (context) => ShoppingListBloc(diet),
                   child: BlocBuilder<ShoppingListBloc, ShoppingListState>(
-                      builder: (context, state) => const ShoppingListPage()),
+                      builder: (context, state) => const SHPG()),
                 );
               }));
             },

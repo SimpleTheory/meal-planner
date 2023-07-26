@@ -443,7 +443,7 @@ void applyEvent(App app, EventLog event) {
   // <editor-fold desc="Diet">
   case "createDay":
     // ()
-    retrieveDiet().createDay(save: false);
+    retrieveDiet().createDay(id: event.args[1], save: false);
     return;
   case "removeDay":
     // (Day day)
@@ -461,6 +461,25 @@ void applyEvent(App app, EventLog event) {
   case "updateDRIS":
     retrieveDiet().updateDRIS(event.args[1], save: false);
     return;
+
+  // <editor-fold desc="ShoppingList">
+  case "reIndexItem":
+    retrieveDiet().updateShoppingList();
+    retrieveDiet().reIndexItem(event.args[1], event.args[2], event.args[3], event.args[4], save: false);
+    return;
+  case "reIndexList":
+    retrieveDiet().reIndexList(event.args[1], event.args[2], save: false);
+    return;
+  case "reorderWithinList":
+    retrieveDiet().updateShoppingList();
+    retrieveDiet().reorderWithinList(event.args[1], event.args[2], event.args[3], save: false);
+    return;
+  case "moveSelectedItems":
+    retrieveDiet().updateShoppingList();
+    retrieveDiet().moveSelectedItems(event.args[1], List<MealComponent>.from(event.args[2]), save: false);
+    return;
+  // </editor-fold>
+
   // </editor-fold>
 
   /// Args[0] day id, Args[1] first argument
@@ -500,6 +519,7 @@ void applyOnAppAndSave(App app) async {
   for (EventLog event in events){
     applyEvent(app, event);
   }
+  app.sortIngredientsAndMeals();
   Saver().app(app).whenComplete(() =>
     tempLog.deleteFromDisk().whenComplete(() =>
       Hive.openBox('tempLog').then((value) => value.close())

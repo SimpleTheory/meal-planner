@@ -1239,7 +1239,7 @@ class DRI {
     };
   }
 
-  factory DRI.fromMap(Map<String, dynamic> map) {
+  factory DRI.fromMap(Map map) {
     return DRI(map['name'] as String,
         dri: map['dri'] as num?,
         upperLimit: map['upperLimit'] as num?,

@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:ari_utils/ari_utils.dart' as ari;
 import 'package:nutrition_app/mydataclasses/metadata.dart';
 import 'dart:convert';
@@ -113,6 +112,11 @@ class App {
       }
     }
     throw ArgumentError('Day does not exist with id: $id');
+  }
+
+  void sortIngredientsAndMeals(){
+    baseIngredients = baseIngredients.sort((entry) => entry.key.toLowerCase());
+    meals = meals.sort((entry) => entry.key.toLowerCase());
   }
 
   // <editor-fold desc="Dataclass Section">
@@ -304,10 +308,11 @@ class Diet {
   }
 
   // <editor-fold desc="Day Functions">
-  void createDay({bool save = true}) {
-    days.add(Day(name: (days.length + 1).toString(), meals: []));
+  void createDay({bool save = true, int? id}) {
+    final newDay = Day(name: (days.length + 1).toString(), meals: [], id: id);
+    days.add(newDay);
     if (save) {
-      saveEvent([name]);
+      saveEvent([name, newDay.id]);
     }
   }
 
@@ -368,18 +373,14 @@ class Diet {
 
   void updateShoppingList() {
     Map<MealComponent, String> currentShoppingDummy = {};
-    for (MapEntry<String, List<MealComponent>> keyList
-        in shoppingList.entries) {
-      currentShoppingDummy
-          .addAll({for (MealComponent ing in keyList.value) ing: keyList.key});
+    for (MapEntry<String, List<MealComponent>> keyList in shoppingList.entries) {
+      currentShoppingDummy.addAll({for (MealComponent ing in keyList.value) ing: keyList.key});
     }
-    final shoppingDummyForNames =
-        currentShoppingDummy.map((key, value) => MapEntry(key.name, value));
+    final shoppingDummyForNames = currentShoppingDummy.map((key, value) => MapEntry(key.name, value));
     // Map<String, MealComponent> namesDummy = {
     //   for (MealComponent meal in currentShoppingDummy.keys) meal.name: meal
     // };
-    shoppingList =
-        shoppingList.map((key, value) => MapEntry(key, <MealComponent>[]));
+    shoppingList = shoppingList.map((key, value) => MapEntry(key, <MealComponent>[]));
 
     for (MealComponent mealComponent in initShoppingList()) {
       final String? itemCategory = shoppingDummyForNames[mealComponent.name];
@@ -424,13 +425,17 @@ class Diet {
   }
   
   void reIndexItem(int oldItemIndex, int oldListIndex,
-  int newItemIndex, int newListIndex, {bool save=true}){
-    final copy = shoppingAsList;
-    final movedItem = shoppingAsList[oldListIndex].value.removeAt(oldItemIndex);
-    copy[newListIndex].value.insert(newItemIndex, movedItem);
-    shoppingAsList = copy;
-    if (save) {
-      saveEvent([name, oldItemIndex, oldListIndex, newItemIndex, newListIndex]);
+    int newItemIndex, int newListIndex, {bool save=true}){
+    try {
+      final copy = shoppingAsList;
+      final movedItem = shoppingAsList[oldListIndex].value.removeAt(oldItemIndex);
+      copy[newListIndex].value.insert(newItemIndex, movedItem);
+      shoppingAsList = copy;
+      if (save) {
+        saveEvent([name, oldItemIndex, oldListIndex, newItemIndex, newListIndex]);
+      }
+    } catch (e) {
+      print(e);
     }
   }
   void reIndexList(int oldListIndex, int newListIndex, {bool save=true}){
