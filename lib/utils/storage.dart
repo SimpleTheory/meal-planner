@@ -11,6 +11,8 @@ import 'package:lecle_downloads_path_provider/lecle_downloads_path_provider.dart
 import 'package:nutrition_app/mydataclasses/metadata.dart';
 import 'package:nutrition_app/utils.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:path/path.dart' as path;
+
 // <editor-fold desc="Current Saving Setup">
 Future<File> dataFile() async {
   final appDocumentDir = await getApplicationDocumentsDirectory();
@@ -28,10 +30,13 @@ Future<void> saveApp(App app) async {
 Future<void> wasThereEverHive(List thing) async {
   BackgroundIsolateBinaryMessenger.ensureInitialized(thing[1]);
   final file = await dataFile();
+  final copy = File(path.normalize(path.join(file.parent.path, 'copy.json')));
+  copy.writeAsStringSync(thing[0].toJson());
   if (file.existsSync()) {
     file.deleteSync();
   }
-  file.writeAsStringSync(thing[0].toJson());
+  copy.renameSync(file.path);
+
 }
 
 Future<App?> loadApp() async {
@@ -483,6 +488,8 @@ void applyEvent(App app, EventLog event) {
   case "replaceMealInDay":
     retrieveDay().replaceMealInDay(event.args[1], event.args[2], save: false);
   // </editor-fold>
+
+  // TODO: SHOPPING LIST
   }
 }
 void applyOnAppAndSave(App app) async {
@@ -493,7 +500,7 @@ void applyOnAppAndSave(App app) async {
   for (EventLog event in events){
     applyEvent(app, event);
   }
-  Saver().appMainIsoSync(app).whenComplete(() =>
+  Saver().app(app).whenComplete(() =>
     tempLog.deleteFromDisk().whenComplete(() =>
       Hive.openBox('tempLog').then((value) => value.close())
     )

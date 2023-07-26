@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:ari_utils/ari_utils.dart' as ari;
 import 'package:nutrition_app/mydataclasses/metadata.dart';
 import 'dart:convert';
@@ -415,23 +417,57 @@ class Diet {
     // }
   }
 
+  List<MapEntry<String, List<MealComponent>>> get shoppingAsList => shoppingList.entries.toList();
+  
+  set shoppingAsList(List<MapEntry<String, List<MealComponent>>> lst){
+    shoppingList = Map<String, List<MealComponent>>.fromEntries(lst);
+  }
+  
+  void reIndexItem(int oldItemIndex, int oldListIndex,
+  int newItemIndex, int newListIndex, {bool save=true}){
+    final copy = shoppingAsList;
+    final movedItem = shoppingAsList[oldListIndex].value.removeAt(oldItemIndex);
+    copy[newListIndex].value.insert(newItemIndex, movedItem);
+    shoppingAsList = copy;
+    if (save) {
+      saveEvent([name, oldItemIndex, oldListIndex, newItemIndex, newListIndex]);
+    }
+  }
+  void reIndexList(int oldListIndex, int newListIndex, {bool save=true}){
+    final copy = shoppingAsList;
+    final movedList = copy.removeAt(oldListIndex);
+    copy.insert(newListIndex, movedList);
+    shoppingAsList = copy;
+    if (save){
+      saveEvent([name, oldListIndex, newListIndex]);
+    }
+  }
+  void reorderWithinList(int listIndex, int oldIndex, int newIndex, {bool save=true}){
+    final copy = shoppingAsList;
+    final movedItem = copy[listIndex].value.removeAt(oldIndex);
+    copy[listIndex].value.insert(newIndex, movedItem);
+    shoppingAsList = copy;
+    if (save){
+      saveEvent([name, listIndex, oldIndex, newIndex]);
+    }
+  }
+  void moveSelectedItems(String target, List<MealComponent> selected, {bool save=true}){
+    // Remove Selected from all lists
+    for (MapEntry<String, List<MealComponent>> entry in shoppingList.entries){
+      shoppingList[entry.key] = entry.value.where((element) => !(selected.contains(element))).toList();
+    }
+    // Append All Selected to the end of the target
+    shoppingList[target] = [...shoppingList[target]!, ...selected];
+    if (save){
+      saveEvent([name, target, selected]);
+    }
+  }
+
   // TODO:
-  // on<ReIndexItem>((event, emit){
-  // final movedItem = state.shoppingList[event.oldListIndex].value.removeAt(event.oldItemIndex);
-  // state.shoppingList[event.newListIndex].value.insert(event.newItemIndex, movedItem);
-  // emit(ShoppingListState.onMovement(state.diet, state.shoppingList, state.selected));
-  // });
-  // on<ReIndexList>((event, emit){
-  // // final copy = List<MapEntry<String, List<MealComponent>>>.from(state.shoppingList);
-  // final movedList = state.shoppingList.removeAt(event.oldListIndex);
-  // state.shoppingList.insert(event.newListIndex, movedList);
-  // emit(ShoppingListState.onMovement(state.diet, state.shoppingList, state.selected));
-  //
-  // });
-  // on<ReorderWithinList>((event, emit){
-  // final movedItem = state.shoppingList[event.listIndex].value.removeAt(event.oldIndex);
-  // state.shoppingList[event.listIndex].value.insert(event.newIndex, movedItem);
-  // emit(ShoppingListState.onMovement(state.diet, state.shoppingList, state.selected));
+
+  // on<SendSelectedItems>((event, emit){
+  // state.moveItemsInSelected(event.target);
+  // emit(state.copyWith(selected_: <MealComponent>[]));
   // });
 
 // </editor-fold>
@@ -635,7 +671,9 @@ class Day {
     String name = map['name'];
     List mealsTemp = dejsonify(map['meals']);
     int? id = map['id'];
-
+    if (id == null) {
+      sleep(const Duration(milliseconds: 1));
+    }
     List<MealComponent> meals = List<MealComponent>.from(mealsTemp);
 
     return Day(name: name, meals: meals, id: id);
