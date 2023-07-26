@@ -4,8 +4,6 @@ Creation:
     Create a CQRS saving model (In development on separate branch)
 
 CQRS:
-    ShoppingList events
-    DRI events
     Comprehensive Testing
 
 

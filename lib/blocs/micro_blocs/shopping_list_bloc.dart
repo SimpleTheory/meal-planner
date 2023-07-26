@@ -11,6 +11,7 @@ class ShoppingListBloc extends Bloc<ShoppingListEvent, ShoppingListState> {
       // state.shoppingList[event.newListIndex].value.insert(event.newItemIndex, movedItem);
       // emit(ShoppingListState.onMovement(state.diet, state.shoppingList, state.selected));
       state.diet.reIndexItem(event.oldItemIndex, event.oldListIndex, event.newItemIndex, event.newListIndex);
+      state.shoppingList = diet.shoppingAsList;
       emit(state.copyWith());
     });
     on<ReIndexList>((event, emit){
@@ -18,6 +19,7 @@ class ShoppingListBloc extends Bloc<ShoppingListEvent, ShoppingListState> {
       // state.shoppingList.insert(event.newListIndex, movedList);
       // emit(ShoppingListState.onMovement(state.diet, state.shoppingList, state.selected));
       state.diet.reIndexList(event.oldListIndex, event.newListIndex);
+      state.shoppingList = diet.shoppingAsList;
       emit(state.copyWith());
 
     });
@@ -26,6 +28,7 @@ class ShoppingListBloc extends Bloc<ShoppingListEvent, ShoppingListState> {
       // state.shoppingList[event.listIndex].value.insert(event.newIndex, movedItem);
       // emit(ShoppingListState.onMovement(state.diet, state.shoppingList, state.selected));
       state.diet.reorderWithinList(event.listIndex, event.oldIndex, event.newIndex);
+      state.shoppingList = diet.shoppingAsList;
       emit(state.copyWith());
 
     });
@@ -43,7 +46,7 @@ class ShoppingListBloc extends Bloc<ShoppingListEvent, ShoppingListState> {
     });
     on<SendSelectedItems>((event, emit){
       state.diet.moveSelectedItems(event.target, state.selected);
-      state.shoppingList = diet.shoppingList.entries.toList();
+      state.shoppingList = diet.shoppingAsList;
       emit(state.copyWith(selected_: <MealComponent>[]));
     });
   }
