@@ -1,7 +1,7 @@
 Creation:
     (- get lazy/busy friends to contribute their assets)(1/2 done)
     SHPG Lazy Load
-    Create a CQRS saving model
+    Create a CQRS saving model (In development on separate branch)
 
 CQRS:
     ShoppingList events
@@ -13,6 +13,10 @@ Potential Save Points:
     on ingbloc submit
     on local backup save
     on add mc to day
+
+Documentation:
+    Add gifs and more detailed guide on usage in readme
+    Add documentation in to the code and generate code docs for it
 
 Questions:
 
