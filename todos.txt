@@ -1,6 +1,6 @@
 Creation:
-    (- get lazy/busy friends to contribute their assets)(1/2 done)
-    SHPG Lazy Load
+    Get lazy/busy friends to contribute their assets
+    Shopping Page Lazy Load
     Create a CQRS saving model (In development on separate branch)
 
 CQRS:
@@ -8,11 +8,6 @@ CQRS:
     DRI events
     Comprehensive Testing
 
-Potential Save Points:
-    on any diet drawer nav
-    on ingbloc submit
-    on local backup save
-    on add mc to day
 
 Documentation:
     Add gifs and more detailed guide on usage in readme
@@ -22,7 +17,6 @@ Questions:
 
 Known things/Qs for later:
 - Overwriting
-- Saving
 - Desktop compatibility:
     • Create copy of project without stupid barcode scanner or kill its bridge
     • Implement features like local back up and file saving
@@ -30,6 +24,8 @@ Known things/Qs for later:
 - QoL:
     - Plus sign doesn't disappear behind search when searching
     - days didnt update when showing rahawa but cant replicate bug
+    - reorder glitches out sometimes (replicate it)
+    - improve on UI elements of different things, for ex: alt measures to cards
 Ideas?:
     summon api directly from searchbar (in ingpage)?
     ing measure pref for shopping list?

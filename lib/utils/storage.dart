@@ -210,6 +210,22 @@ class Saver {
       return true;
     }
   }
+
+  Future<bool> appMainIsoSync(App app) async {
+    if (isSaving) {
+      return false;
+    }
+    else {
+      isSaving = true;
+      final file = await dataFile();
+      if (file.existsSync()) {
+        file.deleteSync();
+      }
+      file.writeAsStringSync(app.toJson());
+      isSaving = false;
+      return true;
+    }
+  }
 }
 // </editor-fold>
 
@@ -477,7 +493,7 @@ void applyOnAppAndSave(App app) async {
   for (EventLog event in events){
     applyEvent(app, event);
   }
-  Saver().app(app).whenComplete(() =>
+  Saver().appMainIsoSync(app).whenComplete(() =>
     tempLog.deleteFromDisk().whenComplete(() =>
       Hive.openBox('tempLog').then((value) => value.close())
     )
