@@ -317,22 +317,29 @@ class MealMakerPage extends StatelessWidget {
                 ],
               ),
             ),
-            const Text(
-              'Alternate measures:',
-              style: TextStyle(fontSize: 20),
+            ExpansionTile(
+              title: const Center(
+                child: Text(
+                'Alternate measures',
+                style: TextStyle(fontSize: 20),
+    ),
+              ),
+              children: [
+                PlusSignTile((context) {
+                  mmbloc.add(AddAltMeasure());
+                }),
+                BlocBuilder<MealMakerBloc, MealMakerState>(
+                    builder: (context, state) {
+                  return ListView.builder(
+                    key: ValueKey<int>(state.altMeasures.length),
+                    itemBuilder: (context, index) => AltMeasureCardMM(index),
+                    shrinkWrap: true,
+                    physics: const ClampingScrollPhysics(),
+                    itemCount: state.altMeasures.length,
+                  );
+                }),
+              ],
             ),
-            PlusSignTile((context) {
-              mmbloc.add(AddAltMeasure());
-            }),
-            BlocBuilder<MealMakerBloc, MealMakerState>(
-                builder: (context, state) {
-              return ListView.builder(
-                itemBuilder: (context, index) => AltMeasureFormFieldMM(index),
-                shrinkWrap: true,
-                physics: const ClampingScrollPhysics(),
-                itemCount: state.altMeasures.length,
-              );
-            }),
             Container(
               decoration: const BoxDecoration(
                   border: Border(top: BorderSide(color: Colors.grey))),
@@ -426,6 +433,94 @@ class AltMeasureFormFieldMM extends StatelessWidget {
           ),
         )),
       ],
+    );
+  }
+}
+
+class AltMeasureCardMM extends StatelessWidget {
+  final int index;
+  const AltMeasureCardMM(this.index, {super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final mmbloc = context.read<MealMakerBloc>();
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(4, 8, 4, 0),
+      child: Container(
+        decoration: BoxDecoration(
+            border: Border.all(color: const Color(0x818C8B8B)),
+            borderRadius: BorderRadius.circular(15)
+        ),
+        child: Stack(
+          children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(5, 12, 16, 5),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Flexible(
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(10, 3, 10, 3),
+                        child: TextFormField(
+                            decoration: InputDecoration(
+                                labelText: 'name',
+                                contentPadding: const EdgeInsets.fromLTRB(10, 0, 0, 0),
+                                border: OutlineInputBorder(borderRadius: BorderRadius.circular(15.0)),
+                            ),
+
+                            // inputFormatters: <TextInputFormatter>[
+                            //   FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z \-]+'))
+                            // ],
+                            initialValue: mmbloc.state.altMeasures[index].key,
+                            onChanged: (name) {
+                              mmbloc.add(AltMeasureName(name, index));
+                            }),
+                      )),
+                  Flexible(
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(10, 3, 10, 3),
+                        child: BlocBuilder<MealMakerBloc, MealMakerState>(
+                          builder: (context, state) {
+                            return TextFormField(
+                                decoration: InputDecoration(
+                                  contentPadding: const EdgeInsets.fromLTRB(10, 0, 0, 0),
+                                  labelText: 'grams',
+                                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(15.0)),
+                                  errorMaxLines: 4,
+                                  // invalid value and there is name and is error state
+                                  errorText: state.altMeasures[index].value.isEmpty &&
+                                      state.altMeasures[index].key.isNotEmpty &&
+                                      state.showErrors
+                                      ? 'Required (delete name to ignore)'
+                                      : null,
+                                ),
+                                inputFormatters: <TextInputFormatter>[
+                                  FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*'))
+                                ],
+                                keyboardType:
+                                const TextInputType.numberWithOptions(decimal: true),
+                                initialValue: state.altMeasures[index].value,
+                                onChanged: (val) {
+                                  mmbloc.add(AltMeasureValue(val, index));
+                                });
+                          },
+                        ),
+                      )),
+                ],
+              ),
+            ),
+            Align(
+              alignment: Alignment.topRight,
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(0, 3, 5, 0),
+                child: InkWell(child: const Icon(Icons.close, size: 18), onTap: () {
+                  mmbloc.add(AltMeasureDelete(index));
+                },),
+              )
+              ,)
+          ],
+        ),
+      ),
     );
   }
 }

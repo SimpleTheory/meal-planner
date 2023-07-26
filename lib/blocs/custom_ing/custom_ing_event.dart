@@ -15,6 +15,10 @@ class ChangeAltMeasureValueCI extends CustomIngEvent {
 
   ChangeAltMeasureValueCI(this.index, this.newValue);
 }
+class DeleteAltMeasureCI extends CustomIngEvent{
+  int index;
+  DeleteAltMeasureCI(this.index);
+}
 class ChangeNutrientValueCI extends CustomIngEvent {
   Nutrient nut;
   String value;

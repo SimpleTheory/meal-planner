@@ -1,10 +1,10 @@
 Creation:
     Get lazy/busy friends to contribute their assets
-    Shopping Page Lazy Load
-    Create a CQRS saving model (In development on separate branch)
+    -- Shopping Page Lazy Load ✔ (Need to Test)
+    -- Create a CQRS saving model (In development on separate branch) ✔ (Need to test and merge)
 
 CQRS:
-    Comprehensive Testing
+    Comprehensive Testing (Including Test on Local Phone After Back Ups)
 
 
 Documentation:

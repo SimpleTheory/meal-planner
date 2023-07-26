@@ -34,6 +34,10 @@ class CustomIngBloc extends Bloc<CustomIngEvent, CustomIngState> {
       state.altMeasures[event.index] = MapEntry(currentName, event.newValue);
       newState(emit, state);
     });
+    on<DeleteAltMeasureCI>((event, emit){
+      state.altMeasures.removeAt(event.index);
+      newState(emit, state);
+    });
     on<ChangeNutrientValueCI>((event, emit) {
       state.nutrientFields[event.nut.name] = event.value;
       newState(emit, state);

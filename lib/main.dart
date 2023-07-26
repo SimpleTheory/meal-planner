@@ -15,6 +15,7 @@ import 'utils.dart';
 void main() async {
   await Hive.initFlutter();
   // debugInvertOversizedImages = true;
+  WidgetsFlutterBinding.ensureInitialized();
   RootIsolateToken rootIsolateToken = RootIsolateToken.instance!;
   Saver.init(rootIsolateToken);
   runApp(MyApp(app: await loadApp()));

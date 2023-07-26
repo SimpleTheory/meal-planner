@@ -29,13 +29,19 @@ Future<void> saveApp(App app) async {
 
 Future<void> wasThereEverHive(List thing) async {
   BackgroundIsolateBinaryMessenger.ensureInitialized(thing[1]);
+  // final stopwatch = Stopwatch()..start();
   final file = await dataFile();
   final copy = File(path.normalize(path.join(file.parent.path, 'copy.json')));
   copy.writeAsStringSync(thing[0].toJson());
+  // final stopwatch2 = Stopwatch()..start();
   if (file.existsSync()) {
     file.deleteSync();
   }
   copy.renameSync(file.path);
+  // print('Saver.app() executed in ${stopwatch.elapsed}');
+  // print('delete and rename executed in ${stopwatch2.elapsed}');
+  // I/flutter (15383): Saver.app() executed in 0:00:18.911096
+  // I/flutter (15383): delete and rename executed in 0:00:00.012868
 
 }
 
