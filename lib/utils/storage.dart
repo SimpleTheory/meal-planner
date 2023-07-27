@@ -52,7 +52,7 @@ Future<App?> loadApp() async {
       final json = file.readAsStringSync();
       final result = App.fromJson(json);
       if (await Hive.boxExists('tempLog')) {
-        applyOnAppAndSave(result);
+        await applyOnAppAndSave(result);
       }
       return result;
     } on Exception catch (_) {
@@ -494,6 +494,9 @@ void applyEvent(App app, EventLog event) {
     // (Meal meal)
     retrieveDay().addDayMeal(event.args[1], save: false);
     return;
+  case "duplicateDayMeal":
+    retrieveDay().duplicateDayMeal(event.args[1], save: false);
+    return;
   case "addDayMealFromIng":
     // (Ingredient ing)
     retrieveDay().addDayMealFromIng(event.args[1], save: false);
@@ -517,7 +520,7 @@ void applyEvent(App app, EventLog event) {
   // TODO: SHOPPING LIST
   }
 }
-void applyOnAppAndSave(App app) async {
+Future<void> applyOnAppAndSave(App app) async {
   final tempLog = await Hive.openBox('tempLog');
   Iterable<EventLog> events = tempLog.values.map(
           (e) => EventLog.fromMap(Map<String, dynamic>.from(e))

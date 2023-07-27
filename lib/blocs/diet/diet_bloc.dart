@@ -72,12 +72,13 @@ class DietBloc extends Bloc<DietEvent, DietState> {
       emit(DeleteDayState(state.diet));
     });
     on<DuplicateMealInDay>((event, emit){
-      if (event.meal is Meal) {
-        event.day.addDayMeal(event.meal as Meal);
-      }
-      else if (event.meal is Ingredient){
-        event.day.addDayMealFromIng(event.meal as Ingredient);
-      }
+      // if (current is Meal) {
+      //   event.day.addDayMeal(event.meal as Meal);
+      // }
+      // else if (current is Ingredient){
+      //   event.day.addDayMealFromIng(event.meal as Ingredient);
+      // }
+      event.day.duplicateDayMeal(event.meal);
       emit(AddMealToDayState(state.diet, event.day));
     });
   }

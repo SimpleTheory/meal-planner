@@ -35,7 +35,7 @@ class IndexPage extends StatelessWidget {
                       context,
                       MaterialPageRoute(
                           builder: (context) => GeneralSettingsPage(
-                              context.read<SettingsBloc>().state.settings)));
+                              context.read<InitBloc>().state.app!.settings)));
                 },
               ))
         ],

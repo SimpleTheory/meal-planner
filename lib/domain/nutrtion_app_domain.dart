@@ -4,9 +4,7 @@ import 'package:nutrition_app/mydataclasses/metadata.dart';
 import 'dart:convert';
 import 'package:dataclasses/dataclasses.dart';
 import 'package:nutrition_app/domain.dart';
-import 'package:nutrition_app/temp_dummy_data.dart';
 import 'package:nutrition_app/utils.dart';
-import 'package:nutrition_app/utils/utils.dart';
 
 /// AGG ROOT
 @Dataclass()
@@ -577,6 +575,13 @@ class Day {
   // Day saves are instituted in the Diet Bloc for the day events over there.
   // Reason being is that the bloc encloses the diet which is a necessary argument
   //  for capturing the days.
+
+  void duplicateDayMeal(MealComponent thing2Duplicate, {bool save=true}){
+    meals.add(thing2Duplicate.copyWithMealComponent());
+    if (save) {
+      saveEvent([id, thing2Duplicate]);
+    }
+  }
 
   void addDayMeal(Meal meal, {bool save = true}) {
     meals.add(meal.toMealComponent('serving', 1, meal));
