@@ -24,7 +24,7 @@ class DietPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(diet.name),
-        actions: [SaveDietButton(diet)],
+        // actions: [SaveDietButton(diet)],
       ),
       drawer: DietDrawer(diet),
       body: ListView(

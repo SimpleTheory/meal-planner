@@ -161,7 +161,7 @@ class CategoryExpanders extends StatelessWidget {
         leading: MatchingIcon(category),
         children: [
           Container(
-            height: categoryItems.length * 75,
+            height: categoryItems.length * 72,
             child: ListView.builder(
                 itemCount: categoryItems.length,
                 physics: const NeverScrollableScrollPhysics(),
@@ -212,9 +212,6 @@ class SHPG extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Shopping List'),
-        actions: [
-          SaveDietButton(shBloc.state.diet)
-        ],
       ),
       drawer: DietDrawer(shBloc.state.diet),
       bottomSheet: shBloc.state.selected.isEmpty

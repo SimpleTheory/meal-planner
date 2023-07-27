@@ -20,7 +20,7 @@ class DRIConfigPage extends StatelessWidget {
       child: Scaffold(
         appBar: AppBar(
           title: Text(diet.name),
-          actions: [SaveDietButton(diet)],
+          // actions: [SaveDietButton(diet)],
         ),
         drawer: DietDrawer(diet),
         onDrawerChanged: (bool isOpened){

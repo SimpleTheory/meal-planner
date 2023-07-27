@@ -529,8 +529,7 @@ void applyOnAppAndSave(App app) async {
   Saver().app(app).whenComplete(() =>
     tempLog.deleteFromDisk().whenComplete(() =>
       Hive.openBox('tempLog').then((value) => value.close())
-    )
-  );
+    ));
 
 }
 String scopeName([int farBack = 1]) {

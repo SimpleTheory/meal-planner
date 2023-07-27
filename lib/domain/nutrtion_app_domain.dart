@@ -4,6 +4,7 @@ import 'package:nutrition_app/mydataclasses/metadata.dart';
 import 'dart:convert';
 import 'package:dataclasses/dataclasses.dart';
 import 'package:nutrition_app/domain.dart';
+import 'package:nutrition_app/temp_dummy_data.dart';
 import 'package:nutrition_app/utils.dart';
 import 'package:nutrition_app/utils/utils.dart';
 
@@ -94,7 +95,7 @@ class App {
   }
 
   void updateSettings(Settings settings, {bool save = true}) {
-    this.settings = settings;
+    this.settings = settings.copyWithSettings(anthroMetrics: settings.anthroMetrics.copyWithAnthroMetrics());
     if (save) {
       saveEvent([settings]);
     }

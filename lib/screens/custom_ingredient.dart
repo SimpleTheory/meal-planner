@@ -155,6 +155,7 @@ class CustomIngredientPage extends StatelessWidget {
                 padding: const EdgeInsets.all(16.0),
                 child: ExpansionTile(
                   title: const Text('Alternate measures'),
+                  shape: Border(top: BorderSide(color: Theme.of(context).dividerColor)),
                   children: [
                     PlusSignTile((context) {
                       context.read<CustomIngBloc>().add(AddAltMeasureCI());

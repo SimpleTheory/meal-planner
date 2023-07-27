@@ -36,8 +36,8 @@ class GeneralSettingsPage extends StatelessWidget {
         appBar: AppBar(title: const Text('General Settings'),
           leading: IconButton(
             onPressed: (){
-              // saveSettings(app.settings);
-              app.updateSettings(app.settings);
+              app.updateSettings(context.read<SettingsBloc>().state.settings);
+              // EventLog(name: 'updateSettings', args: [app.settings.copyWithSettings(anthroMetrics: app.settings.anthroMetrics.copyWithAnthroMetrics())]).save();
               Navigator.pop(context);
             },
             icon: const Icon(Icons.arrow_back),

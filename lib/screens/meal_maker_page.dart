@@ -301,29 +301,17 @@ class MealMakerPage extends StatelessWidget {
                     curr is! MMChangeGrams;
               },
             ),
-            Center(
-              child: Row(
-                children: [
-                  const Text('Sub-recipe ', style: TextStyle(fontSize: 20)),
-                  BlocBuilder<MealMakerBloc, MealMakerState>(
-                    builder: (context, state) {
-                      return Switch(
-                          value: state.subRecipe,
-                          onChanged: (bool isSubRecipe) {
-                            mmbloc.add(ToggleSub(isSubRecipe));
-                          });
-                    },
-                  )
-                ],
-              ),
-            ),
             ExpansionTile(
               title: const Center(
-                child: Text(
-                'Alternate measures',
-                style: TextStyle(fontSize: 20),
+                child: Padding(
+                  padding: EdgeInsets.fromLTRB(25, 0, 0, 0),
+                  child: Text(
+                  'Alternate measures',
+                  style: TextStyle(fontSize: 20),
     ),
+                ),
               ),
+              shape: Border(top: BorderSide(color: Theme.of(context).dividerColor)),
               children: [
                 PlusSignTile((context) {
                   mmbloc.add(AddAltMeasure());
@@ -340,14 +328,32 @@ class MealMakerPage extends StatelessWidget {
                 }),
               ],
             ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Text('   Sub-recipe ', style: TextStyle(fontSize: 20)),
+                BlocBuilder<MealMakerBloc, MealMakerState>(
+                  builder: (context, state) {
+                    return Switch(
+                        value: state.subRecipe,
+                        onChanged: (bool isSubRecipe) {
+                          mmbloc.add(ToggleSub(isSubRecipe));
+                        });
+                  },
+                )
+              ],
+            ),
             Container(
               decoration: const BoxDecoration(
                   border: Border(top: BorderSide(color: Colors.grey))),
               child: Column(
                 children: [
-                  const Text(
-                    'Notes:',
-                    style: TextStyle(fontSize: 20),
+                  const Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: Text(
+                      'Notes',
+                      style: TextStyle(fontSize: 20),
+                    ),
                   ),
                   TextFormField(
                     initialValue: mmbloc.state.notes,

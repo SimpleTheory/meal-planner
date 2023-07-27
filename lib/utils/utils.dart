@@ -294,13 +294,19 @@ class GetImage extends StatelessWidget {
     }
     try {
       if (uri!.scheme == 'file') {
+        if (File(uri!.path).existsSync()){
         return ExtendedImage.file(
           File(uri!.path),
           width: width,
           height: height,
           cacheWidth: cW ?? width.round() * 4,
           cacheHeight: cH ?? height.round() * 4,
-        );
+        );}
+        else{
+          return Image.asset('cache/images/null.png',
+          width: width,
+          height: height,);
+        }
       }
       else{
         return ExtendedImage.network(
