@@ -311,7 +311,8 @@ class MealMakerPage extends StatelessWidget {
     ),
                 ),
               ),
-              shape: Border(top: BorderSide(color: Theme.of(context).dividerColor)),
+              // shape: Border(top: BorderSide(color: Theme.of(context).dividerColor)),
+              shape: Border.all(color: Colors.transparent),
               children: [
                 PlusSignTile((context) {
                   mmbloc.add(AddAltMeasure());
@@ -328,6 +329,7 @@ class MealMakerPage extends StatelessWidget {
                 }),
               ],
             ),
+            // Container(height: 10, decoration: BoxDecoration(border: Border(bottom: BorderSide(color: Theme.of(context).dividerColor))),),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
