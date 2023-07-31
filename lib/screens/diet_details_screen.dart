@@ -151,10 +151,10 @@ class DayTile extends StatelessWidget {
       ),
       trailing: PopupMenuButton(
         itemBuilder: (BuildContext context) => [
-          PopupMenuItem(
-            value: DayPopUpEnumHolder(day, PopUpOptions.edit),
-            child: const Text('Edit'),
-          ),
+          // PopupMenuItem(
+          //   value: DayPopUpEnumHolder(day, PopUpOptions.edit),
+          //   child: const Text('Edit'),
+          // ),
           PopupMenuItem(
               value: DayPopUpEnumHolder(day, PopUpOptions.delete),
               child: const Text('Delete')),
