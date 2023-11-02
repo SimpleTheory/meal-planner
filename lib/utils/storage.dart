@@ -319,6 +319,9 @@ List<String> masterBoxValues = ['diets order', 'settings', 'app'];
 // </editor-fold>
 
 // <editor-fold desc="CQRS Try">
+/// The `EventLog` class represents a log entry for an event, with properties such
+/// as name, arguments, and timestamp, and provides methods for saving and
+/// converting the log entry.
 class EventLog {
   String name;
   /// Contents of list must be Json-able!
@@ -404,6 +407,19 @@ class EventLog {
 
 //</editor-fold>
 }
+/// The function `applyEvent` takes an `App` object and an `EventLog` object as
+/// parameters and applies various actions based on the event name and arguments.
+///
+/// Args:
+///   app (App): The `app` parameter is an instance of the `App` class. It
+/// represents the application and contains various methods and properties related
+/// to managing meals, ingredients, diets, and settings.
+///   event (EventLog): The `event` parameter is of type `EventLog`, which
+/// represents a log of events that need to be applied to the `App` object.
+///
+/// Returns:
+///   In this code, the `applyEvent` function does not explicitly return anything.
+/// Therefore, it implicitly returns `null`.
 void applyEvent(App app, EventLog event) {
   // Is currently re-saving event when applied that might have to be changed, I wish dart had decorators :(
   Diet retrieveDiet() => app.diets[event.args[0]]!;
@@ -520,6 +536,11 @@ void applyEvent(App app, EventLog event) {
   // TODO: SHOPPING LIST
   }
 }
+/// The function applies event logs to an app, sorts its ingredients and meals,
+/// saves the app, and deletes the temporary log.
+///
+/// Args:
+///   app [App]: The "app" parameter is an instance of the "App" class.
 Future<void> applyOnAppAndSave(App app) async {
   final tempLog = await Hive.openBox('tempLog');
   Iterable<EventLog> events = tempLog.values.map(
@@ -535,11 +556,29 @@ Future<void> applyOnAppAndSave(App app) async {
     ));
 
 }
+/// The function `scopeName` returns the name of the scope at a specified level in
+/// the call stack.
+///
+/// Args:
+///   farBack (int): The `farBack` parameter is an optional parameter of type `int`
+/// with a default value of `1`. It determines how far back in the stack trace the
+/// regular expression should search for the scope name. If no value is provided for
+/// `farBack`, it will default to `1`. Defaults to 1
+///
+/// Returns:
+///   The function `scopeName` returns a string that matches the regular expression
+/// pattern `\#1\s+([a-zA-Z0-9.]+)` in the current stack trace. The captured group 1
+/// of the match is returned.
 String scopeName([int farBack = 1]) {
   final regex = RegExp(r'\#1\s+([a-zA-Z0-9.]+)'.replaceFirst('1', farBack.toString()));
   final temp = StackTrace.current.toString();
   return regex.firstMatch(temp)!.group(1)!;
 }
+/// The function saves an event log with the given name and arguments.
+///
+/// Args:
+///   args (List): The "args" parameter is a list that contains the arguments to be
+/// passed to the EventLog constructor.
 void saveEvent(List args) {
   EventLog(name: scopeName(2), args: args).save();
 }

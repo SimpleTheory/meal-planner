@@ -57,7 +57,12 @@ dependencies:
   url_launcher: ^6.1.11
   path_provider: ^2.0.15
   lecle_downloads_path_provider: ^0.0.2+8
-  extended_image: ^8.0.2
+  extended_image: ^8.1.0
+
+dependency_overrides:
+  extended_image_library: ^3.6.0
+  http_client_helper: ^3.0.0
+  http: ^1.0.0
 
 dev_dependencies:
   flutter_test:

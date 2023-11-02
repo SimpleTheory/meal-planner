@@ -29,3 +29,11 @@ Ideas?:
     summon api directly from searchbar (in ingpage)?
     ing measure pref for shopping list?
 
+Save Fixing:
+    (In python generator) fix jsonify since try catch in Dart is f****d
+        -(msg teacher)
+    Make CQRS Hydration save in main-isolate and to Hive
+    Modify Domain such that MealComponents save a deepcopy of references
+        - Make cascading changes to App object based on modified references
+        - Maybe ref count
+

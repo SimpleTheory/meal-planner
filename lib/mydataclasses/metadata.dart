@@ -1712,9 +1712,9 @@ Map dejsonifyMap(Map map) {
 // Serialize JSON
 
 jsonify(thing) {
-  try {
-    return thing.toMap();
-  } on NoSuchMethodError {
+  // try {
+
+  // } on NoSuchMethodError {
     if (isJsonSafe(thing)) {
       return thing;
     } else if (supportedTypeToMap(thing) != null) {
@@ -1724,11 +1724,13 @@ jsonify(thing) {
     } else if (isMap(thing)) {
       return nestedJsonMap(thing);
     } else {
-      throw Exception('Error on handling $thing since ${thing.runtimeType} '
-          'is not a base class or does not have a toJson() method');
+      return thing.toMap();
+
+      // throw Exception('Error on handling $thing since ${thing.runtimeType} '
+      //     'is not a base class or does not have a toJson() method');
     }
-  }
 }
+// }
 
 List nestedJsonList(Iterable iter) {
   List l = [];

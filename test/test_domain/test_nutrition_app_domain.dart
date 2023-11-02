@@ -608,19 +608,39 @@ void mealComponentTests() {
   });
 }
 
+void jsonTime(){
+  String json = File(r'D:\StudioProjects\nutrition_app\test\test_cache\test2.json').readAsStringSync();
+  DateTime startTime = DateTime.now();
+  App app = App.fromJson(json);
+  DateTime appLoad = DateTime.now();
+  Map appMap = app.toMap();
+  DateTime mapTime = DateTime.now();
+  String reconstJson = jsonEncode(appMap);
+  DateTime encodeTime = DateTime.now();
+
+  print('');
+  print('Total Time ${encodeTime.difference(startTime)}');
+  print('App Load Time ${appLoad.difference(startTime)}');
+  print('Map Time ${mapTime.difference(appLoad)}');
+  print('Encode Time ${mapTime.difference(encodeTime)}');
+  // print('Total Time ${encodeTime.difference(startTime)}');
+
+}
+
 void main() {
-  appDataclassMethods();
-  appTests();
-  settingsDataclassMethods();
-  settingsTests();
-  mealDataclassMethods();
-  mealTests();
-  ingredientDataclassMethods();
-  ingredientTests();
-  mealComponentDataclassMethods();
-  mealComponentTests();
-  dietDataclassMethods();
-  dietTests();
-  dayDataclassMethods();
-  dayTests();
+  // appDataclassMethods();
+  // appTests();
+  // settingsDataclassMethods();
+  // settingsTests();
+  // mealDataclassMethods();
+  // mealTests();
+  // ingredientDataclassMethods();
+  // ingredientTests();
+  // mealComponentDataclassMethods();
+  // mealComponentTests();
+  // dietDataclassMethods();
+  // dietTests();
+  // dayDataclassMethods();
+  // dayTests();
+  jsonTime();
 }
