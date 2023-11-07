@@ -1,40 +1,36 @@
-Creation:
-    Get lazy/busy friends to contribute their assets
-    -- Shopping Page Lazy Load ✔ (Need to Test)
-    -- Create a CQRS saving model (In development on separate branch) ✔ (Need to test and merge)
-Todo:
-    FIX NOT FOUND IMAGES TO DEFAULT NOT FOUND (1/3 done)
-CQRS:
-    Comprehensive Testing (Including Test on Local Phone After Back Ups) ✔
-
-
-Documentation:
-    Add gifs and more detailed guide on usage in readme
-    Add documentation in to the code and generate code docs for it
-
-Questions:
-
-Known things/Qs for later:
-- Overwriting
-- Desktop compatibility:
-    • Create copy of project without stupid barcode scanner or kill its bridge
-    • Implement features like local back up and file saving
-    • find what other plugins may inhibit this and refactor
-- QoL:
-    - Plus sign doesn't disappear behind search when searching
-    - days didnt update when showing rahawa but cant replicate bug
-    - reorder glitches out sometimes (replicate it)
-    - improve on UI elements of different things, for ex: alt measures to cards
-Ideas?:
-    summon api directly from searchbar (in ingpage)?
-    ing measure pref for shopping list?
-
-Save Fixing:
-    (In python generator) fix jsonify since try catch in Dart is f****d ✔
-        -(msg teacher) ✔
-    Use new hive ✔
-    Modify Domain such that MealComponents save a deepcopy of references
+Modify Domain such that MealComponents save a deepcopy of references
         - Make cascading changes to App object based on modified references
         - Maybe ref count
 
-New Save Scheme ✔
+Shopping List Page Still Lags a bit when opening a tab with 100+ objects
+
+Desktop/iOS compatibility
+    • Create copy of project without stupid barcode scanner or kill its bridge
+    • Implement features like local back up and file saving
+    • find what other plugins may inhibit this and refactor
+
+
+
+-----------------------------------
+Minor Notes
+    Documentation:
+        Add gifs and more detailed guide on usage in readme
+        Add documentation in to the code and generate code docs for it
+
+    Known things/Qs for later:
+    - Overwriting
+    - Desktop compatibility:
+        • Create copy of project without stupid barcode scanner or kill its bridge
+        • Implement features like local back up and file saving
+        • find what other plugins may inhibit this and refactor
+    - QoL:
+        - Plus sign doesn't disappear behind search when searching
+        - days didnt update when showing rahawa but cant replicate bug
+        - reorder glitches out sometimes (replicate it)
+        - improve on UI elements of different things, for ex: alt measures to cards
+    Ideas?:
+        summon api directly from searchbar (in ingpage)?
+        ing measure pref for shopping list?
+
+
+

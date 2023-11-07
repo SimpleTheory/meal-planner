@@ -1,0 +1,12 @@
+Save Fixing:
+    (In python generator) fix jsonify since try catch in Dart is f****d ✔
+        -(msg teacher) ✔
+    Use new hive ✔
+Creation:
+    Get lazy/busy friends to contribute their assets
+    -- Shopping Page Lazy Load ✔ (Need to Test)
+    -- Create a CQRS saving model (In development on separate branch) ✔ (Need to test and merge)
+FIX NOT FOUND IMAGES TO DEFAULT NOT FOUND
+CQRS:
+    Comprehensive Testing (Including Test on Local Phone After Back Ups) ✔
+New Save Scheme ✔
