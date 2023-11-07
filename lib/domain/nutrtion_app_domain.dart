@@ -118,6 +118,12 @@ class App {
     meals = meals.sort((entry) => entry.key.toLowerCase());
   }
 
+  App.dummy() :
+      settings = Settings.dummy(),
+      diets = {},
+      meals = {},
+      baseIngredients = {};
+
   // <editor-fold desc="Dataclass Section">
 
   // <editor-fold desc="Singleton Pattern">

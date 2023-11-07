@@ -9,142 +9,51 @@ import 'package:nutrition_app/blocs/micro_blocs/saver.dart';
 import 'package:nutrition_app/domain.dart';
 import 'package:lecle_downloads_path_provider/lecle_downloads_path_provider.dart';
 import 'package:nutrition_app/mydataclasses/metadata.dart';
-import 'package:nutrition_app/utils.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:path/path.dart' as path;
 
-// <editor-fold desc="Current Saving Setup">
-Future<File> dataFile() async {
-  final appDocumentDir = await getApplicationDocumentsDirectory();
-  final path = appDocumentDir.path;
-  return File('$path/data.json');
-}
+Box logBox()=>Hive.box(name: 'log', maxSizeMiB: 150);
 
-Future<void> saveApp(App app) async {
-  final box = await Hive.openBox('master');
-  // Perform read/write operations on the box
-  box.put('app', app.toJson());
-  // await box.close();
-}
+Box appBox()=>Hive.box(name: 'app', maxSizeMiB: 150);
 
-Future<void> wasThereEverHive(List thing) async {
-  BackgroundIsolateBinaryMessenger.ensureInitialized(thing[1]);
-  // final stopwatch = Stopwatch()..start();
-  final file = await dataFile();
-  final copy = File(path.normalize(path.join(file.parent.path, 'copy.json')));
-  copy.writeAsStringSync(thing[0].toJson());
-  // final stopwatch2 = Stopwatch()..start();
-  if (file.existsSync()) {
-    file.deleteSync();
-  }
-  copy.renameSync(file.path);
-  // print('Saver.app() executed in ${stopwatch.elapsed}');
-  // print('delete and rename executed in ${stopwatch2.elapsed}');
-  // I/flutter (15383): Saver.app() executed in 0:00:18.911096
-  // I/flutter (15383): delete and rename executed in 0:00:00.012868
+Future<void> newHive(List thing) async {
+  BackgroundIsolateBinaryMessenger.ensureInitialized(thing[0]);
+  Hive.defaultDirectory = thing[1];
+  // Hive.registerAdapter('App', (json) => App.fromJson(json));
+  final box = appBox();
+  box.write((){
+    box.putAll({
+      'index': thing[2],
+      'app': thing[3].toMap()
+    });
+  });
+  box.close();
+
 
 }
 
 Future<App?> loadApp() async {
-  final file = await dataFile();
-  if (file.existsSync()) {
-    try {
-      final json = file.readAsStringSync();
-      final result = App.fromJson(json);
-      if (await Hive.boxExists('tempLog')) {
-        await applyOnAppAndSave(result);
-      }
-      return result;
-    } on Exception catch (_) {
-      print('why');
-      // pass
-    }
-  }
-  // <editor-fold desc="Atoning">
-  final boxExists = await Hive.boxExists('master');
-  final facturedLoading = await Hive.boxExists('ingredients') ||
-      await Hive.boxExists('meals') ||
-      await Hive.boxExists('diets');
-  if (facturedLoading) {
-    final masterBox = await Hive.openBox('master');
-    final ingredientsBox = await Hive.openBox('ingredients');
-    final mealsBox = await Hive.openBox('meals');
-    final dietsBox = await Hive.openBox('diets');
-    try {
-      final result = App(
-          settings: Settings.fromJson(masterBox.get('settings')),
-          diets: mapName(sortByOtherList<Diet>(
-              instantiateAllDCFromBox(dietsBox),
-              masterBox.get('diets order'),
-                  (Diet obj) => obj.name)),
-          meals: instantiateAllDCMap(mealsBox),
-          baseIngredients: instantiateAllDCMap(ingredientsBox));
-      Saver().app(result);
-      atoningFractured();
-
-    } catch (e) {
-      //pass
-      // print(e);
-    }
-  }
-  if (boxExists) {
-    try {
-      final box = await Hive.openBox('master');
-      final json = box.get('app');
-      // await box.close();
-      final result = App.fromJson(json);
-      Saver().app(result);
-      atoningFractured();
-      return result;
-    } catch (e) {
-      return null;
-    }
-  }
-// </editor-fold>
-  else {
+  // factoryResetApp();
+  final appBox_ = appBox();
+  final logBox_ = logBox();
+  if (appBox_.isEmpty){
     return null;
   }
+  // print(appBox_['index']);
+  // print(logBox_.length);
+  if (appBox_['index'] == logBox_.length){
+    return App.fromMap(appBox_['app']);
+  }
+  return apply2(appBox_, logBox_);
 }
-
-void atoningFractured()async{
-  final box = await Hive.openBox('master');
-  final box1 = await Hive.openBox('meals');
-  final box2 = await Hive.openBox('ingredients');
-  final box3 = await Hive.openBox('diets');
-  box.deleteFromDisk();
-  box1.deleteFromDisk();
-  box2.deleteFromDisk();
-  box3.deleteFromDisk();
-}
-
-// Future<App?> atoningForMyMistakes(){}
-// void deletingMyMistakes(){}
 
 void factoryResetApp() async {
-  Hive.openBox('tempLog').then((value) => value.deleteFromDisk());
-  final file = await dataFile();
-  if (file.existsSync()) {
-    file.deleteSync();
-  }
-
-  // // Delete a key-value pair
-  // box.delete('app');
-  //
-  // // Close the box
-  // await box.close();
+  logBox().clear();
+  appBox().clear();
 }
 
 Future<void> saveAppBackupMobile({String? fileName, required App app}) async {
   fileName ??= 'nut_app_backup.json';
   // Get the downloads directory
   Directory downloadsDirectory = (await DownloadsPath.downloadsDirectory())!;
-  // List<FileSystemEntity> files = downloadsDirectory.listSync();
-  //
-  // List<String> fileNames = files
-  //     .where((entity) => entity is File) // Filter out directories
-  //     .map((entity) => entity.path.split('/').last) // Extract file names
-  //     .toList();
-  // Create a File instance with the desired file name
   File file = File('${downloadsDirectory.path}/${(fileName)}.json');
 
   // Write the file
@@ -153,8 +62,6 @@ Future<void> saveAppBackupMobile({String? fileName, required App app}) async {
   // await file.writeAsString(app.toJson());
   // print(temp.elapsed);
   // print('file save time');
-
-  // print('File saved to ${file.path}');
 }
 
 class Saver {
@@ -189,136 +96,20 @@ class Saver {
     }
     else {
       isSaving = true;
-      compute(wasThereEverHive, [app, root])
+      compute(newHive, [
+        root, Hive.defaultDirectory!, logBox().length, app])
           .whenComplete(() {
         isSaving = false;
         if (saverBloc != null) {
           saverBloc!.add(SavedApp());
         }
       });
-      // saveAppWithIsolate(app, receivePort: receivePort);
-      // receivePort.listen((message) {
-      //   print('message');
-      //   isSaving = false;
-      //   saverBloc.add(SavedApp());
-      // });
       return true;
     }
   }
 
-  Future<bool> diet(Diet diet) async {
-    if (isSaving) {
-      return false;
-    }
-    else {
-      isSaving = true;
-      compute(saveDiet, diet).whenComplete(() {
-        isSaving = false;
-        if (saverBloc != null) {
-          saverBloc!.add(SavedDiet('Diet: ${diet.name}'));
-        }
-      });
-      return true;
-    }
-  }
-
-  Future<bool> appMainIsoSync(App app) async {
-    if (isSaving) {
-      return false;
-    }
-    else {
-      isSaving = true;
-      final file = await dataFile();
-      if (file.existsSync()) {
-        file.deleteSync();
-      }
-      file.writeAsStringSync(app.toJson());
-      isSaving = false;
-      return true;
-    }
-  }
-}
-// </editor-fold>
-
-// <editor-fold desc="Factured Hive Try">
-Future<void> saveDiet(Diet diet) async {
-  final box = await Hive.openBox('diets');
-  box.put(diet.name, diet.toJson());
 }
 
-void saveMeal(Meal meal) async {
-  final box = await Hive.openBox('meals');
-  box.put(meal.name, meal.toJson());
-}
-
-void deleteMealFromSave(Meal meal) async {
-  final box = await Hive.openBox('meals');
-  box.delete(meal.name);
-}
-
-void saveIngredient(Ingredient ingredient) async {
-  final box = await Hive.openBox('ingredients');
-  box.put(ingredient.name, ingredient.toJson());
-}
-
-void deleteIngredientFromSave(Ingredient ingredient) async {
-  final box = await Hive.openBox('ingredients');
-  box.delete(ingredient.name);
-}
-
-void deleteDietFromSave(Diet diet) async {
-  final box = await Hive.openBox('diets');
-  box.delete(diet.name);
-}
-
-void saveSettings(Settings settings) async {
-  final box = await Hive.openBox('settings');
-  box.put('settings', settings.toJson());
-}
-
-Future<void> saveDietsOrder(Iterable<Diet> diets) async {
-  final box = await Hive.openBox('master');
-  box.put('diets order', diets.map((e) => e.name).toList());
-}
-
-Future<void> fracturedSaveAll(App app) async {
-  saveDietsOrder(app.diets.values);
-  saveSettings(app.settings);
-  for (Ingredient ing in app.baseIngredients.values) {
-    saveIngredient(ing);
-  }
-  for (Meal meal in app.meals.values) {
-    saveMeal(meal);
-  }
-  for (Diet diet in app.diets.values) {
-    saveDiet(diet);
-  }
-}
-
-List<T> instantiateAllDCFromBox<T>(Box box) {
-  final result = <T>[];
-  final type = T.toString();
-  for (String value in box.values) {
-    result.add(str2reflection[type]!.fromJson!(value));
-  }
-  return result;
-}
-
-Map<String, K> mapName<K>(Iterable<K> list) =>
-    {for (dynamic k in list) k.name: k as K};
-
-Map<String, T> instantiateAllDCMap<T>(Box box) {
-  return mapName<T>(sorter(instantiateAllDCFromBox<T>(box), (T thing) {
-    dynamic temp = thing;
-    return (temp.name as String).toLowerCase();
-  }));
-}
-
-List<String> boxNames = ['master', 'meals', 'diets', 'ingredients'];
-List<String> masterBoxValues = ['diets order', 'settings', 'app'];
-// </editor-fold>
-
-// <editor-fold desc="CQRS Try">
 /// The `EventLog` class represents a log entry for an event, with properties such
 /// as name, arguments, and timestamp, and provides methods for saving and
 /// converting the log entry.
@@ -333,12 +124,7 @@ class EventLog {
       EventLog(name: name, args: [diet.name, int.parse(day.name) - 1, ...args]);
 
   void save() async {
-    Hive.openLazyBox('auditTrail').then((value){
-      value.add(toMap());
-    });
-    Hive.openBox('tempLog').then((value){
-      value.add(toMap());
-    });
+    Hive.box(name: 'log').add(toMap());
   }
 
   //<editor-fold desc="Data Methods">
@@ -407,6 +193,7 @@ class EventLog {
 
 //</editor-fold>
 }
+
 /// The function `applyEvent` takes an `App` object and an `EventLog` object as
 /// parameters and applies various actions based on the event name and arguments.
 ///
@@ -421,7 +208,6 @@ class EventLog {
 ///   In this code, the `applyEvent` function does not explicitly return anything.
 /// Therefore, it implicitly returns `null`.
 void applyEvent(App app, EventLog event) {
-  // Is currently re-saving event when applied that might have to be changed, I wish dart had decorators :(
   Diet retrieveDiet() => app.diets[event.args[0]]!;
   Day retrieveDay() => app.dayFromId(event.args[0]);
   final String trueName = event.name.contains('.') ? event.name.split('.')[1] : event.name;
@@ -533,29 +319,30 @@ void applyEvent(App app, EventLog event) {
     retrieveDay().replaceMealInDay(event.args[1], event.args[2], save: false);
   // </editor-fold>
 
-  // TODO: SHOPPING LIST
   }
 }
+
 /// The function applies event logs to an app, sorts its ingredients and meals,
 /// saves the app, and deletes the temporary log.
 ///
 /// Args:
 ///   app [App]: The "app" parameter is an instance of the "App" class.
-Future<void> applyOnAppAndSave(App app) async {
-  final tempLog = await Hive.openBox('tempLog');
-  Iterable<EventLog> events = tempLog.values.map(
-          (e) => EventLog.fromMap(Map<String, dynamic>.from(e))
-  );
-  for (EventLog event in events){
-    applyEvent(app, event);
-  }
-  app.sortIngredientsAndMeals();
-  Saver().app(app).whenComplete(() =>
-    tempLog.deleteFromDisk().whenComplete(() =>
-      Hive.openBox('tempLog').then((value) => value.close())
-    ));
-
+Future<App> apply2(Box appBox, Box log) async {
+  final index = appBox['index'];
+  final app = App.fromMap(appBox['app']);
+  applyEventsList(app, log.getRange(index, log.length));
+  Saver().app(app);
+  return app;
 }
+
+void applyEventsList(App app, List events){
+  for (Map<String, dynamic> event in events){
+    applyEvent(app, EventLog.fromMap(event));
+  }
+}
+
+/// App save event args [index, datetime, app]
+
 /// The function `scopeName` returns the name of the scope at a specified level in
 /// the call stack.
 ///
@@ -583,40 +370,12 @@ void saveEvent(List args) {
   EventLog(name: scopeName(2), args: args).save();
 }
 
-
-
-
-
-// </editor-fold>
-
-//--------------------------------
-
-// <editor-fold desc="CQRS Try">
-
-// // <editor-fold desc="App">
-// addMeal(Meal meal)
-// addBaseIngredient(Ingredient ingredient)
-// addDiet(Diet diet)
-// deleteMeal(Meal meal)
-// deleteBaseIngredient(Ingredient ingredient)
-// deleteDiet(Diet diet)
-// renameDiet(Diet diet, String newName)
-// reorderDiet(int oldIndex, int newIndex)
-// // </editor-fold>
-//
-// // <editor-fold desc="Diet">
-// createDay()
-// removeDay(Day day)
-// reorderDay(int old, int new_)
-// duplicateDay(int index)
-// // </editor-fold>
-//
-// // <editor-fold desc="Day">
-// addDayMeal(Meal meal)
-// addDayMealFromIng(Ingredient ing)
-// deleteDayMeal(int index)
-// updateMealServingSize(int index, String measure, num newAmount)
-// reorderMeal(int oldIndex, int newIndex)
-// // </editor-fold>
-
-// </editor-fold>
+App totalRestoreFromLog(){
+  final appBox_ = appBox();
+  final log = logBox();
+  App app = appBox_.containsKey('originalJson') ?
+    App.fromJson(appBox_['originalJson']) :
+    App.dummy();
+  applyEventsList(app, log.getRange(0, log.length));
+  return app;
+}

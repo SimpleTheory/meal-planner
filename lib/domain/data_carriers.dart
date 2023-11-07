@@ -1978,6 +1978,15 @@ class AnthroMetrics {
       required this.inches,
       required this.activity});
 
+  AnthroMetrics.dummy()
+     : sex=Sex.M,
+      age=20,
+      weight=200,
+      feet=6,
+      inches=0,
+      activity=Activity.Sedentary;
+
+
   // <editor-fold desc="Dataclass Section">
   @Generate()
   // <Dataclass>
@@ -2115,6 +2124,11 @@ class Settings {
   bool darkMode = true;
   Measure measure;
   AnthroMetrics anthroMetrics;
+
+  Settings.dummy() :
+      measure = Measure.metric,
+      darkMode = false,
+      anthroMetrics = AnthroMetrics.dummy();
 
   // <editor-fold desc="Dataclass Section">
   @Generate()

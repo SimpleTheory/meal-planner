@@ -5,7 +5,7 @@ Creation:
 Todo:
     FIX NOT FOUND IMAGES TO DEFAULT NOT FOUND (1/3 done)
 CQRS:
-    Comprehensive Testing (Including Test on Local Phone After Back Ups)
+    Comprehensive Testing (Including Test on Local Phone After Back Ups) ✔
 
 
 Documentation:
@@ -30,10 +30,11 @@ Ideas?:
     ing measure pref for shopping list?
 
 Save Fixing:
-    (In python generator) fix jsonify since try catch in Dart is f****d
-        -(msg teacher)
-    Make CQRS Hydration save in main-isolate and to Hive
+    (In python generator) fix jsonify since try catch in Dart is f****d ✔
+        -(msg teacher) ✔
+    Use new hive ✔
     Modify Domain such that MealComponents save a deepcopy of references
         - Make cascading changes to App object based on modified references
         - Maybe ref count
 
+New Save Scheme ✔

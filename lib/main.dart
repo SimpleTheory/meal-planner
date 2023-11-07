@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hive_flutter/adapters.dart';
+import 'package:hive/hive.dart';
 import 'package:nutrition_app/blocs/micro_blocs/saver.dart';
 import 'package:nutrition_app/blocs/settings/settings_bloc.dart';
 import 'package:nutrition_app/screens/index.dart';
 import 'package:nutrition_app/screens/init.dart';
+import 'package:path_provider/path_provider.dart';
 import 'blocs/index/index_bloc.dart';
 import 'blocs/init/init_bloc.dart';
 import 'blocs/init/settings/init_settings_bloc.dart';
@@ -13,9 +14,10 @@ import 'domain/nutrtion_app_domain.dart';
 import 'utils.dart';
 
 void main() async {
-  await Hive.initFlutter();
   // debugInvertOversizedImages = true;
   WidgetsFlutterBinding.ensureInitialized();
+  final dir = await getApplicationDocumentsDirectory();
+  Hive.defaultDirectory = dir.path;
   RootIsolateToken rootIsolateToken = RootIsolateToken.instance!;
   Saver.init(rootIsolateToken);
   runApp(MyApp(app: await loadApp()));

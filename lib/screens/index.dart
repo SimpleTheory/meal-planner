@@ -1,10 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hive/hive.dart';
 import 'package:nutrition_app/blocs/diet/diet_bloc.dart';
 import 'package:nutrition_app/blocs/ingredients_page/ingredients_page_bloc.dart';
-import 'package:nutrition_app/blocs/settings/settings_bloc.dart';
 import 'package:nutrition_app/screens/diet_details_screen.dart';
 import 'package:nutrition_app/screens/general_settings.dart';
 import 'package:nutrition_app/screens/ingredients_page.dart';
@@ -137,12 +135,7 @@ class IndexPage extends StatelessWidget {
                     //     ));
                     //   }
                     // });
-                    Saver().app(context.read<InitBloc>().state.app!).whenComplete(() =>
-                        Hive.openBox('tempLog').then((value) =>
-                            value.deleteFromDisk()).whenComplete(() =>
-                              Hive.openBox('tempLog')
-                        )
-                    );
+                    Saver().app(context.read<InitBloc>().state.app!);
                   },
                   child: const Text('Save')),
             )

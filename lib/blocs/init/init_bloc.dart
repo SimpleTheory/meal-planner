@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nutrition_app/domain.dart';
 import 'package:nutrition_app/utils.dart';
 import 'package:path/path.dart';
+import 'package:hive/hive.dart';
 
 part 'init_event.dart';
 part 'init_state.dart';
@@ -19,7 +20,10 @@ class InitBloc extends Bloc<InitEvent, InitState> {
         try {
           App app = App.fromJson(text);
           emit(SuccessfulLoad(app));
-            Saver().app(app);
+          // TODO Save original JSON for full restores?
+          Saver().app(app).whenComplete((){Hive.compute((){appBox().put('originalJson', text);});});
+
+          // appBox().put('originalJson', text);
         } on Exception catch (_) {
           emit(FailedLoad(basename(file.path)));
         }
@@ -30,6 +34,7 @@ class InitBloc extends Bloc<InitEvent, InitState> {
     });
     on<CreatedNewSettings>((event, emit){
       final newApp = App.newApp(event.settings);
+      EventLog(name: 'updateSettings', args: [event.settings]).save();
       Saver().app(newApp);
       emit(SuccessfulLoad(newApp));
     });
