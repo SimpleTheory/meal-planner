@@ -2,11 +2,12 @@ Modify Domain such that MealComponents save a deepcopy of references
         - Make cascading changes to App object based on modified references
         - Maybe ref count
 
+In Diet ReorderableView Error Null value passed through Null Check when moving items sometimes
+
 Shopping List Page Still Lags a bit when opening a tab with 100+ objects
 
 Desktop/iOS compatibility
-    • Create copy of project without stupid barcode scanner or kill its bridge
-    • Implement features like local back up and file saving
+    • Create copy of project without stupid barcode scanner or kill its bridge ✔
     • find what other plugins may inhibit this and refactor
 
 

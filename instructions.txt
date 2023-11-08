@@ -1,0 +1,4 @@
+To Build From Source:
+
+Comment out this file (Windows):
+-   .\windows\flutter\ephemeral\.plugin_symlinks\flutter_zxing\windows\CMakeLists.txt
