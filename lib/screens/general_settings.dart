@@ -1,3 +1,4 @@
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -5,6 +6,7 @@ import 'package:nutrition_app/blocs/settings/settings_bloc.dart';
 import 'package:nutrition_app/utils.dart';
 import 'package:nutrition_app/domain.dart';
 import '../blocs/init/init_bloc.dart';
+import 'dart:io';
 
 class GeneralSettingsPage extends StatelessWidget {
   late final TextEditingController cmCon;
@@ -382,6 +384,20 @@ class GeneralSettingsPage extends StatelessWidget {
                               settingsBloc.add(BackupSuccess());
                             } on Exception catch (e) {
                               settingsBloc.add(BackupFailure(e.toString()));
+                            }
+                          }
+                          else {
+                              String? outputFile = await FilePicker.platform.saveFile(
+                                dialogTitle: 'Please select an output file:',
+                                fileName: 'nutrition_app.json',
+                            );
+                            if (outputFile != null) {
+                              try {
+                              saveBackupDesktop(app: app, filePath: outputFile);
+                              settingsBloc.add(BackupSuccess());
+                            } on Exception catch (e) {
+                              settingsBloc.add(BackupFailure(e.toString()));
+                            }
                             }
                           }
                         },

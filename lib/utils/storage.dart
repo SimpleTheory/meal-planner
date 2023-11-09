@@ -64,6 +64,11 @@ Future<void> saveAppBackupMobile({String? fileName, required App app}) async {
   // print('file save time');
 }
 
+Future<void> saveBackupDesktop({required String filePath, required App app})async{
+  final file = File(filePath);
+  file.writeAsStringSync(app.toJson());
+}
+
 class Saver {
   static Saver? _instance;
   bool isSaving = false;
