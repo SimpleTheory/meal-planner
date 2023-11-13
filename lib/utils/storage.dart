@@ -66,7 +66,7 @@ Future<void> saveAppBackupMobile({String? fileName, required App app}) async {
 
 Future<void> saveBackupDesktop({required String filePath, required App app})async{
   final file = File(filePath);
-  file.writeAsStringSync(app.toJson());
+  file.writeAsString(app.toJson());
 }
 
 class Saver {
