@@ -5,7 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nutrition_app/blocs/dri_config/dri_config_bloc.dart';
 import 'package:nutrition_app/domain.dart';
 import 'package:nutrition_app/domain/dri_notes.dart';
-import 'package:nutrition_app/utils/local_widgets.dart';
+import 'package:nutrition_app/utils.dart';
 
 class DRIConfigPage extends StatelessWidget {
   final Diet diet;
@@ -20,9 +20,14 @@ class DRIConfigPage extends StatelessWidget {
       child: Scaffold(
         appBar: AppBar(
           title: Text(diet.name),
-          actions: [SaveDietButton(diet)],
+          // actions: [SaveDietButton(diet)],
         ),
         drawer: DietDrawer(diet),
+        onDrawerChanged: (bool isOpened){
+          if (isOpened) {
+            EventLog(name: 'updateDRIS', args: [diet.name, diet.dris]).save();
+          }
+        },
         // body: SingleChildScrollView(
         //   child: Column(
         //     children: [

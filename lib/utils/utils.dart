@@ -103,6 +103,21 @@ Map<K, V> reorderMap<K, V>(Map<K, V> map, int oldIndex, int newIndex, {bool safe
   return Map<K, V>.fromEntries(entries);
 }
 
+extension MapSort<K, V> on Map<K, V>{
+  /// Returns a sorted map (NOT IN PLACE!)
+  /// Key applies function to entry in order to sort
+  Map<K, V> sort(Comparable Function(MapEntry<K, V> entry) key, [Comparable Function(MapEntry<K, V> entry)? key2]){
+    List<MapEntry<K, V>> asList = entries.toList();
+    if (key2 == null) {
+      asList.sort((a,b)=>key(a).compareTo(key(b)));
+    }
+    else {
+      asList.sort((a,b)=>key(a).compareTo(key2(b)));
+    }
+    return Map<K, V>.fromEntries(asList);
+  }
+}
+
 class ImperialHeight{
   int feet;
   int inches;
@@ -279,13 +294,19 @@ class GetImage extends StatelessWidget {
     }
     try {
       if (uri!.scheme == 'file') {
+        if (File(uri!.path).existsSync()){
         return ExtendedImage.file(
           File(uri!.path),
           width: width,
           height: height,
           cacheWidth: cW ?? width.round() * 4,
           cacheHeight: cH ?? height.round() * 4,
-        );
+        );}
+        else{
+          return Image.asset('cache/images/null.png',
+          width: width,
+          height: height,);
+        }
       }
       else{
         return ExtendedImage.network(

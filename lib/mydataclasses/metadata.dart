@@ -1,17 +1,127 @@
-import 'package:nutrition_app/domain/enums.dart';
-import 'package:nutrition_app/api/dri.dart';
-import 'package:nutrition_app/domain/nutrtion_app_domain.dart';
+import 'package:nutrition_app/utils.dart';
 import 'package:ari_utils/ari_utils.dart';
-import 'dart:convert';
-import 'package:nutrition_app/domain.dart';
+import 'package:nutrition_app/domain/nutrtion_app_domain.dart';
 import 'package:nutrition_app/domain/data_carriers.dart';
-import 'package:nutrition_app/domain/meal_component_factory.dart';
-import 'package:dataclasses/dataclasses.dart';
-import 'package:nutrition_app/api/nutritionix.dart';
+import 'package:nutrition_app/api/dri.dart';
 import 'package:dio/dio.dart';
+import 'package:nutrition_app/domain/meal_component_factory.dart';
+import 'package:nutrition_app/domain.dart';
 import 'package:nutrition_app/utils/utils.dart';
+import 'package:dataclasses/dataclasses.dart';
+import 'dart:convert';
+import 'package:nutrition_app/api/nutritionix.dart';
+import 'package:nutrition_app/domain/enums.dart';
+import 'package:ari_utils/ari_utils.dart' as ari;
 
 List<ReflectedClass> dataclasses = [
+  ReflectedClass(
+      name: 'App',
+      referenceType: ReflectedType.create(App, 'App'),
+      dataclassAnnotation: Annotation.create('Dataclass', [], {}),
+      attributes: [
+        Attribute.create('settings', ReflectedType.create(Settings, 'Settings'),
+            false, false, false, false, false, null),
+        Attribute.create(
+            'diets',
+            ReflectedType.create(Map, 'Map<String, Diet>'),
+            false,
+            false,
+            false,
+            false,
+            false,
+            null),
+        Attribute.create(
+            'meals',
+            ReflectedType.create(Map, 'Map<String, Meal>'),
+            false,
+            false,
+            false,
+            false,
+            false,
+            null),
+        Attribute.create(
+            'baseIngredients',
+            ReflectedType.create(Map, 'Map<String, Ingredient>'),
+            false,
+            false,
+            false,
+            false,
+            false,
+            null)
+      ],
+      getters: [
+        Getter.create(ReflectedType.create(List, 'List<MealComponentFactory>'),
+            'ingredients', false, false),
+        Getter.create(ReflectedType.create(Map, 'Map<String, dynamic>'),
+            'attributes__', false, false),
+        Getter.create(
+            ReflectedType.create(int, 'int'), 'hashCode', false, false)
+      ],
+      methods: [
+        Method.create('addMeal', ReflectedType.create(null, 'void'),
+            MethodType.normal, false, null, false, null),
+        Method.create('addBaseIngredient', ReflectedType.create(null, 'void'),
+            MethodType.normal, false, null, false, null),
+        Method.create('addDiet', ReflectedType.create(null, 'void'),
+            MethodType.normal, false, null, false, null),
+        Method.create(
+            'updateBaseIngredient',
+            ReflectedType.create(null, 'void'),
+            MethodType.normal,
+            false,
+            null,
+            false,
+            null),
+        Method.create('updateMeal', ReflectedType.create(null, 'void'),
+            MethodType.normal, false, null, false, null),
+        Method.create('deleteMeal', ReflectedType.create(null, 'void'),
+            MethodType.normal, false, null, false, null),
+        Method.create(
+            'deleteBaseIngredient',
+            ReflectedType.create(null, 'void'),
+            MethodType.normal,
+            false,
+            null,
+            false,
+            null),
+        Method.create('deleteDiet', ReflectedType.create(null, 'void'),
+            MethodType.normal, false, null, false, null),
+        Method.create('renameDiet', ReflectedType.create(null, 'void'),
+            MethodType.normal, false, null, false, null),
+        Method.create('reorderDiet', ReflectedType.create(null, 'void'),
+            MethodType.normal, false, null, false, null),
+        Method.create('updateSettings', ReflectedType.create(null, 'void'),
+            MethodType.normal, false, null, false, null),
+        Method.create('newApp', ReflectedType.create(App, 'App'),
+            MethodType.factory, false, null, false, App.newApp),
+        Method.create('App', ReflectedType.create(App, 'App'),
+            MethodType.constructor, false, null, false, null),
+        Method.create('staticConstructor', ReflectedType.create(App, 'App'),
+            MethodType.factory, false, null, false, App.staticConstructor),
+        Method.create('==', ReflectedType.create(bool, 'bool'),
+            MethodType.operator, false, null, false, null),
+        Method.create('toString', ReflectedType.create(String, 'String'),
+            MethodType.normal, false, null, false, null),
+        Method.create('copyWithApp', ReflectedType.create(App, 'App'),
+            MethodType.normal, false, null, false, null),
+        Method.create('toJson', ReflectedType.create(String, 'String'),
+            MethodType.normal, false, null, false, null),
+        Method.create(
+            'toMap',
+            ReflectedType.create(Map, 'Map<String, dynamic>'),
+            MethodType.normal,
+            false,
+            null,
+            false,
+            null),
+        Method.create('fromJson', ReflectedType.create(App, 'App'),
+            MethodType.factory, false, null, false, App.fromJson),
+        Method.create('fromMap', ReflectedType.create(App, 'App'),
+            MethodType.factory, false, null, false, App.fromMap)
+      ],
+      parent: null,
+      mixins: null,
+      implementations: null),
   ReflectedClass(
       name: 'Nutrient',
       referenceType: ReflectedType.create(Nutrient, 'Nutrient'),
@@ -235,112 +345,70 @@ List<ReflectedClass> dataclasses = [
       mixins: null,
       implementations: null),
   ReflectedClass(
-      name: 'Ingredient',
-      referenceType: ReflectedType.create(Ingredient, 'Ingredient'),
-      dataclassAnnotation: Annotation.create('Dataclass', [], {}),
+      name: 'Diet',
+      referenceType: ReflectedType.create(Diet, 'Diet'),
+      dataclassAnnotation:
+          Annotation.create('Dataclass', [], {'constructor': 'false'}),
       attributes: [
         Attribute.create('name', ReflectedType.create(String, 'String'), false,
-            false, false, false, false, null, '+++'),
-        Attribute.create(
-            'baseNutrient',
-            ReflectedType.create(BaseNutrients, 'BaseNutrients'),
-            false,
-            false,
-            false,
-            false,
-            false,
-            null,
-            '+'),
-        Attribute.create(
-            'altMeasures2grams',
-            ReflectedType.create(Map, 'Map<String, num>'),
-            false,
-            false,
-            false,
-            false,
-            false,
-            null,
-            '++'),
-        Attribute.create('photo', ReflectedType.create(Uri, 'Uri?'), false,
+            false, false, false, false, null),
+        Attribute.create('days', ReflectedType.create(List, 'List<Day>'), false,
+            false, false, false, false, null),
+        Attribute.create('dris', ReflectedType.create(DRIS, 'DRIS'), false,
             false, false, false, false, null),
         Attribute.create(
-            'source',
-            ReflectedType.create(IngredientSource, 'IngredientSource'),
+            'shoppingList',
+            ReflectedType.create(Map, 'Map<String, List<MealComponent>>'),
             false,
             false,
             false,
-            false,
-            false,
-            null),
-        Attribute.create(
-            'sourceMetadata',
-            ReflectedType.create(dynamic, 'dynamic'),
-            false,
-            false,
-            false,
-            false,
+            true,
             false,
             null)
       ],
       getters: [
+        Getter.create(ReflectedType.create(Nutrients, 'Nutrients'),
+            'averageNutrition', false, false),
         Getter.create(ReflectedType.create(Map, 'Map<String, dynamic>'),
             'attributes__', false, false),
         Getter.create(
             ReflectedType.create(int, 'int'), 'hashCode', false, false)
       ],
       methods: [
+        Method.create('create', ReflectedType.create(Future, 'Future<Diet>'),
+            MethodType.normal, true, null, false, Diet.create),
+        Method.create('createDay', ReflectedType.create(null, 'void'),
+            MethodType.normal, false, null, false, null),
+        Method.create('removeDay', ReflectedType.create(null, 'void'),
+            MethodType.normal, false, null, false, null),
+        Method.create('refreshDays', ReflectedType.create(null, 'void'),
+            MethodType.normal, false, null, false, null),
+        Method.create('reorderDay', ReflectedType.create(null, 'void'),
+            MethodType.normal, false, null, false, null),
+        Method.create('duplicateDay', ReflectedType.create(null, 'void'),
+            MethodType.normal, false, null, false, null),
         Method.create(
-            'fromApi',
-            ReflectedType.create(Future, 'Future<Ingredient>'),
-            MethodType.normal,
-            true,
-            null,
-            false,
-            Ingredient.fromApi),
-        Method.create(
-            'fromResponseBody',
-            ReflectedType.create(Ingredient, 'Ingredient'),
-            MethodType.factory,
-            false,
-            null,
-            false,
-            Ingredient.fromResponseBody),
-        Method.create(
-            'baseIngredients',
-            ReflectedType.create(dynamic, 'dynamic'),
+            'initShoppingList',
+            ReflectedType.create(List, 'List<MealComponent>'),
             MethodType.normal,
             false,
             null,
             false,
             null),
-        Method.create(
-            'Ingredient',
-            ReflectedType.create(Ingredient, 'Ingredient'),
-            MethodType.constructor,
-            false,
-            null,
-            false,
-            null),
-        Method.create(
-            'staticConstructor',
-            ReflectedType.create(Ingredient, 'Ingredient'),
-            MethodType.factory,
-            false,
-            null,
-            false,
-            Ingredient.staticConstructor),
+        Method.create('updateShoppingList', ReflectedType.create(null, 'void'),
+            MethodType.normal, false, null, false, null),
+        Method.create('updateDRIS', ReflectedType.create(dynamic, 'dynamic'),
+            MethodType.normal, false, null, false, null),
+        Method.create('Diet', ReflectedType.create(Diet, 'Diet'),
+            MethodType.constructor, false, null, false, null),
+        Method.create('staticConstructor', ReflectedType.create(Diet, 'Diet'),
+            MethodType.factory, false, null, false, Diet.staticConstructor),
         Method.create('==', ReflectedType.create(bool, 'bool'),
             MethodType.operator, false, null, false, null),
         Method.create('toString', ReflectedType.create(String, 'String'),
             MethodType.normal, false, null, false, null),
-        Method.create(
-            'copyWithIngredient',
-            ReflectedType.create(Ingredient, 'Ingredient'),
-            MethodType.normal,
-            false,
-            null,
-            false,
-            null),
+        Method.create('copyWithDiet', ReflectedType.create(Diet, 'Diet'),
+            MethodType.normal, false, null, false, null),
         Method.create('toJson', ReflectedType.create(String, 'String'),
             MethodType.normal, false, null, false, null),
         Method.create(
@@ -351,110 +419,10 @@ List<ReflectedClass> dataclasses = [
             null,
             false,
             null),
-        Method.create(
-            'fromJson',
-            ReflectedType.create(Ingredient, 'Ingredient'),
-            MethodType.factory,
-            false,
-            null,
-            false,
-            Ingredient.fromJson),
-        Method.create('fromMap', ReflectedType.create(Ingredient, 'Ingredient'),
-            MethodType.factory, false, null, false, Ingredient.fromMap)
-      ],
-      parent: MealComponentFactory,
-      mixins: null,
-      implementations: null),
-  ReflectedClass(
-      name: 'MealComponent',
-      referenceType: ReflectedType.create(MealComponent, 'MealComponent'),
-      dataclassAnnotation: Annotation.create('Dataclass', [], {}),
-      attributes: [
-        Attribute.create(
-            'reference',
-            ReflectedType.create(MealComponentFactory, 'MealComponentFactory'),
-            false,
-            false,
-            false,
-            false,
-            false,
-            null),
-        Attribute.create('grams', ReflectedType.create(num, 'num'), false,
-            false, false, false, false, null)
-      ],
-      getters: [
-        Getter.create(ReflectedType.create(Nutrients, 'Nutrients'), 'nutrients',
-            false, false),
-        Getter.create(
-            ReflectedType.create(String, 'String'), 'name', false, false),
-        Getter.create(ReflectedType.create(Map, 'Map<String, dynamic>'),
-            'attributes__', false, false),
-        Getter.create(
-            ReflectedType.create(int, 'int'), 'hashCode', false, false)
-      ],
-      methods: [
-        Method.create(
-            'getBaseIngredients',
-            ReflectedType.create(dynamic, 'dynamic'),
-            MethodType.normal,
-            false,
-            null,
-            false,
-            null),
-        Method.create(
-            'MealComponent',
-            ReflectedType.create(MealComponent, 'MealComponent'),
-            MethodType.constructor,
-            false,
-            null,
-            false,
-            null),
-        Method.create(
-            'staticConstructor',
-            ReflectedType.create(MealComponent, 'MealComponent'),
-            MethodType.factory,
-            false,
-            null,
-            false,
-            MealComponent.staticConstructor),
-        Method.create('==', ReflectedType.create(bool, 'bool'),
-            MethodType.operator, false, null, false, null),
-        Method.create('toString', ReflectedType.create(String, 'String'),
-            MethodType.normal, false, null, false, null),
-        Method.create(
-            'copyWithMealComponent',
-            ReflectedType.create(MealComponent, 'MealComponent'),
-            MethodType.normal,
-            false,
-            null,
-            false,
-            null),
-        Method.create('toJson', ReflectedType.create(String, 'String'),
-            MethodType.normal, false, null, false, null),
-        Method.create(
-            'toMap',
-            ReflectedType.create(Map, 'Map<String, dynamic>'),
-            MethodType.normal,
-            false,
-            null,
-            false,
-            null),
-        Method.create(
-            'fromJson',
-            ReflectedType.create(MealComponent, 'MealComponent'),
-            MethodType.factory,
-            false,
-            null,
-            false,
-            MealComponent.fromJson),
-        Method.create(
-            'fromMap',
-            ReflectedType.create(MealComponent, 'MealComponent'),
-            MethodType.factory,
-            false,
-            null,
-            false,
-            MealComponent.fromMap)
+        Method.create('fromJson', ReflectedType.create(Diet, 'Diet'),
+            MethodType.factory, false, null, false, Diet.fromJson),
+        Method.create('fromMap', ReflectedType.create(Diet, 'Diet'),
+            MethodType.factory, false, null, false, Diet.fromMap)
       ],
       parent: null,
       mixins: null,
@@ -704,6 +672,80 @@ List<ReflectedClass> dataclasses = [
       mixins: null,
       implementations: null),
   ReflectedClass(
+      name: 'Day',
+      referenceType: ReflectedType.create(Day, 'Day'),
+      dataclassAnnotation: Annotation.create('Dataclass', [], {}),
+      attributes: [
+        Attribute.create('name', ReflectedType.create(String, 'String'), false,
+            false, false, false, false, null),
+        Attribute.create(
+            'meals',
+            ReflectedType.create(List, 'List<MealComponent>'),
+            false,
+            false,
+            false,
+            false,
+            false,
+            null)
+      ],
+      getters: [
+        Getter.create(ReflectedType.create(Nutrients, 'Nutrients'), 'nutrients',
+            false, false),
+        Getter.create(ReflectedType.create(Map, 'Map<String, dynamic>'),
+            'attributes__', false, false),
+        Getter.create(
+            ReflectedType.create(int, 'int'), 'hashCode', false, false)
+      ],
+      methods: [
+        Method.create('id', ReflectedType.create(int, 'int'), MethodType.normal,
+            false, null, false, null),
+        Method.create('addDayMeal', ReflectedType.create(null, 'void'),
+            MethodType.normal, false, null, false, null),
+        Method.create('addDayMealFromIng', ReflectedType.create(null, 'void'),
+            MethodType.normal, false, null, false, null),
+        Method.create('deleteDayMeal', ReflectedType.create(null, 'void'),
+            MethodType.normal, false, null, false, null),
+        Method.create(
+            'updateMealServingSize',
+            ReflectedType.create(null, 'void'),
+            MethodType.normal,
+            false,
+            null,
+            false,
+            null),
+        Method.create('reorderMeal', ReflectedType.create(null, 'void'),
+            MethodType.normal, false, null, false, null),
+        Method.create('replaceMealInDay', ReflectedType.create(null, 'void'),
+            MethodType.normal, false, null, false, null),
+        Method.create('Day', ReflectedType.create(Day, 'Day'),
+            MethodType.constructor, false, null, false, null),
+        Method.create('staticConstructor', ReflectedType.create(Day, 'Day'),
+            MethodType.factory, false, null, false, Day.staticConstructor),
+        Method.create('==', ReflectedType.create(bool, 'bool'),
+            MethodType.operator, false, null, false, null),
+        Method.create('toString', ReflectedType.create(String, 'String'),
+            MethodType.normal, false, null, false, null),
+        Method.create('copyWithDay', ReflectedType.create(Day, 'Day'),
+            MethodType.normal, false, null, false, null),
+        Method.create('toJson', ReflectedType.create(String, 'String'),
+            MethodType.normal, false, null, false, null),
+        Method.create(
+            'toMap',
+            ReflectedType.create(Map, 'Map<String, dynamic>'),
+            MethodType.normal,
+            false,
+            null,
+            false,
+            null),
+        Method.create('fromJson', ReflectedType.create(Day, 'Day'),
+            MethodType.factory, false, null, false, Day.fromJson),
+        Method.create('fromMap', ReflectedType.create(Day, 'Day'),
+            MethodType.factory, false, null, false, Day.fromMap)
+      ],
+      parent: null,
+      mixins: null,
+      implementations: null),
+  ReflectedClass(
       name: 'Settings',
       referenceType: ReflectedType.create(Settings, 'Settings'),
       dataclassAnnotation: Annotation.create('Dataclass', [], {}),
@@ -774,15 +816,37 @@ List<ReflectedClass> dataclasses = [
       mixins: null,
       implementations: null),
   ReflectedClass(
-      name: 'App',
-      referenceType: ReflectedType.create(App, 'App'),
+      name: 'Ingredient',
+      referenceType: ReflectedType.create(Ingredient, 'Ingredient'),
       dataclassAnnotation: Annotation.create('Dataclass', [], {}),
       attributes: [
-        Attribute.create('settings', ReflectedType.create(Settings, 'Settings'),
-            false, false, false, false, false, null),
+        Attribute.create('name', ReflectedType.create(String, 'String'), false,
+            false, false, false, false, null, '+++'),
         Attribute.create(
-            'diets',
-            ReflectedType.create(Map, 'Map<String, Diet>'),
+            'baseNutrient',
+            ReflectedType.create(BaseNutrients, 'BaseNutrients'),
+            false,
+            false,
+            false,
+            false,
+            false,
+            null,
+            '+'),
+        Attribute.create(
+            'altMeasures2grams',
+            ReflectedType.create(Map, 'Map<String, num>'),
+            false,
+            false,
+            false,
+            false,
+            false,
+            null,
+            '++'),
+        Attribute.create('photo', ReflectedType.create(Uri, 'Uri?'), false,
+            false, false, false, false, null),
+        Attribute.create(
+            'source',
+            ReflectedType.create(IngredientSource, 'IngredientSource'),
             false,
             false,
             false,
@@ -790,245 +854,49 @@ List<ReflectedClass> dataclasses = [
             false,
             null),
         Attribute.create(
-            'meals',
-            ReflectedType.create(Map, 'Map<String, Meal>'),
+            'sourceMetadata',
+            ReflectedType.create(dynamic, 'dynamic'),
             false,
             false,
             false,
             false,
             false,
-            null),
-        Attribute.create(
+            null)
+      ],
+      getters: [
+        Getter.create(ReflectedType.create(Map, 'Map<String, dynamic>'),
+            'attributes__', false, false),
+        Getter.create(
+            ReflectedType.create(int, 'int'), 'hashCode', false, false)
+      ],
+      methods: [
+        Method.create(
+            'fromApi',
+            ReflectedType.create(Future, 'Future<Ingredient>'),
+            MethodType.normal,
+            true,
+            null,
+            false,
+            Ingredient.fromApi),
+        Method.create(
+            'fromResponseBody',
+            ReflectedType.create(Ingredient, 'Ingredient'),
+            MethodType.factory,
+            false,
+            null,
+            false,
+            Ingredient.fromResponseBody),
+        Method.create(
             'baseIngredients',
-            ReflectedType.create(Map, 'Map<String, Ingredient>'),
-            false,
-            false,
-            false,
-            false,
-            false,
-            null)
-      ],
-      getters: [
-        Getter.create(ReflectedType.create(List, 'List<MealComponentFactory>'),
-            'ingredients', false, false),
-        Getter.create(ReflectedType.create(Map, 'Map<String, dynamic>'),
-            'attributes__', false, false),
-        Getter.create(
-            ReflectedType.create(int, 'int'), 'hashCode', false, false)
-      ],
-      methods: [
-        Method.create('addMeal', ReflectedType.create(null, 'void'),
-            MethodType.normal, false, null, false, null),
-        Method.create('addBaseIngredient', ReflectedType.create(null, 'void'),
-            MethodType.normal, false, null, false, null),
-        Method.create('addDiet', ReflectedType.create(null, 'void'),
-            MethodType.normal, false, null, false, null),
-        Method.create('deleteMeal', ReflectedType.create(null, 'void'),
-            MethodType.normal, false, null, false, null),
-        Method.create(
-            'deleteBaseIngredient',
-            ReflectedType.create(null, 'void'),
+            ReflectedType.create(dynamic, 'dynamic'),
             MethodType.normal,
             false,
             null,
             false,
             null),
-        Method.create('deleteDiet', ReflectedType.create(null, 'void'),
-            MethodType.normal, false, null, false, null),
-        Method.create('newApp', ReflectedType.create(App, 'App'),
-            MethodType.factory, false, null, false, App.newApp),
-        Method.create('App', ReflectedType.create(App, 'App'),
-            MethodType.constructor, false, null, false, null),
-        Method.create('staticConstructor', ReflectedType.create(App, 'App'),
-            MethodType.factory, false, null, false, App.staticConstructor),
-        Method.create('==', ReflectedType.create(bool, 'bool'),
-            MethodType.operator, false, null, false, null),
-        Method.create('toString', ReflectedType.create(String, 'String'),
-            MethodType.normal, false, null, false, null),
-        Method.create('copyWithApp', ReflectedType.create(App, 'App'),
-            MethodType.normal, false, null, false, null),
-        Method.create('toJson', ReflectedType.create(String, 'String'),
-            MethodType.normal, false, null, false, null),
         Method.create(
-            'toMap',
-            ReflectedType.create(Map, 'Map<String, dynamic>'),
-            MethodType.normal,
-            false,
-            null,
-            false,
-            null),
-        Method.create('fromJson', ReflectedType.create(App, 'App'),
-            MethodType.factory, false, null, false, App.fromJson),
-        Method.create('fromMap', ReflectedType.create(App, 'App'),
-            MethodType.factory, false, null, false, App.fromMap)
-      ],
-      parent: null,
-      mixins: null,
-      implementations: null),
-  ReflectedClass(
-      name: 'Day',
-      referenceType: ReflectedType.create(Day, 'Day'),
-      dataclassAnnotation: Annotation.create('Dataclass', [], {}),
-      attributes: [
-        Attribute.create('name', ReflectedType.create(String, 'String'), false,
-            false, false, false, false, null),
-        Attribute.create(
-            'meals',
-            ReflectedType.create(List, 'List<MealComponent>'),
-            false,
-            false,
-            false,
-            false,
-            false,
-            null)
-      ],
-      getters: [
-        Getter.create(ReflectedType.create(Nutrients, 'Nutrients'), 'nutrients',
-            false, false),
-        Getter.create(ReflectedType.create(Map, 'Map<String, dynamic>'),
-            'attributes__', false, false),
-        Getter.create(
-            ReflectedType.create(int, 'int'), 'hashCode', false, false)
-      ],
-      methods: [
-        Method.create('addDayMeal', ReflectedType.create(null, 'void'),
-            MethodType.normal, false, null, false, null),
-        Method.create('deleteDayMeal', ReflectedType.create(null, 'void'),
-            MethodType.normal, false, null, false, null),
-        Method.create(
-            'updateMealServingSize',
-            ReflectedType.create(null, 'void'),
-            MethodType.normal,
-            false,
-            null,
-            false,
-            null),
-        Method.create('Day', ReflectedType.create(Day, 'Day'),
-            MethodType.constructor, false, null, false, null),
-        Method.create('staticConstructor', ReflectedType.create(Day, 'Day'),
-            MethodType.factory, false, null, false, Day.staticConstructor),
-        Method.create('==', ReflectedType.create(bool, 'bool'),
-            MethodType.operator, false, null, false, null),
-        Method.create('toString', ReflectedType.create(String, 'String'),
-            MethodType.normal, false, null, false, null),
-        Method.create('copyWithDay', ReflectedType.create(Day, 'Day'),
-            MethodType.normal, false, null, false, null),
-        Method.create('toJson', ReflectedType.create(String, 'String'),
-            MethodType.normal, false, null, false, null),
-        Method.create(
-            'toMap',
-            ReflectedType.create(Map, 'Map<String, dynamic>'),
-            MethodType.normal,
-            false,
-            null,
-            false,
-            null),
-        Method.create('fromJson', ReflectedType.create(Day, 'Day'),
-            MethodType.factory, false, null, false, Day.fromJson),
-        Method.create('fromMap', ReflectedType.create(Day, 'Day'),
-            MethodType.factory, false, null, false, Day.fromMap)
-      ],
-      parent: null,
-      mixins: null,
-      implementations: null),
-  ReflectedClass(
-      name: 'DRI',
-      referenceType: ReflectedType.create(DRI, 'DRI'),
-      dataclassAnnotation: Annotation.create('Dataclass', [], {}),
-      attributes: [
-        Attribute.create('name', ReflectedType.create(String, 'String'), false,
-            false, false, false, false, null),
-        Attribute.create('dri', ReflectedType.create(num, 'num?'), false, false,
-            false, false, false, null),
-        Attribute.create('upperLimit', ReflectedType.create(num, 'num?'), false,
-            false, false, false, false, null),
-        Attribute.create('unit', ReflectedType.create(String, 'String'), false,
-            false, false, false, false, null),
-        Attribute.create('note', ReflectedType.create(String, 'String?'), false,
-            false, false, false, false, null),
-        Attribute.create('tracked', ReflectedType.create(bool, 'bool'), false,
-            false, false, false, false, true)
-      ],
-      getters: [
-        Getter.create(
-            ReflectedType.create(int, 'int'), 'hashCode', false, false)
-      ],
-      methods: [
-        Method.create('compare', ReflectedType.create(String, 'String'),
-            MethodType.normal, false, null, false, null),
-        Method.create('*', ReflectedType.create(DRI, 'DRI'),
-            MethodType.operator, false, null, false, null),
-        Method.create('/', ReflectedType.create(DRI, 'DRI'),
-            MethodType.operator, false, null, false, null),
-        Method.create('DRI', ReflectedType.create(DRI, 'DRI'),
-            MethodType.constructor, false, null, false, null),
-        Method.create('sugars', ReflectedType.create(DRI, 'DRI'),
-            MethodType.factory, false, null, false, DRI.sugars),
-        Method.create('toString', ReflectedType.create(String, 'String'),
-            MethodType.normal, false, null, false, null),
-        Method.create('substitutions', ReflectedType.create(null, 'void'),
-            MethodType.normal, false, null, false, null),
-        Method.create('addNote', ReflectedType.create(null, 'void'),
-            MethodType.normal, false, null, false, null),
-        Method.create('driMacro', ReflectedType.create(DRI, 'DRI'),
-            MethodType.factory, false, null, false, DRI.driMacro),
-        Method.create('driMicro', ReflectedType.create(DRI, 'DRI'),
-            MethodType.factory, false, null, false, DRI.driMicro),
-        Method.create('==', ReflectedType.create(bool, 'bool'),
-            MethodType.operator, false, null, false, null),
-        Method.create(
-            'toMap',
-            ReflectedType.create(Map, 'Map<String, dynamic>'),
-            MethodType.normal,
-            false,
-            null,
-            false,
-            null),
-        Method.create('fromMap', ReflectedType.create(DRI, 'DRI'),
-            MethodType.factory, false, null, false, DRI.fromMap),
-        Method.create('copyWith', ReflectedType.create(DRI, 'DRI'),
-            MethodType.normal, false, null, false, null)
-      ],
-      parent: null,
-      mixins: null,
-      implementations: null),
-  ReflectedClass(
-      name: 'AnthroMetrics',
-      referenceType: ReflectedType.create(AnthroMetrics, 'AnthroMetrics'),
-      dataclassAnnotation:
-          Annotation.create('Dataclass', [], {'constructor': 'false'}),
-      attributes: [
-        Attribute.create('sex', ReflectedType.create(Sex, 'Sex'), false, false,
-            false, false, false, null),
-        Attribute.create('age', ReflectedType.create(int, 'int'), false, false,
-            false, false, false, null),
-        Attribute.create('weight', ReflectedType.create(int, 'int'), false,
-            false, false, false, false, null),
-        Attribute.create('feet', ReflectedType.create(int, 'int'), false, false,
-            false, false, false, null),
-        Attribute.create('inches', ReflectedType.create(int, 'int'), false,
-            false, false, false, false, null),
-        Attribute.create('activity', ReflectedType.create(Activity, 'Activity'),
-            false, false, false, false, false, null)
-      ],
-      getters: [
-        Getter.create(
-            ReflectedType.create(dynamic, 'dynamic'), 'cm', false, false),
-        Getter.create(
-            ReflectedType.create(dynamic, 'dynamic'), 'kg', false, false),
-        Getter.create(ReflectedType.create(Map, 'Map<String, dynamic>'),
-            'attributes__', false, false),
-        Getter.create(
-            ReflectedType.create(int, 'int'), 'hashCode', false, false)
-      ],
-      methods: [
-        Method.create('cm', ReflectedType.create(null, 'void'),
-            MethodType.setter, false, null, false, null),
-        Method.create('kg', ReflectedType.create(null, 'void'),
-            MethodType.setter, false, null, false, null),
-        Method.create(
-            'AnthroMetrics',
-            ReflectedType.create(AnthroMetrics, 'AnthroMetrics'),
+            'Ingredient',
+            ReflectedType.create(Ingredient, 'Ingredient'),
             MethodType.constructor,
             false,
             null,
@@ -1036,19 +904,19 @@ List<ReflectedClass> dataclasses = [
             null),
         Method.create(
             'staticConstructor',
-            ReflectedType.create(AnthroMetrics, 'AnthroMetrics'),
+            ReflectedType.create(Ingredient, 'Ingredient'),
             MethodType.factory,
             false,
             null,
             false,
-            AnthroMetrics.staticConstructor),
+            Ingredient.staticConstructor),
         Method.create('==', ReflectedType.create(bool, 'bool'),
             MethodType.operator, false, null, false, null),
         Method.create('toString', ReflectedType.create(String, 'String'),
             MethodType.normal, false, null, false, null),
         Method.create(
-            'copyWithAnthroMetrics',
-            ReflectedType.create(AnthroMetrics, 'AnthroMetrics'),
+            'copyWithIngredient',
+            ReflectedType.create(Ingredient, 'Ingredient'),
             MethodType.normal,
             false,
             null,
@@ -1066,94 +934,68 @@ List<ReflectedClass> dataclasses = [
             null),
         Method.create(
             'fromJson',
-            ReflectedType.create(AnthroMetrics, 'AnthroMetrics'),
+            ReflectedType.create(Ingredient, 'Ingredient'),
             MethodType.factory,
             false,
             null,
             false,
-            AnthroMetrics.fromJson),
-        Method.create(
-            'fromMap',
-            ReflectedType.create(AnthroMetrics, 'AnthroMetrics'),
-            MethodType.factory,
-            false,
-            null,
-            false,
-            AnthroMetrics.fromMap),
-        Method.create(
-            'fromMetric',
-            ReflectedType.create(AnthroMetrics, 'AnthroMetrics'),
-            MethodType.factory,
-            false,
-            null,
-            false,
-            AnthroMetrics.fromMetric),
-        Method.create(
-            'toDictForPost',
-            ReflectedType.create(Map, 'Map<String, String>'),
-            MethodType.normal,
-            false,
-            null,
-            false,
-            null)
+            Ingredient.fromJson),
+        Method.create('fromMap', ReflectedType.create(Ingredient, 'Ingredient'),
+            MethodType.factory, false, null, false, Ingredient.fromMap)
       ],
-      parent: null,
+      parent: MealComponentFactory,
       mixins: null,
       implementations: null),
   ReflectedClass(
-      name: 'Diet',
-      referenceType: ReflectedType.create(Diet, 'Diet'),
-      dataclassAnnotation:
-          Annotation.create('Dataclass', [], {'constructor': 'false'}),
+      name: 'Meal',
+      referenceType: ReflectedType.create(Meal, 'Meal'),
+      dataclassAnnotation: Annotation.create(
+          'Dataclass', [], {'constructor': 'false', 'attributes': 'false'}),
       attributes: [
         Attribute.create('name', ReflectedType.create(String, 'String'), false,
-            false, false, false, false, null),
-        Attribute.create('days', ReflectedType.create(List, 'List<Day>'), false,
-            false, false, false, false, null),
-        Attribute.create('dris', ReflectedType.create(DRIS, 'DRIS'), false,
-            false, false, false, false, null),
+            false, false, false, false, null, '+++'),
         Attribute.create(
-            'shoppingList',
-            ReflectedType.create(Map, 'Map<String, List<MealComponent>>'),
+            'ingredients',
+            ReflectedType.create(List, 'List<MealComponent>'),
             false,
             false,
             false,
-            true,
             false,
-            null)
+            false,
+            null),
+        Attribute.create('servings', ReflectedType.create(int, 'int'), false,
+            false, false, false, false, null),
+        Attribute.create('isSubRecipe', ReflectedType.create(bool, 'bool'),
+            false, false, false, false, false, null),
+        Attribute.create('photo', ReflectedType.create(Uri, 'Uri?'), false,
+            false, false, false, false, null),
+        Attribute.create('notes', ReflectedType.create(String, 'String'), false,
+            false, false, false, false, '')
       ],
       getters: [
-        Getter.create(ReflectedType.create(Nutrients, 'Nutrients'),
-            'averageNutrition', false, false),
         Getter.create(ReflectedType.create(Map, 'Map<String, dynamic>'),
             'attributes__', false, false),
         Getter.create(
             ReflectedType.create(int, 'int'), 'hashCode', false, false)
       ],
       methods: [
-        Method.create('createDay', ReflectedType.create(null, 'void'),
-            MethodType.normal, false, null, false, null),
-        Method.create('removeDay', ReflectedType.create(null, 'void'),
-            MethodType.normal, false, null, false, null),
         Method.create(
-            'initShoppingList',
+            'baseIngredients',
             ReflectedType.create(List, 'List<MealComponent>'),
             MethodType.normal,
             false,
             null,
             false,
             null),
-        Method.create('updateShoppingList', ReflectedType.create(null, 'void'),
-            MethodType.normal, false, null, false, null),
-        Method.create('Diet', ReflectedType.create(Diet, 'Diet'),
+        Method.create('Meal', ReflectedType.create(Meal, 'Meal'),
             MethodType.constructor, false, null, false, null),
-        Method.create('staticConstructor', ReflectedType.create(Diet, 'Diet'),
-            MethodType.factory, false, null, false, Diet.staticConstructor),
+        Method.create('staticConstructor', ReflectedType.create(Meal, 'Meal'),
+            MethodType.factory, false, null, false, Meal.staticConstructor),
         Method.create('==', ReflectedType.create(bool, 'bool'),
             MethodType.operator, false, null, false, null),
         Method.create('toString', ReflectedType.create(String, 'String'),
             MethodType.normal, false, null, false, null),
-        Method.create('copyWithDiet', ReflectedType.create(Diet, 'Diet'),
+        Method.create('copyWithMeal', ReflectedType.create(Meal, 'Meal'),
             MethodType.normal, false, null, false, null),
         Method.create('toJson', ReflectedType.create(String, 'String'),
             MethodType.normal, false, null, false, null),
@@ -1165,10 +1007,104 @@ List<ReflectedClass> dataclasses = [
             null,
             false,
             null),
-        Method.create('fromJson', ReflectedType.create(Diet, 'Diet'),
-            MethodType.factory, false, null, false, Diet.fromJson),
-        Method.create('fromMap', ReflectedType.create(Diet, 'Diet'),
-            MethodType.factory, false, null, false, Diet.fromMap)
+        Method.create('fromJson', ReflectedType.create(Meal, 'Meal'),
+            MethodType.factory, false, null, false, Meal.fromJson),
+        Method.create('fromMap', ReflectedType.create(Meal, 'Meal'),
+            MethodType.factory, false, null, false, Meal.fromMap)
+      ],
+      parent: MealComponentFactory,
+      mixins: null,
+      implementations: null),
+  ReflectedClass(
+      name: 'MealComponent',
+      referenceType: ReflectedType.create(MealComponent, 'MealComponent'),
+      dataclassAnnotation: Annotation.create('Dataclass', [], {}),
+      attributes: [
+        Attribute.create(
+            'reference',
+            ReflectedType.create(MealComponentFactory, 'MealComponentFactory'),
+            false,
+            false,
+            false,
+            false,
+            false,
+            null),
+        Attribute.create('grams', ReflectedType.create(num, 'num'), false,
+            false, false, false, false, null)
+      ],
+      getters: [
+        Getter.create(ReflectedType.create(Nutrients, 'Nutrients'), 'nutrients',
+            false, false),
+        Getter.create(
+            ReflectedType.create(String, 'String'), 'name', false, false),
+        Getter.create(ReflectedType.create(Map, 'Map<String, dynamic>'),
+            'attributes__', false, false),
+        Getter.create(
+            ReflectedType.create(int, 'int'), 'hashCode', false, false)
+      ],
+      methods: [
+        Method.create(
+            'getBaseIngredients',
+            ReflectedType.create(dynamic, 'dynamic'),
+            MethodType.normal,
+            false,
+            null,
+            false,
+            null),
+        Method.create(
+            'MealComponent',
+            ReflectedType.create(MealComponent, 'MealComponent'),
+            MethodType.constructor,
+            false,
+            null,
+            false,
+            null),
+        Method.create(
+            'staticConstructor',
+            ReflectedType.create(MealComponent, 'MealComponent'),
+            MethodType.factory,
+            false,
+            null,
+            false,
+            MealComponent.staticConstructor),
+        Method.create('==', ReflectedType.create(bool, 'bool'),
+            MethodType.operator, false, null, false, null),
+        Method.create('toString', ReflectedType.create(String, 'String'),
+            MethodType.normal, false, null, false, null),
+        Method.create(
+            'copyWithMealComponent',
+            ReflectedType.create(MealComponent, 'MealComponent'),
+            MethodType.normal,
+            false,
+            null,
+            false,
+            null),
+        Method.create('toJson', ReflectedType.create(String, 'String'),
+            MethodType.normal, false, null, false, null),
+        Method.create(
+            'toMap',
+            ReflectedType.create(Map, 'Map<String, dynamic>'),
+            MethodType.normal,
+            false,
+            null,
+            false,
+            null),
+        Method.create(
+            'fromJson',
+            ReflectedType.create(MealComponent, 'MealComponent'),
+            MethodType.factory,
+            false,
+            null,
+            false,
+            MealComponent.fromJson),
+        Method.create(
+            'fromMap',
+            ReflectedType.create(MealComponent, 'MealComponent'),
+            MethodType.factory,
+            false,
+            null,
+            false,
+            MealComponent.fromMap)
       ],
       parent: null,
       mixins: null,
@@ -1254,75 +1190,6 @@ List<ReflectedClass> dataclasses = [
             BaseNutrients.fromMap)
       ],
       parent: null,
-      mixins: null,
-      implementations: null),
-  ReflectedClass(
-      name: 'Meal',
-      referenceType: ReflectedType.create(Meal, 'Meal'),
-      dataclassAnnotation: Annotation.create(
-          'Dataclass', [], {'constructor': 'false', 'attributes': 'false'}),
-      attributes: [
-        Attribute.create('name', ReflectedType.create(String, 'String'), false,
-            false, false, false, false, null, '+++'),
-        Attribute.create(
-            'ingredients',
-            ReflectedType.create(List, 'List<MealComponent>'),
-            false,
-            false,
-            false,
-            false,
-            false,
-            null),
-        Attribute.create('servings', ReflectedType.create(int, 'int'), false,
-            false, false, false, false, null),
-        Attribute.create('isSubRecipe', ReflectedType.create(bool, 'bool'),
-            false, false, false, false, false, null),
-        Attribute.create('photo', ReflectedType.create(Uri, 'Uri?'), false,
-            false, false, false, false, null),
-        Attribute.create('notes', ReflectedType.create(String, 'String'), false,
-            false, false, false, false, '')
-      ],
-      getters: [
-        Getter.create(ReflectedType.create(Map, 'Map<String, dynamic>'),
-            'attributes__', false, false),
-        Getter.create(
-            ReflectedType.create(int, 'int'), 'hashCode', false, false)
-      ],
-      methods: [
-        Method.create(
-            'baseIngredients',
-            ReflectedType.create(List, 'List<MealComponent>'),
-            MethodType.normal,
-            false,
-            null,
-            false,
-            null),
-        Method.create('Meal', ReflectedType.create(Meal, 'Meal'),
-            MethodType.constructor, false, null, false, null),
-        Method.create('staticConstructor', ReflectedType.create(Meal, 'Meal'),
-            MethodType.factory, false, null, false, Meal.staticConstructor),
-        Method.create('==', ReflectedType.create(bool, 'bool'),
-            MethodType.operator, false, null, false, null),
-        Method.create('toString', ReflectedType.create(String, 'String'),
-            MethodType.normal, false, null, false, null),
-        Method.create('copyWithMeal', ReflectedType.create(Meal, 'Meal'),
-            MethodType.normal, false, null, false, null),
-        Method.create('toJson', ReflectedType.create(String, 'String'),
-            MethodType.normal, false, null, false, null),
-        Method.create(
-            'toMap',
-            ReflectedType.create(Map, 'Map<String, dynamic>'),
-            MethodType.normal,
-            false,
-            null,
-            false,
-            null),
-        Method.create('fromJson', ReflectedType.create(Meal, 'Meal'),
-            MethodType.factory, false, null, false, Meal.fromJson),
-        Method.create('fromMap', ReflectedType.create(Meal, 'Meal'),
-            MethodType.factory, false, null, false, Meal.fromMap)
-      ],
-      parent: MealComponentFactory,
       mixins: null,
       implementations: null),
   ReflectedClass(
@@ -1467,26 +1334,222 @@ List<ReflectedClass> dataclasses = [
       ],
       parent: null,
       mixins: null,
+      implementations: null),
+  ReflectedClass(
+      name: 'AnthroMetrics',
+      referenceType: ReflectedType.create(AnthroMetrics, 'AnthroMetrics'),
+      dataclassAnnotation:
+          Annotation.create('Dataclass', [], {'constructor': 'false'}),
+      attributes: [
+        Attribute.create('sex', ReflectedType.create(Sex, 'Sex'), false, false,
+            false, false, false, null),
+        Attribute.create('age', ReflectedType.create(int, 'int'), false, false,
+            false, false, false, null),
+        Attribute.create('weight', ReflectedType.create(int, 'int'), false,
+            false, false, false, false, null),
+        Attribute.create('feet', ReflectedType.create(int, 'int'), false, false,
+            false, false, false, null),
+        Attribute.create('inches', ReflectedType.create(int, 'int'), false,
+            false, false, false, false, null),
+        Attribute.create('activity', ReflectedType.create(Activity, 'Activity'),
+            false, false, false, false, false, null)
+      ],
+      getters: [
+        Getter.create(ReflectedType.create(int, 'int'), 'cm', false, false),
+        Getter.create(ReflectedType.create(int, 'int'), 'kg', false, false),
+        Getter.create(ReflectedType.create(Map, 'Map<String, dynamic>'),
+            'attributes__', false, false),
+        Getter.create(
+            ReflectedType.create(int, 'int'), 'hashCode', false, false)
+      ],
+      methods: [
+        Method.create('cm', ReflectedType.create(null, 'void'),
+            MethodType.setter, false, null, false, null),
+        Method.create('kg', ReflectedType.create(null, 'void'),
+            MethodType.setter, false, null, false, null),
+        Method.create(
+            'AnthroMetrics',
+            ReflectedType.create(AnthroMetrics, 'AnthroMetrics'),
+            MethodType.constructor,
+            false,
+            null,
+            false,
+            null),
+        Method.create(
+            'staticConstructor',
+            ReflectedType.create(AnthroMetrics, 'AnthroMetrics'),
+            MethodType.factory,
+            false,
+            null,
+            false,
+            AnthroMetrics.staticConstructor),
+        Method.create('==', ReflectedType.create(bool, 'bool'),
+            MethodType.operator, false, null, false, null),
+        Method.create('toString', ReflectedType.create(String, 'String'),
+            MethodType.normal, false, null, false, null),
+        Method.create(
+            'copyWithAnthroMetrics',
+            ReflectedType.create(AnthroMetrics, 'AnthroMetrics'),
+            MethodType.normal,
+            false,
+            null,
+            false,
+            null),
+        Method.create('toJson', ReflectedType.create(String, 'String'),
+            MethodType.normal, false, null, false, null),
+        Method.create(
+            'toMap',
+            ReflectedType.create(Map, 'Map<String, dynamic>'),
+            MethodType.normal,
+            false,
+            null,
+            false,
+            null),
+        Method.create(
+            'fromJson',
+            ReflectedType.create(AnthroMetrics, 'AnthroMetrics'),
+            MethodType.factory,
+            false,
+            null,
+            false,
+            AnthroMetrics.fromJson),
+        Method.create(
+            'fromMap',
+            ReflectedType.create(AnthroMetrics, 'AnthroMetrics'),
+            MethodType.factory,
+            false,
+            null,
+            false,
+            AnthroMetrics.fromMap),
+        Method.create(
+            'fromMetric',
+            ReflectedType.create(AnthroMetrics, 'AnthroMetrics'),
+            MethodType.factory,
+            false,
+            null,
+            false,
+            AnthroMetrics.fromMetric),
+        Method.create(
+            'toDictForPost',
+            ReflectedType.create(Map, 'Map<String, String>'),
+            MethodType.normal,
+            false,
+            null,
+            false,
+            null)
+      ],
+      parent: null,
+      mixins: null,
+      implementations: null),
+  ReflectedClass(
+      name: 'DRI',
+      referenceType: ReflectedType.create(DRI, 'DRI'),
+      dataclassAnnotation: Annotation.create('Dataclass', [], {}),
+      attributes: [
+        Attribute.create('name', ReflectedType.create(String, 'String'), false,
+            false, false, false, false, null),
+        Attribute.create('dri', ReflectedType.create(num, 'num?'), false, false,
+            false, false, false, null),
+        Attribute.create('upperLimit', ReflectedType.create(num, 'num?'), false,
+            false, false, false, false, null),
+        Attribute.create('unit', ReflectedType.create(String, 'String'), false,
+            false, false, false, false, null),
+        Attribute.create('note', ReflectedType.create(String, 'String?'), false,
+            false, false, false, false, null),
+        Attribute.create('tracked', ReflectedType.create(bool, 'bool'), false,
+            false, false, false, false, true)
+      ],
+      getters: [
+        Getter.create(
+            ReflectedType.create(int, 'int'), 'hashCode', false, false)
+      ],
+      methods: [
+        Method.create('compare', ReflectedType.create(String, 'String'),
+            MethodType.normal, false, null, false, null),
+        Method.create('*', ReflectedType.create(DRI, 'DRI'),
+            MethodType.operator, false, null, false, null),
+        Method.create('/', ReflectedType.create(DRI, 'DRI'),
+            MethodType.operator, false, null, false, null),
+        Method.create('convertUnit', ReflectedType.create(null, 'void'),
+            MethodType.normal, false, null, false, null),
+        Method.create('DRI', ReflectedType.create(DRI, 'DRI'),
+            MethodType.constructor, false, null, false, null),
+        Method.create('sugars', ReflectedType.create(DRI, 'DRI'),
+            MethodType.factory, false, null, false, DRI.sugars),
+        Method.create('toString', ReflectedType.create(String, 'String'),
+            MethodType.normal, false, null, false, null),
+        Method.create('substitutions', ReflectedType.create(null, 'void'),
+            MethodType.normal, false, null, false, null),
+        Method.create('driMacro', ReflectedType.create(DRI, 'DRI'),
+            MethodType.factory, false, null, false, DRI.driMacro),
+        Method.create('driMicro', ReflectedType.create(DRI, 'DRI'),
+            MethodType.factory, false, null, false, DRI.driMicro),
+        Method.create('==', ReflectedType.create(bool, 'bool'),
+            MethodType.operator, false, null, false, null),
+        Method.create(
+            'toMap',
+            ReflectedType.create(Map, 'Map<String, dynamic>'),
+            MethodType.normal,
+            false,
+            null,
+            false,
+            null),
+        Method.create('fromMap', ReflectedType.create(DRI, 'DRI'),
+            MethodType.factory, false, null, false, DRI.fromMap),
+        Method.create('copyWith', ReflectedType.create(DRI, 'DRI'),
+            MethodType.normal, false, null, false, null)
+      ],
+      parent: null,
+      mixins: null,
       implementations: null)
 ];
 List<EnumExtension> enumExtensions = [
   EnumExtension(
-      name: 'Sex',
-      referenceType: ReflectedType.create(Sex, "Sex"),
+      name: 'MCFTypes',
+      referenceType: ReflectedType.create(MCFTypes, "MCFTypes"),
       options: [
-        'M',
-        'F'
+        'meal',
+        'ingredient'
       ],
       methods: [
-        Method.create("fromMap", ReflectedType.create(Sex, "Sex"),
+        Method.create("fromMap", ReflectedType.create(MCFTypes, "MCFTypes"),
             MethodType.factory, false, null, false, (Map map) {
-          if (map['value'] == 'Sex.M') {
-            return Sex.M;
+          if (map['value'] == 'MCFTypes.meal') {
+            return MCFTypes.meal;
           }
-          if (map['value'] == 'Sex.F') {
-            return Sex.F;
+          if (map['value'] == 'MCFTypes.ingredient') {
+            return MCFTypes.ingredient;
           }
-          throw Exception("Enum Sex can not instantiate from map $map");
+          throw Exception("Enum MCFTypes can not instantiate from map $map");
+        }),
+      ]),
+  EnumExtension(
+      name: 'IngredientSource',
+      referenceType: ReflectedType.create(IngredientSource, "IngredientSource"),
+      options: [
+        'string',
+        'upc',
+        'custom'
+      ],
+      methods: [
+        Method.create(
+            "fromMap",
+            ReflectedType.create(IngredientSource, "IngredientSource"),
+            MethodType.factory,
+            false,
+            null,
+            false, (Map map) {
+          if (map['value'] == 'IngredientSource.string') {
+            return IngredientSource.string;
+          }
+          if (map['value'] == 'IngredientSource.upc') {
+            return IngredientSource.upc;
+          }
+          if (map['value'] == 'IngredientSource.custom') {
+            return IngredientSource.custom;
+          }
+          throw Exception(
+              "Enum IngredientSource can not instantiate from map $map");
         }),
       ]),
   EnumExtension(
@@ -1514,25 +1577,6 @@ List<EnumExtension> enumExtensions = [
             return Activity.Very_Active;
           }
           throw Exception("Enum Activity can not instantiate from map $map");
-        }),
-      ]),
-  EnumExtension(
-      name: 'Measure',
-      referenceType: ReflectedType.create(Measure, "Measure"),
-      options: [
-        'metric',
-        'imperial'
-      ],
-      methods: [
-        Method.create("fromMap", ReflectedType.create(Measure, "Measure"),
-            MethodType.factory, false, null, false, (Map map) {
-          if (map['value'] == 'Measure.metric') {
-            return Measure.metric;
-          }
-          if (map['value'] == 'Measure.imperial') {
-            return Measure.imperial;
-          }
-          throw Exception("Enum Measure can not instantiate from map $map");
         }),
       ]),
   EnumExtension(
@@ -1565,32 +1609,41 @@ List<EnumExtension> enumExtensions = [
         }),
       ]),
   EnumExtension(
-      name: 'IngredientSource',
-      referenceType: ReflectedType.create(IngredientSource, "IngredientSource"),
+      name: 'Sex',
+      referenceType: ReflectedType.create(Sex, "Sex"),
       options: [
-        'string',
-        'upc',
-        'custom'
+        'M',
+        'F'
       ],
       methods: [
-        Method.create(
-            "fromMap",
-            ReflectedType.create(IngredientSource, "IngredientSource"),
-            MethodType.factory,
-            false,
-            null,
-            false, (Map map) {
-          if (map['value'] == 'IngredientSource.string') {
-            return IngredientSource.string;
+        Method.create("fromMap", ReflectedType.create(Sex, "Sex"),
+            MethodType.factory, false, null, false, (Map map) {
+          if (map['value'] == 'Sex.M') {
+            return Sex.M;
           }
-          if (map['value'] == 'IngredientSource.upc') {
-            return IngredientSource.upc;
+          if (map['value'] == 'Sex.F') {
+            return Sex.F;
           }
-          if (map['value'] == 'IngredientSource.custom') {
-            return IngredientSource.custom;
+          throw Exception("Enum Sex can not instantiate from map $map");
+        }),
+      ]),
+  EnumExtension(
+      name: 'Measure',
+      referenceType: ReflectedType.create(Measure, "Measure"),
+      options: [
+        'metric',
+        'imperial'
+      ],
+      methods: [
+        Method.create("fromMap", ReflectedType.create(Measure, "Measure"),
+            MethodType.factory, false, null, false, (Map map) {
+          if (map['value'] == 'Measure.metric') {
+            return Measure.metric;
           }
-          throw Exception(
-              "Enum IngredientSource can not instantiate from map $map");
+          if (map['value'] == 'Measure.imperial') {
+            return Measure.imperial;
+          }
+          throw Exception("Enum Measure can not instantiate from map $map");
         }),
       ])
 ];
@@ -1659,9 +1712,9 @@ Map dejsonifyMap(Map map) {
 // Serialize JSON
 
 jsonify(thing) {
-  try {
-    return thing.toMap();
-  } on NoSuchMethodError {
+  // try {
+
+  // } on NoSuchMethodError {
     if (isJsonSafe(thing)) {
       return thing;
     } else if (supportedTypeToMap(thing) != null) {
@@ -1671,11 +1724,13 @@ jsonify(thing) {
     } else if (isMap(thing)) {
       return nestedJsonMap(thing);
     } else {
-      throw Exception('Error on handling $thing since ${thing.runtimeType} '
-          'is not a base class or does not have a toJson() method');
+      return thing.toMap();
+
+      // throw Exception('Error on handling $thing since ${thing.runtimeType} '
+      //     'is not a base class or does not have a toJson() method');
     }
-  }
 }
+// }
 
 List nestedJsonList(Iterable iter) {
   List l = [];

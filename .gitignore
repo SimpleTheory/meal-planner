@@ -121,3 +121,4 @@ app.*.map.json
 /domain.png
 /test/tryingthingsout.dart
 /test/personal_diet_cmd/*
+/test/test_cache/

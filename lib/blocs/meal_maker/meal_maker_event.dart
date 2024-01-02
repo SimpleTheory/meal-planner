@@ -66,6 +66,10 @@ class AltMeasureValue extends MealMakerEvent{
 
   AltMeasureValue(this.val, this.index);
 }
+class AltMeasureDelete extends MealMakerEvent{
+  final int index;
+  AltMeasureDelete(this.index);
+}
 class AddAltMeasure extends MealMakerEvent{}
 class SubmitMM extends MealMakerEvent{}
 class UpdateNotes extends MealMakerEvent{

@@ -98,7 +98,7 @@ void openAddNewIngredientPopUp(BuildContext context) {
                               controller: myController,
                             ),
                             const Text('Or:'),
-                            ElevatedButton(
+                            if (isMobile()) ElevatedButton(
                                 onPressed: () {
                                   Navigator.push(
                                       context,

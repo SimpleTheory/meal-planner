@@ -318,7 +318,7 @@ class DietDrawer extends StatelessWidget {
           ListTile(
             title: const Text('Days'),
             onTap: () {
-              Saver().app(context.read<InitBloc>().state.app!);
+              // Saver().app(context.read<InitBloc>().state.app!);
               Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
@@ -331,13 +331,13 @@ class DietDrawer extends StatelessWidget {
           ListTile(
             title: const Text('Shopping List'),
             onTap: () {
-              Saver().app(context.read<InitBloc>().state.app!);
+              // Saver().app(context.read<InitBloc>().state.app!);
               Navigator.pushReplacement(context,
                   MaterialPageRoute(builder: (context) {
                 return BlocProvider(
                   create: (context) => ShoppingListBloc(diet),
                   child: BlocBuilder<ShoppingListBloc, ShoppingListState>(
-                      builder: (context, state) => const ShoppingListPage()),
+                      builder: (context, state) => const SHPG()),
                 );
               }));
             },
@@ -345,7 +345,7 @@ class DietDrawer extends StatelessWidget {
           ListTile(
             title: const Text('DRI Configuration'),
             onTap: () {
-              Saver().app(context.read<InitBloc>().state.app!);
+              // Saver().app(context.read<InitBloc>().state.app!);
               Navigator.pushReplacement(context,
                   MaterialPageRoute(builder: (context) => DRIConfigPage(diet)));
             },
@@ -353,7 +353,7 @@ class DietDrawer extends StatelessWidget {
           ListTile(
             title: const Text('Return to Home Page'),
             onTap: () {
-              Saver().app(context.read<InitBloc>().state.app!);
+              // Saver().app(context.read<InitBloc>().state.app!);
               Navigator.pop(context);
               Navigator.pop(context);
             },
@@ -770,14 +770,14 @@ class SaveDietButton extends StatelessWidget {
       },
       child: IconButton(
           onPressed: () {
-            Saver().app(context.read<InitBloc>().state.app!).then((value) {
-              if (!value) {
-                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                  content: Text('A save is currently running!'),
-                  backgroundColor: Colors.orange,
-                ));
-              }
-            });
+            // Saver().app(context.read<InitBloc>().state.app!).then((value) {
+            //   if (!value) {
+            //     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+            //       content: Text('A save is currently running!'),
+            //       backgroundColor: Colors.orange,
+            //     ));
+            //   }
+            // });
           },
           icon: const Icon(Icons.sync)),
     );

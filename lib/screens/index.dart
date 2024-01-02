@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nutrition_app/blocs/diet/diet_bloc.dart';
 import 'package:nutrition_app/blocs/ingredients_page/ingredients_page_bloc.dart';
-import 'package:nutrition_app/blocs/settings/settings_bloc.dart';
 import 'package:nutrition_app/screens/diet_details_screen.dart';
 import 'package:nutrition_app/screens/general_settings.dart';
 import 'package:nutrition_app/screens/ingredients_page.dart';
@@ -34,7 +33,7 @@ class IndexPage extends StatelessWidget {
                       context,
                       MaterialPageRoute(
                           builder: (context) => GeneralSettingsPage(
-                              context.read<SettingsBloc>().state.settings)));
+                              context.read<InitBloc>().state.app!.settings)));
                 },
               ))
         ],
@@ -125,43 +124,21 @@ class IndexPage extends StatelessWidget {
               },
               child: ElevatedButton(
                   onPressed: () {
-                    Saver()
-                        .app(context.read<InitBloc>().state.app!)
-                        .then((value) {
-                      if (!value) {
-                        ScaffoldMessenger.of(context)
-                            .showSnackBar(const SnackBar(
-                          content: Text('A save is currently running!'),
-                          backgroundColor: Colors.orange,
-                        ));
-                      }
-                    });
+                    // Saver()
+                    //     .app(context.read<InitBloc>().state.app!)
+                    //     .then((value) {
+                    //   if (!value) {
+                    //     ScaffoldMessenger.of(context)
+                    //         .showSnackBar(const SnackBar(
+                    //       content: Text('A save is currently running!'),
+                    //       backgroundColor: Colors.orange,
+                    //     ));
+                    //   }
+                    // });
+                    Saver().app(context.read<InitBloc>().state.app!);
                   },
                   child: const Text('Save')),
             )
-            // const Text('DEBUG NAVIGATIONS'),
-            // Expanded(
-            //   child: ListView(
-            //     children: [
-            //       // ListTile(title: Text('Confirm Ingredient Debug'), onTap: (){
-            //       //   showDialog(context: context, builder: (context)=>
-            //       //      confirmIngredient(ingredients[1], context)
-            //       //   );}, tileColor: Colors.green),
-            //       // ListTile(title: Text('Meal Maker'), onTap: (){
-            //       //   Navigator.push(context, MaterialPageRoute(builder: (context) => const MealMakerPage()));
-            //       // }, tileColor: Colors.green),
-            //       ListTile(title: Text('cancel dialog'),
-            //           onTap: (){showDialog(
-            //               context: context,
-            //               builder: (context) => deleteConfirmation(onSubmit: (){}, context: context));},
-            //           tileColor: Colors.green),
-            //       // ListTile(title: Text(''), onTap: (){}, tileColor: Colors.green),
-            //       // ListTile(title: Text(''), onTap: (){}, tileColor: Colors.green),
-            //       // ListTile(title: Text(''), onTap: (){}, tileColor: Colors.green),
-            //
-            //     ],
-            //   ),
-            // )
           ],
         ),
       ),

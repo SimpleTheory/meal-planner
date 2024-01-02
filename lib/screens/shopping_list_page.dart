@@ -1,4 +1,5 @@
 import 'package:drag_and_drop_lists/drag_and_drop_lists.dart';
+import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nutrition_app/blocs/micro_blocs/shopping_list_bloc.dart';
@@ -144,6 +145,100 @@ import 'package:nutrition_app/domain.dart';
 //   }
 // }
 // // </editor-fold>
+
+// <editor-fold desc="Dep Removal">
+class CategoryExpanders extends StatelessWidget {
+  final String category;
+  final ShoppingListBloc bloc;
+  const CategoryExpanders(this.category, this.bloc, {super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final List<MealComponent> categoryItems = bloc.state.diet.shoppingList[category]!;
+    categoryItems.sort((a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()));
+    return ExpansionTile(
+        title: Text(category),
+        leading: MatchingIcon(category),
+        children: [
+          Container(
+            height: categoryItems.length * 72,
+            child: ListView.builder(
+                itemCount: categoryItems.length,
+                physics: const NeverScrollableScrollPhysics(),
+                itemBuilder: (context, index){
+              final data = categoryItems[index];
+              return ListTile(
+                title: Text(data.name),
+                subtitle: Text(
+                  '${data.grams}g',
+                  style: const TextStyle(fontStyle: FontStyle.italic),
+                ),
+                leading: GetImage(
+                  data.reference.photo,
+                  height: 100,
+                  width: 65,
+                  cW: 260,
+                  cH: 260,
+                  cache: false,
+                ),
+                selected: bloc.state.selected.contains(data),
+                onTap: () {
+                  bloc.add(SelectItem(data));
+                },
+// shape: const BeveledRectangleBorder(
+//     side: BorderSide(
+//         color: Color.fromRGBO(150, 150, 150, 80),
+//         width: 1
+//     )
+// ),
+              );
+            }
+            ),
+          )
+        ],
+    );
+  }
+}
+
+
+class SHPG extends StatelessWidget {
+  const SHPG({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final shBloc = context.read<ShoppingListBloc>();
+    return BlocBuilder<ShoppingListBloc, ShoppingListState>(
+  builder: (context, state) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Shopping List'),
+      ),
+      drawer: DietDrawer(shBloc.state.diet),
+      bottomSheet: shBloc.state.selected.isEmpty
+          ? null
+          : const SendToBottomSheet(),
+      body: SizedBox(
+        height: MediaQuery.of(context).size.height,
+        child: SingleChildScrollView(
+          child: PaddedColumn(
+            edgeInsets: EdgeInsets.zero,
+            children: [
+              CategoryExpanders('Good', shBloc),
+              CategoryExpanders('Running Low', shBloc),
+              CategoryExpanders('Out of Stock', shBloc),
+              CategoryExpanders('On the Way', shBloc),
+              Container(height: 75,)
+            ],
+          ),
+        ),
+      ),
+    );
+  },
+);
+  }
+}
+
+// </editor-fold>
 
 // <editor-fold desc="Attempt">
 

@@ -1,31 +1,37 @@
-Creation:
-    (- get lazy/busy friends to contribute their assets)(1/2 done)
-    SHPG Lazy Load
-    Create a CQRS saving model (In development on separate branch)
+Modify Domain such that MealComponents save a deepcopy of references
+        - Make cascading changes to App object based on modified references
+        - Maybe ref count
 
-Potential Save Points:
-    on any diet drawer nav
-    on ingbloc submit
-    on local backup save
-    on add mc to day
+In Diet ReorderableView Error Null value passed through Null Check when moving items sometimes
 
-Documentation:
-    Add gifs and more detailed guide on usage in readme
-    Add documentation in to the code and generate code docs for it
+Shopping List Page Still Lags a bit when opening a tab with 100+ objects
 
-Questions:
-
-Known things/Qs for later:
-- Overwriting
-- Saving
-- Desktop compatibility:
-    • Create copy of project without stupid barcode scanner or kill its bridge
-    • Implement features like local back up and file saving
+Desktop/iOS compatibility
+    • Create copy of project without stupid barcode scanner or kill its bridge ✔
     • find what other plugins may inhibit this and refactor
-- QoL:
-    - Plus sign doesn't disappear behind search when searching
-    - days didnt update when showing rahawa but cant replicate bug
-Ideas?:
-    summon api directly from searchbar (in ingpage)?
-    ing measure pref for shopping list?
+
+
+
+-----------------------------------
+Minor Notes
+    Documentation:
+        Add gifs and more detailed guide on usage in readme
+        Add documentation in to the code and generate code docs for it
+
+    Known things/Qs for later:
+    - Overwriting
+    - Desktop compatibility:
+        • Create copy of project without stupid barcode scanner or kill its bridge
+        • Implement features like local back up and file saving
+        • find what other plugins may inhibit this and refactor
+    - QoL:
+        - Plus sign doesn't disappear behind search when searching
+        - days didnt update when showing rahawa but cant replicate bug
+        - reorder glitches out sometimes (replicate it)
+        - improve on UI elements of different things, for ex: alt measures to cards
+    Ideas?:
+        summon api directly from searchbar (in ingpage)?
+        ing measure pref for shopping list?
+
+
 

@@ -91,6 +91,10 @@ class MealMakerBloc extends Bloc<MealMakerEvent, MealMakerState> {
       state.altMeasures[event.index] = MapEntry(name, event.val);
       emit(state.copyWith());
     });
+    on<AltMeasureDelete>((event, emit){
+      state.altMeasures.removeAt(event.index);
+      emit(state.copyWith());
+    });
     on<AddAltMeasure>((event, emit){
       state.altMeasures.add(const MapEntry('', ''));
       emit(state.copyWith());

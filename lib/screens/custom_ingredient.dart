@@ -153,18 +153,20 @@ class CustomIngredientPage extends StatelessWidget {
               decoration: BoxDecoration(border: Border.all()),
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
-                child: Column(
+                child: ExpansionTile(
+                  title: const Text('Alternate measures'),
+                  shape: Border(top: BorderSide(color: Theme.of(context).dividerColor)),
                   children: [
-                    const Text('Alternate measures:'),
                     PlusSignTile((context) {
                       context.read<CustomIngBloc>().add(AddAltMeasureCI());
                     }, padding: const EdgeInsets.fromLTRB(0, 16, 0, 0)),
                     BlocBuilder<CustomIngBloc, CustomIngState>(
                       builder: (context, state) {
                         return ListView.builder(
+                          key: ValueKey<int>(state.altMeasures.length),
                           physics: const ClampingScrollPhysics(),
                           shrinkWrap: true,
-                          itemBuilder: (_, index) => AltMeasureFormFieldCI(index),
+                          itemBuilder: (_, index) => AltMeasureCardCI(index),
                           itemCount: state.altMeasures.length,
                         );
                       },
@@ -346,6 +348,105 @@ class AltMeasureFormFieldCI extends StatelessWidget {
     );
   }
 }
+
+class AltMeasureCardCI extends StatelessWidget {
+  final int index;
+  const AltMeasureCardCI(this.index, {super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(4, 8, 4, 0),
+      child: Container(
+        decoration: BoxDecoration(
+            border: Border.all(color: const Color(0x818C8B8B)),
+            borderRadius: BorderRadius.circular(15)
+        ),
+        child: Stack(
+          children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(5, 12, 16, 5),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Flexible(
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(10, 3, 10, 3),
+                        child: TextFormField(
+                            decoration: InputDecoration(
+                                labelText: 'name',
+                                contentPadding: const EdgeInsets.fromLTRB(10, 0, 0, 0),
+                                border: OutlineInputBorder(borderRadius: BorderRadius.circular(15.0)),
+                            ),
+
+                            // inputFormatters: <TextInputFormatter>[
+                            //   FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z \-]+'))
+                            // ],
+                            initialValue:
+                            context.read<CustomIngBloc>().state.altMeasures[index].key,
+                            onChanged: (val) {
+                              context
+                                  .read<CustomIngBloc>()
+                                  .add(ChangeAltMeasureNameCI(index, val));
+                            }),
+                      )),
+                  Flexible(
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(10, 3, 10, 3),
+                        child: TextFormField(
+                            decoration: InputDecoration(
+                                contentPadding: const EdgeInsets.fromLTRB(10, 0, 0, 0),
+                                labelText: 'grams',
+                                border: OutlineInputBorder(borderRadius: BorderRadius.circular(15.0)),
+                                errorMaxLines: 4,
+                                // invalid value and there is name and is error state
+                                errorText: invalidateNum(context
+                                    .read<CustomIngBloc>()
+                                    .state
+                                    .altMeasures[index]
+                                    .value) &&
+                                    context.read<CustomIngBloc>().state
+                                    is CustomIngErrors &&
+                                    context
+                                        .read<CustomIngBloc>()
+                                        .state
+                                        .altMeasures[index]
+                                        .key
+                                        .isNotEmpty
+                                    ? 'Value required'
+                                    : null),
+                            inputFormatters: <TextInputFormatter>[
+                              FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*'))
+                            ],
+                            keyboardType:
+                            const TextInputType.numberWithOptions(decimal: true),
+                            initialValue:
+                            context.read<CustomIngBloc>().state.altMeasures[index].value,
+                            onChanged: (val) {
+                              context
+                                  .read<CustomIngBloc>()
+                                  .add(ChangeAltMeasureValueCI(index, val));
+                            }),
+                      )),
+                ],
+              ),
+            ),
+            Align(
+              alignment: Alignment.topRight,
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(0, 3, 5, 0),
+                child: InkWell(child: const Icon(Icons.close, size: 18), onTap: () {
+                  context.read<CustomIngBloc>().add(DeleteAltMeasureCI(index));
+                },),
+              )
+              ,)
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 
 // Row altMeasureFormField()=>
 //     Row(

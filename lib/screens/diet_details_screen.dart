@@ -24,7 +24,7 @@ class DietPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(diet.name),
-        actions: [SaveDietButton(diet)],
+        // actions: [SaveDietButton(diet)],
       ),
       drawer: DietDrawer(diet),
       body: ListView(
@@ -151,10 +151,10 @@ class DayTile extends StatelessWidget {
       ),
       trailing: PopupMenuButton(
         itemBuilder: (BuildContext context) => [
-          PopupMenuItem(
-            value: DayPopUpEnumHolder(day, PopUpOptions.edit),
-            child: const Text('Edit'),
-          ),
+          // PopupMenuItem(
+          //   value: DayPopUpEnumHolder(day, PopUpOptions.edit),
+          //   child: const Text('Edit'),
+          // ),
           PopupMenuItem(
               value: DayPopUpEnumHolder(day, PopUpOptions.delete),
               child: const Text('Delete')),
